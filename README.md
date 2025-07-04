@@ -1,0 +1,86 @@
+# Auto-Translate
+
+AI 기반 마인크래프트 모드팩 자동 번역기
+
+[![ko-kr](https://img.shields.io/badge/lang-ko--kr-brightgreen.svg)](https://github.com/kunho-park/auto-translate)
+
+## 📖 프로젝트 소개
+
+**Auto-Translate**는 대규모 마인크래프트 모드팩의 언어 파일(`en_us.json`, `.lang` 등)을 최신 LLM(거대 언어 모델)을 활용하여 자동으로 번역하는 파이썬 애플리케이션입니다. 사용하기 쉬운 GUI를 통해 몇 번의 클릭만으로 모드팩 전체를 번역하고, 결과물을 바로 적용 가능한 리소스팩 형태로 만들 수 있습니다.
+
+## ✨ 주요 기능
+
+- **모드팩 자동 탐지**: PC에 설치된 CurseForge 모드팩을 자동으로 찾아 목록으로 보여줍니다.
+- **다양한 LLM 지원**: Google Gemini, OpenAI GPT, Anthropic Claude, DeepSeek 등 원하는 모델을 선택하여 번역할 수 있습니다.
+- **상세 번역 설정**:
+  - 모델, Temperature 등 LLM 관련 파라미터 조정
+  - 동시 요청 수, 재시도 등 네트워크 설정
+  - 일관된 번역 품질을 위한 용어집(Glossary) 사용
+- **실시간 모니터링**: 번역 진행률과 상세 로그를 GUI에서 실시간으로 확인할 수 있습니다.
+- **자동 패키징**: 번역된 파일을 마인크래프트에 바로 적용할 수 있는 리소스팩(`.zip`)으로 자동 생성합니다.
+- **원본 파일 백업**: 번역 작업 전 원본 파일을 안전하게 백업합니다.
+
+## 🚀 시작하기
+
+두 가지 설치 방법이 있습니다. 초보자에게는 **방법 1: 간편 설치**를 강력히 권장합니다.
+
+### 방법 1: 간편 설치 (권장)
+
+스크립트를 사용하여 가장 쉽게 설치하고 실행하는 방법입니다.
+
+1.  **설치 파일 다운로드**: [auto-translate-easy-install.zip](https://github.com/kunho-park/auto-translate/releases/download/easy-install/auto-translate-easy-install.zip) 파일을 다운로드합니다.
+
+2.  **압축 해제**:
+    -   원하는 위치에 새 폴더(예: `C:\AutoTranslator`)를 만들고, 그 안에 다운로드한 zip 파일의 압축을 풉니다.
+    -   압축을 풀면 `app` 폴더와 함께 `installer.bat`, `run.bat`, `update.bat` 파일이 보일 것입니다.
+
+3.  **프로그램 설치**:
+    -   `run.bat` 파일을 더블 클릭하여 실행합니다.
+    -   스크립트가 `app` 폴더 안으로 최신 프로그램 소스 코드를 자동으로 다운로드하고 필요한 패키지를 설치합니다. 이 과정은 인터넷 속도에 따라 몇 분 정도 걸릴 수 있습니다.
+
+4.  **API 키 설정**:
+    -   설치가 완료된 후, **`app` 폴더 안에** `.env` 라는 이름의 파일을 만드세요.
+    -   발급받은 API 키를 다음 형식으로 파일에 추가하고 저장합니다.
+        ```dotenv
+        # .env (app 폴더 내부에 위치해야 합니다)
+        GOOGLE_API_KEY="여기에_발급받은_API_키를_붙여넣으세요"
+        OPENAI_API_KEY="여기에_발급받은_API_키를_붙여넣으세요"
+        ```
+
+5.  **프로그램 실행**:
+    -   최상위 폴더(`run.bat` 파일이 있는 곳)로 돌아와 `run.bat`을 다시 실행하면 GUI 프로그램이 시작됩니다.
+
+### 방법 2: 직접 설치 (Git 사용자용)
+
+Git에 익숙하고 소스 코드를 직접 관리하고 싶을 때 사용하는 방법입니다.
+
+1.  **사전 준비**: [Python과 uv](#사전-준비), Git을 먼저 설치해야 합니다.
+2.  **소스 코드 복제**: 원하는 폴더에서 아래 명령어를 실행합니다.
+    ```bash
+    git clone https://github.com/kunho-park/auto-translate.git
+    cd auto-translate
+    ```
+3.  **의존성 설치**: `uv sync` 명령어를 실행하여 필요한 라이브러리를 설치합니다.
+4.  **API 키 설정**: 프로젝트 루트 폴더에 `.env` 파일을 만들고 API 키를 입력합니다.
+5.  **프로그램 실행**: `python run_flet_gui.py` 명령어를 실행합니다.
+
+---
+
+*더 자세한 단계별 가이드는 [상세 이용 가이드 (How to Use)](./docs/HOW_TO_USE.md)를 참고하세요.*
+
+## 📚 상세 가이드
+
+더 자세한 설정 방법과 각 기능에 대한 설명은 아래 문서를 참고하세요.
+
+-   **[상세 이용 가이드 (How to Use)](./docs/HOW_TO_USE.md)**
+
+## ⚙️ 지원하는 파일 형식
+
+-   `.json` (Minecraft, FTB Quests, KubeJS 등)
+-   `.lang` (Minecraft 레거시 형식)
+-   `.snbt` (Patchouli, TConstruct 등)
+-   `.txt`, `.xml` 등 기타 텍스트 기반 형식
+
+---
+
+프로젝트 개선을 위한 기여(Contribution)와 피드백은 언제나 환영합니다! 

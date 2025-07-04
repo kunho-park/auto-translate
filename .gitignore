@@ -1,0 +1,37 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak
+venv.bak
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Output folder
+output/
+
+# IDE / Editor specific
+.idea/
+.vscode/
+
+# Flet build artifacts
+/build/
+!/build/README.md
+
+# Python-generated files
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+old/
+.pytest_cache/
+
+# Node.js
+node_modules/

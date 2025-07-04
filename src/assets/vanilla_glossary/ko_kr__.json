@@ -1,0 +1,10749 @@
+[
+  {
+    "original": "Adventure",
+    "meanings": [
+      {
+        "translation": "모험",
+        "context": "게임 플레이의 한 종류를 지칭하는 용어"
+      }
+    ]
+  },
+  {
+    "original": "advancement",
+    "meanings": [
+      {
+        "translation": "발전 과제",
+        "context": "게임 내에서 달성해야 할 목표"
+      }
+    ]
+  },
+  {
+    "original": "armor",
+    "meanings": [
+      {
+        "translation": "갑옷",
+        "context": "플레이어가 착용하는 방어구"
+      }
+    ]
+  },
+  {
+    "original": "Arrow",
+    "meanings": [
+      {
+        "translation": "화살",
+        "context": "활 또는 쇠뇌의 탄약으로 사용되는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Axe",
+    "meanings": [
+      {
+        "translation": "도끼",
+        "context": "나무를 베거나 특정 블록을 긁어내는 데 사용하는 도구"
+      }
+    ]
+  },
+  {
+    "original": "Bed",
+    "meanings": [
+      {
+        "translation": "침대",
+        "context": "플레이어의 리스폰 지점을 설정하는 블록"
+      }
+    ]
+  },
+  {
+    "original": "biome",
+    "meanings": [
+      {
+        "translation": "생물 군계",
+        "context": "고유한 식물, 동물, 지형을 가진 지역 단위"
+      }
+    ]
+  },
+  {
+    "original": "Brush",
+    "meanings": [
+      {
+        "translation": "솔",
+        "context": "고고학 활동에 사용되는 도구"
+      }
+    ]
+  },
+  {
+    "original": "Compass",
+    "meanings": [
+      {
+        "translation": "나침반",
+        "context": "특정 블록이나 세계의 스폰 지점을 가리키는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Crafter",
+    "meanings": [
+      {
+        "translation": "제작기",
+        "context": "레드스톤 신호로 아이템을 자동으로 제작하는 블록"
+      }
+    ]
+  },
+  {
+    "original": "crossbow",
+    "meanings": [
+      {
+        "translation": "쇠뇌",
+        "context": "화살을 발사하는 원거리 무기"
+      }
+    ]
+  },
+  {
+    "original": "mob",
+    "meanings": [
+      {
+        "translation": "몹",
+        "context": "게임 내에서 움직이는 모든 종류의 생명체 (동물, 몬스터 등)"
+      }
+    ]
+  },
+  {
+    "original": "raid",
+    "meanings": [
+      {
+        "translation": "습격",
+        "context": "주민 마을에서 발생하는 적들의 침공 이벤트"
+      }
+    ]
+  },
+  {
+    "original": "Smithing Table",
+    "meanings": [
+      {
+        "translation": "대장장이 작업대",
+        "context": "장비를 강화하거나 형판으로 장식하는 작업 블록"
+      }
+    ]
+  },
+  {
+    "original": "smithing templates",
+    "meanings": [
+      {
+        "translation": "대장장이 형판",
+        "context": "대장장이 작업대에서 갑옷을 장식하는 데 사용되는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Spyglass",
+    "meanings": [
+      {
+        "translation": "망원경",
+        "context": "멀리 있는 곳을 확대하여 볼 수 있는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Trident",
+    "meanings": [
+      {
+        "translation": "삼지창",
+        "context": "근접 및 원거리 공격이 모두 가능한 무기"
+      }
+    ]
+  },
+  {
+    "original": "Trial Chamber",
+    "meanings": [
+      {
+        "translation": "시련의 회당",
+        "context": "전투와 보상이 있는 새로운 지하 구조물"
+      }
+    ]
+  },
+  {
+    "original": "Vault",
+    "meanings": [
+      {
+        "translation": "금고",
+        "context": "시련 열쇠로 열 수 있는 보상 블록"
+      }
+    ]
+  },
+  {
+    "original": "Ominous Vault",
+    "meanings": [
+      {
+        "translation": "불길한 금고",
+        "context": "불길한 시련 열쇠로 열 수 있는 상위 등급의 보상 블록"
+      }
+    ]
+  },
+  {
+    "original": "Trial Key",
+    "meanings": [
+      {
+        "translation": "시련 열쇠",
+        "context": "시련의 회당에 있는 금고를 여는 데 사용되는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Ominous Trial Key",
+    "meanings": [
+      {
+        "translation": "불길한 시련 열쇠",
+        "context": "불길한 금고를 여는 데 사용되는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Villager",
+    "meanings": [
+      {
+        "translation": "주민",
+        "context": "마을에 거주하며 플레이어와 거래하는 NPC"
+      }
+    ]
+  },
+  {
+    "original": "Warden",
+    "meanings": [
+      {
+        "translation": "워든",
+        "context": "깊은 어둠 속 스컬크 생물 군계에 사는 강력한 적대적 몹"
+      }
+    ]
+  },
+  {
+    "original": "End",
+    "meanings": [
+      {
+        "translation": "엔드",
+        "context": "게임 내 차원 (The End)"
+      },
+      {
+        "translation": "끝",
+        "context": "게임의 끝 (End of the Game)"
+      }
+    ]
+  },
+  {
+    "original": "Ender Dragon",
+    "meanings": [
+      {
+        "translation": "엔더 드래곤",
+        "context": "엔티티 (Ender Dragon)"
+      }
+    ]
+  },
+  {
+    "original": "Pillager",
+    "meanings": [
+      {
+        "translation": "약탈자",
+        "context": "엔티티 (Pillager)"
+      }
+    ]
+  },
+  {
+    "original": "Shulker",
+    "meanings": [
+      {
+        "translation": "셜커",
+        "context": "엔티티 (Shulker)"
+      }
+    ]
+  },
+  {
+    "original": "Allay",
+    "meanings": [
+      {
+        "translation": "알레이",
+        "context": "엔티티 (Allay)"
+      }
+    ]
+  },
+  {
+    "original": "Axolotl",
+    "meanings": [
+      {
+        "translation": "아홀로틀",
+        "context": "엔티티 (Axolotl)"
+      }
+    ]
+  },
+  {
+    "original": "Cat",
+    "meanings": [
+      {
+        "translation": "고양이",
+        "context": "엔티티 (Cat)"
+      }
+    ]
+  },
+  {
+    "original": "Sniffer",
+    "meanings": [
+      {
+        "translation": "스니퍼",
+        "context": "엔티티 (Sniffer)"
+      }
+    ]
+  },
+  {
+    "original": "Frog",
+    "meanings": [
+      {
+        "translation": "개구리",
+        "context": "엔티티 (Frog)"
+      }
+    ]
+  },
+  {
+    "original": "Wolf",
+    "meanings": [
+      {
+        "translation": "늑대",
+        "context": "엔티티 (Wolf)"
+      }
+    ]
+  },
+  {
+    "original": "Goat",
+    "meanings": [
+      {
+        "translation": "염소",
+        "context": "엔티티 (Goat)"
+      }
+    ]
+  },
+  {
+    "original": "Bee",
+    "meanings": [
+      {
+        "translation": "벌 / 꿀벌",
+        "context": "엔티티 (Bee)"
+      }
+    ]
+  },
+  {
+    "original": "Tadpole",
+    "meanings": [
+      {
+        "translation": "올챙이",
+        "context": "엔티티 (Tadpole)"
+      }
+    ]
+  },
+  {
+    "original": "Piglin",
+    "meanings": [
+      {
+        "translation": "피글린",
+        "context": "엔티티 (Piglin)"
+      }
+    ]
+  },
+  {
+    "original": "Dragon's Breath",
+    "meanings": [
+      {
+        "translation": "드래곤의 숨결",
+        "context": "아이템 (Dragon's Breath)"
+      }
+    ]
+  },
+  {
+    "original": "Glass Bottle",
+    "meanings": [
+      {
+        "translation": "유리병",
+        "context": "아이템 (Glass Bottle)"
+      }
+    ]
+  },
+  {
+    "original": "Dragon Egg",
+    "meanings": [
+      {
+        "translation": "드래곤 알",
+        "context": "아이템 (Dragon Egg)"
+      }
+    ]
+  },
+  {
+    "original": "Elytra",
+    "meanings": [
+      {
+        "translation": "겉날개",
+        "context": "아이템 (Elytra)"
+      }
+    ]
+  },
+  {
+    "original": "Bucket",
+    "meanings": [
+      {
+        "translation": "양동이",
+        "context": "아이템 (Bucket)"
+      }
+    ]
+  },
+  {
+    "original": "Lead",
+    "meanings": [
+      {
+        "translation": "끈",
+        "context": "아이템 (Lead)"
+      }
+    ]
+  },
+  {
+    "original": "Netherite Ingot",
+    "meanings": [
+      {
+        "translation": "네더라이트 주괴",
+        "context": "아이템 (Netherite Ingot)"
+      }
+    ]
+  },
+  {
+    "original": "Hoe",
+    "meanings": [
+      {
+        "translation": "괭이",
+        "context": "아이템 (Hoe)"
+      }
+    ]
+  },
+  {
+    "original": "Sniffer Egg",
+    "meanings": [
+      {
+        "translation": "스니퍼 알",
+        "context": "아이템 (Sniffer Egg)"
+      }
+    ]
+  },
+  {
+    "original": "Seed",
+    "meanings": [
+      {
+        "translation": "씨앗",
+        "context": "아이템 (Seed)"
+      }
+    ]
+  },
+  {
+    "original": "Wolf Armor",
+    "meanings": [
+      {
+        "translation": "늑대 갑옷",
+        "context": "아이템 (Wolf Armor)"
+      }
+    ]
+  },
+  {
+    "original": "Shears",
+    "meanings": [
+      {
+        "translation": "가위",
+        "context": "아이템 (Shears)"
+      }
+    ]
+  },
+  {
+    "original": "Armadillo Scute",
+    "meanings": [
+      {
+        "translation": "아르마딜로 인갑",
+        "context": "아이템 (Armadillo Scute)"
+      }
+    ]
+  },
+  {
+    "original": "Boat",
+    "meanings": [
+      {
+        "translation": "보트",
+        "context": "아이템 (Boat)"
+      }
+    ]
+  },
+  {
+    "original": "Honey",
+    "meanings": [
+      {
+        "translation": "꿀",
+        "context": "아이템 (Honey)"
+      }
+    ]
+  },
+  {
+    "original": "Fishing Rod",
+    "meanings": [
+      {
+        "translation": "낚싯대",
+        "context": "아이템 (Fishing Rod)"
+      }
+    ]
+  },
+  {
+    "original": "Honeycomb",
+    "meanings": [
+      {
+        "translation": "벌집 조각",
+        "context": "아이템 (Honeycomb)"
+      }
+    ]
+  },
+  {
+    "original": "Potion",
+    "meanings": [
+      {
+        "translation": "물약",
+        "context": "아이템 (Potion)"
+      }
+    ]
+  },
+  {
+    "original": "Note Block",
+    "meanings": [
+      {
+        "translation": "소리 블록",
+        "context": "블록 (Note Block)"
+      }
+    ]
+  },
+  {
+    "original": "Froglight",
+    "meanings": [
+      {
+        "translation": "개구리불",
+        "context": "블록 (Froglight)"
+      }
+    ]
+  },
+  {
+    "original": "Sign",
+    "meanings": [
+      {
+        "translation": "표지판",
+        "context": "블록 (Sign)"
+      }
+    ]
+  },
+  {
+    "original": "Campfire",
+    "meanings": [
+      {
+        "translation": "모닥불",
+        "context": "블록 (Campfire)"
+      }
+    ]
+  },
+  {
+    "original": "Bee Nest",
+    "meanings": [
+      {
+        "translation": "벌집",
+        "context": "자연 생성 블록 (Bee Nest)"
+      }
+    ]
+  },
+  {
+    "original": "Beehive",
+    "meanings": [
+      {
+        "translation": "벌통",
+        "context": "제작 블록 (Beehive)"
+      }
+    ]
+  },
+  {
+    "original": "Copper block",
+    "meanings": [
+      {
+        "translation": "구리 블록",
+        "context": "블록 (Copper block)"
+      }
+    ]
+  },
+  {
+    "original": "Respawn Anchor",
+    "meanings": [
+      {
+        "translation": "리스폰 정박기",
+        "context": "블록 (Respawn Anchor)"
+      }
+    ]
+  },
+  {
+    "original": "Beacon",
+    "meanings": [
+      {
+        "translation": "신호기",
+        "context": "블록 (Beacon)"
+      }
+    ]
+  },
+  {
+    "original": "Nether",
+    "meanings": [
+      {
+        "translation": "네더",
+        "context": "장소 (Nether)"
+      }
+    ]
+  },
+  {
+    "original": "Overworld",
+    "meanings": [
+      {
+        "translation": "오버월드",
+        "context": "장소 (Overworld)"
+      }
+    ]
+  },
+  {
+    "original": "Bastion Remnant",
+    "meanings": [
+      {
+        "translation": "보루 잔해",
+        "context": "구조물 (Bastion Remnant)"
+      }
+    ]
+  },
+  {
+    "original": "Nether Fortress",
+    "meanings": [
+      {
+        "translation": "네더 요새",
+        "context": "구조물 (Nether Fortress)"
+      }
+    ]
+  },
+  {
+    "original": "Breed",
+    "meanings": [
+      {
+        "translation": "교배",
+        "context": "행동 (Breed)"
+      }
+    ]
+  },
+  {
+    "original": "Tame",
+    "meanings": [
+      {
+        "translation": "길들이기",
+        "context": "행동 (Tame)"
+      }
+    ]
+  },
+  {
+    "original": "Brew",
+    "meanings": [
+      {
+        "translation": "물약 양조",
+        "context": "행동 (Brew a Potion)"
+      }
+    ]
+  },
+  {
+    "original": "Silk Touch",
+    "meanings": [
+      {
+        "translation": "섬세한 손길",
+        "context": "마법 부여 (Silk Touch)"
+      }
+    ]
+  },
+  {
+    "original": "Wax",
+    "meanings": [
+      {
+        "translation": "밀랍",
+        "context": "재료 (Wax)"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "기본 게임 단위, 건축 및 조합의 재료"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "플레이어가 인벤토리에 소지할 수 있는 모든 객체"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "플레이어, 몬스터, 아이템 개체 등 월드 내에 존재하는 동적 객체"
+      }
+    ]
+  },
+  {
+    "original": "Nether",
+    "meanings": [
+      {
+        "translation": "네더",
+        "context": "게임의 주요 월드 중 하나 (지옥 차원)"
+      }
+    ]
+  },
+  {
+    "original": "Overworld",
+    "meanings": [
+      {
+        "translation": "오버월드",
+        "context": "게임의 기본 시작 월드 (일반 월드)"
+      }
+    ]
+  },
+  {
+    "original": "End",
+    "meanings": [
+      {
+        "translation": "엔드",
+        "context": "게임의 마지막 월드 (엔더 드래곤이 있는 차원)"
+      }
+    ]
+  },
+  {
+    "original": "Portal",
+    "meanings": [
+      {
+        "translation": "차원문",
+        "context": "차원과 차원을 연결하는 통로 구조물"
+      }
+    ]
+  },
+  {
+    "original": "Wither",
+    "meanings": [
+      {
+        "translation": "위더",
+        "context": "보스 몬스터 이름"
+      }
+    ]
+  },
+  {
+    "original": "Ghast",
+    "meanings": [
+      {
+        "translation": "가스트",
+        "context": "네더에 사는 비행 몬스터"
+      }
+    ]
+  },
+  {
+    "original": "Strider",
+    "meanings": [
+      {
+        "translation": "스트라이더",
+        "context": "네더의 용암 위를 걷는 수동적 몹"
+      }
+    ]
+  },
+  {
+    "original": "Debris",
+    "meanings": [
+      {
+        "translation": "잔해",
+        "context": "네더라이트 제작에 필요한 핵심 재료 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Obsidian",
+    "meanings": [
+      {
+        "translation": "흑요석",
+        "context": "매우 단단한 검은색 블록, 주로 차원문 제작에 사용"
+      }
+    ]
+  },
+  {
+    "original": "Pickaxe",
+    "meanings": [
+      {
+        "translation": "곡괭이",
+        "context": "블록을 채굴하는 데 사용되는 핵심 도구"
+      }
+    ]
+  },
+  {
+    "original": "Armor",
+    "meanings": [
+      {
+        "translation": "갑옷",
+        "context": "플레이어를 보호하는 방어구 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Enchant",
+    "meanings": [
+      {
+        "translation": "마법 부여",
+        "context": "아이템에 특수 능력을 부여하는 게임 시스템"
+      }
+    ]
+  },
+  {
+    "original": "Advancement",
+    "meanings": [
+      {
+        "translation": "발전 과제",
+        "context": "게임 내에서 특정 목표를 달성했음을 나타내는 시스템"
+      }
+    ]
+  },
+  {
+    "original": "Command Block",
+    "meanings": [
+      {
+        "translation": "명령 블록",
+        "context": "명령어를 실행하는 특수 블록"
+      }
+    ]
+  },
+  {
+    "original": "Mode",
+    "meanings": [
+      {
+        "translation": "모드",
+        "context": "명령 블록의 작동 방식 (반응형, 반복형, 사슬형)"
+      }
+    ]
+  },
+  {
+    "original": "Property",
+    "meanings": [
+      {
+        "translation": "속성",
+        "context": "블록의 상태를 정의하는 값 (예: 방향, 활성화 여부)"
+      }
+    ]
+  },
+  {
+    "original": "Dimension",
+    "meanings": [
+      {
+        "translation": "차원",
+        "context": "오버월드, 네더, 엔드와 같은 독립적인 게임 세계"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "General term for game objects"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "User-controlled character"
+      }
+    ]
+  },
+  {
+    "original": "Level",
+    "meanings": [
+      {
+        "translation": "레벨",
+        "context": "Experience or tier"
+      }
+    ]
+  },
+  {
+    "original": "Game mode",
+    "meanings": [
+      {
+        "translation": "게임 모드",
+        "context": "Game play style (e.g., Survival)"
+      }
+    ]
+  },
+  {
+    "original": "Position",
+    "meanings": [
+      {
+        "translation": "좌표",
+        "context": "For specific x, y, z values"
+      },
+      {
+        "translation": "위치",
+        "context": "For a general location"
+      }
+    ]
+  },
+  {
+    "original": "Coordinates",
+    "meanings": [
+      {
+        "translation": "좌표",
+        "context": "Set of location values"
+      }
+    ]
+  },
+  {
+    "original": "Tag",
+    "meanings": [
+      {
+        "translation": "태그",
+        "context": "Data structure for grouping"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "Object in inventory"
+      }
+    ]
+  },
+  {
+    "original": "Type",
+    "meanings": [
+      {
+        "translation": "유형",
+        "context": "Category or classification"
+      }
+    ]
+  },
+  {
+    "original": "Selector",
+    "meanings": [
+      {
+        "translation": "선택자",
+        "context": "Command target specifier (e.g., @p)"
+      }
+    ]
+  },
+  {
+    "original": "Value",
+    "meanings": [
+      {
+        "translation": "값",
+        "context": "Data or numerical amount"
+      }
+    ]
+  },
+  {
+    "original": "Predicate",
+    "meanings": [
+      {
+        "translation": "술어",
+        "context": "Custom condition for commands"
+      }
+    ]
+  },
+  {
+    "original": "Component",
+    "meanings": [
+      {
+        "translation": "구성 요소",
+        "context": "Part of an item or object"
+      }
+    ]
+  },
+  {
+    "original": "Speed",
+    "meanings": [
+      {
+        "translation": "속도 증가",
+        "context": "단일 속성으로 사용될 때 (예: Movement Speed)"
+      },
+      {
+        "translation": "속도",
+        "context": "복합어의 일부로 사용될 때 (예: Attack Speed)"
+      }
+    ]
+  },
+  {
+    "original": "Damage",
+    "meanings": [
+      {
+        "translation": "피해",
+        "context": "개체에 가해지는 해로움 (예: Attack Damage)"
+      }
+    ]
+  },
+  {
+    "original": "Resistance",
+    "meanings": [
+      {
+        "translation": "저항",
+        "context": "효과에 저항하는 능력 (예: Knockback Resistance)"
+      }
+    ]
+  },
+  {
+    "original": "Efficiency",
+    "meanings": [
+      {
+        "translation": "효율",
+        "context": "작업 수행 속도 (예: Mining Efficiency)"
+      }
+    ]
+  },
+  {
+    "original": "Range",
+    "meanings": [
+      {
+        "translation": "범위",
+        "context": "상호작용 또는 효과가 미치는 거리 (예: Interaction Range)"
+      }
+    ]
+  },
+  {
+    "original": "Forest",
+    "meanings": [
+      {
+        "translation": "숲",
+        "context": "생물 군계 유형 (예: Birch Forest)"
+      }
+    ]
+  },
+  {
+    "original": "Ocean",
+    "meanings": [
+      {
+        "translation": "바다",
+        "context": "생물 군계 유형 (예: Cold Ocean)"
+      }
+    ]
+  },
+  {
+    "original": "Deep",
+    "meanings": [
+      {
+        "translation": "깊은",
+        "context": "생물 군계 이름 접두사 (예: Deep Ocean)"
+      },
+      {
+        "translation": "깊은 어둠",
+        "context": "단일 생물 군계 이름 (The Deep Dark)"
+      }
+    ]
+  },
+  {
+    "original": "Snowy",
+    "meanings": [
+      {
+        "translation": "눈 덮인",
+        "context": "생물 군계 수식어 (예: Snowy Plains)"
+      }
+    ]
+  },
+  {
+    "original": "Old Growth",
+    "meanings": [
+      {
+        "translation": "원시",
+        "context": "생물 군계 수식어 (예: Old Growth Taiga)"
+      }
+    ]
+  },
+  {
+    "original": "Hills",
+    "meanings": [
+      {
+        "translation": "언덕",
+        "context": "생물 군계 유형 (예: Windswept Hills)"
+      }
+    ]
+  },
+  {
+    "original": "Peaks",
+    "meanings": [
+      {
+        "translation": "봉우리",
+        "context": "생물 군계 유형 (예: Jagged Peaks)"
+      }
+    ]
+  },
+  {
+    "original": "Planks",
+    "meanings": [
+      {
+        "translation": "판자",
+        "context": "Crafted wood block"
+      }
+    ]
+  },
+  {
+    "original": "Log",
+    "meanings": [
+      {
+        "translation": "원목",
+        "context": "Raw wood from a tree trunk"
+      }
+    ]
+  },
+  {
+    "original": "Leaves",
+    "meanings": [
+      {
+        "translation": "잎",
+        "context": "Tree leaves block"
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "As a block type (e.g., Acacia Slab)"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "As a block type (e.g., Acacia Stairs)"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "As a standalone block (e.g., Andesite Wall)"
+      },
+      {
+        "translation": "벽",
+        "context": "As a surface (e.g., Wall Sign)"
+      }
+    ]
+  },
+  {
+    "original": "Sign",
+    "meanings": [
+      {
+        "translation": "표지판",
+        "context": "A standalone sign (e.g., Acacia Sign)"
+      },
+      {
+        "translation": "매다는 표지판",
+        "context": "A hanging sign (e.g., Hanging Sign)"
+      }
+    ]
+  },
+  {
+    "original": "Field",
+    "meanings": [
+      {
+        "translation": "바탕",
+        "context": "Banner pattern (solid color)"
+      },
+      {
+        "translation": "벽돌 무늬",
+        "context": "Banner pattern (masoned)"
+      }
+    ]
+  },
+  {
+    "original": "Bordure",
+    "meanings": [
+      {
+        "translation": "테두리",
+        "context": "Banner pattern"
+      }
+    ]
+  },
+  {
+    "original": "Block of",
+    "meanings": [
+      {
+        "translation": "[재료] 블록",
+        "context": "Compressed storage block"
+      }
+    ]
+  },
+  {
+    "original": "Field Masoned",
+    "meanings": [
+      {
+        "translation": "벽돌 무늬",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Roundel",
+    "meanings": [
+      {
+        "translation": "원",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Creeper Charge",
+    "meanings": [
+      {
+        "translation": "크리퍼 모양",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Saltire",
+    "meanings": [
+      {
+        "translation": "X자",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Bordure Indented",
+    "meanings": [
+      {
+        "translation": "톱니 테두리",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Bend",
+    "meanings": [
+      {
+        "translation": "오른쪽 위로부터의 사선 상부",
+        "context": "Per Bend (현수막 무늬)"
+      },
+      {
+        "translation": "왼쪽 위로부터의 사선 상부",
+        "context": "Per Bend Sinister (현수막 무늬)"
+      },
+      {
+        "translation": "오른쪽 위로부터의 사선 하부",
+        "context": "Per Bend Inverted (현수막 무늬)"
+      }
+    ]
+  },
+  {
+    "original": "Per Bend Inverted",
+    "meanings": [
+      {
+        "translation": "오른쪽 위로부터의 사선 하부",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Per Bend Sinister Inverted",
+    "meanings": [
+      {
+        "translation": "왼쪽 위로부터의 사선 하부",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Flow",
+    "meanings": [
+      {
+        "translation": "흐름",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Flower Charge",
+    "meanings": [
+      {
+        "translation": "꽃 모양",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Globe",
+    "meanings": [
+      {
+        "translation": "지구 모양",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Base Gradient",
+    "meanings": [
+      {
+        "translation": "아래쪽 그라데이션",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Gradient",
+    "meanings": [
+      {
+        "translation": "위쪽 그라데이션",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Gradient",
+    "meanings": [
+      {
+        "translation": "위쪽 그라데이션",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Guster",
+    "meanings": [
+      {
+        "translation": "소용돌이",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Per Fess",
+    "meanings": [
+      {
+        "translation": "중앙 가로선 상부",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Per Fess Inverted",
+    "meanings": [
+      {
+        "translation": "중앙 가로선 하부",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Per Pale",
+    "meanings": [
+      {
+        "translation": "중앙 세로선 우측",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Per Pale Inverted",
+    "meanings": [
+      {
+        "translation": "중앙 세로선 좌측",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Thing",
+    "meanings": [
+      {
+        "translation": "무언가",
+        "context": "현수막 무늬"
+      }
+    ]
+  },
+  {
+    "original": "Black",
+    "meanings": [
+      {
+        "translation": "검은색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Blue",
+    "meanings": [
+      {
+        "translation": "파란색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Brown",
+    "meanings": [
+      {
+        "translation": "갈색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Cyan",
+    "meanings": [
+      {
+        "translation": "청록색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Gray",
+    "meanings": [
+      {
+        "translation": "회색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Green",
+    "meanings": [
+      {
+        "translation": "초록색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Light Blue",
+    "meanings": [
+      {
+        "translation": "하늘색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Light Gray",
+    "meanings": [
+      {
+        "translation": "회백색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Lime",
+    "meanings": [
+      {
+        "translation": "연두색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Magenta",
+    "meanings": [
+      {
+        "translation": "자홍색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Orange",
+    "meanings": [
+      {
+        "translation": "주황색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Pink",
+    "meanings": [
+      {
+        "translation": "분홍색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Purple",
+    "meanings": [
+      {
+        "translation": "보라색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Red",
+    "meanings": [
+      {
+        "translation": "빨간색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "White",
+    "meanings": [
+      {
+        "translation": "하얀색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Yellow",
+    "meanings": [
+      {
+        "translation": "노란색",
+        "context": "색상"
+      }
+    ]
+  },
+  {
+    "original": "Thing",
+    "meanings": [
+      {
+        "translation": "무언가",
+        "context": "Pink Thing"
+      }
+    ]
+  },
+  {
+    "original": "Snout",
+    "meanings": [
+      {
+        "translation": "돼지 코",
+        "context": "Black Snout"
+      }
+    ]
+  },
+  {
+    "original": "Lozenge",
+    "meanings": [
+      {
+        "translation": "마름모",
+        "context": "Blue Lozenge"
+      }
+    ]
+  },
+  {
+    "original": "Skull",
+    "meanings": [
+      {
+        "translation": "해골",
+        "context": "Skull Charge"
+      }
+    ]
+  },
+  {
+    "original": "Charge",
+    "meanings": [
+      {
+        "translation": "모양",
+        "context": "Skull Charge"
+      }
+    ]
+  },
+  {
+    "original": "Paly",
+    "meanings": [
+      {
+        "translation": "세로줄 무늬",
+        "context": "Green Paly"
+      }
+    ]
+  },
+  {
+    "original": "Base",
+    "meanings": [
+      {
+        "translation": "아래",
+        "context": "Base Dexter Canton"
+      }
+    ]
+  },
+  {
+    "original": "Dexter",
+    "meanings": [
+      {
+        "translation": "오른쪽",
+        "context": "Base Dexter Canton"
+      }
+    ]
+  },
+  {
+    "original": "Sinister",
+    "meanings": [
+      {
+        "translation": "왼쪽",
+        "context": "Base Sinister Canton"
+      }
+    ]
+  },
+  {
+    "original": "Canton",
+    "meanings": [
+      {
+        "translation": "사각형",
+        "context": "Base Dexter Canton"
+      }
+    ]
+  },
+  {
+    "original": "Base",
+    "meanings": [
+      {
+        "translation": "아래쪽 가로띠",
+        "context": "Banner Pattern name"
+      },
+      {
+        "translation": "아래",
+        "context": "Banner Pattern position"
+      }
+    ]
+  },
+  {
+    "original": "Bend",
+    "meanings": [
+      {
+        "translation": "오른쪽 위로부터의 사선",
+        "context": "Banner Pattern name"
+      }
+    ]
+  },
+  {
+    "original": "Bend Sinister",
+    "meanings": [
+      {
+        "translation": "왼쪽 위로부터의 사선",
+        "context": "Banner Pattern name"
+      }
+    ]
+  },
+  {
+    "original": "Canton",
+    "meanings": [
+      {
+        "translation": "사각형",
+        "context": "Banner Pattern shape"
+      }
+    ]
+  },
+  {
+    "original": "Chief",
+    "meanings": [
+      {
+        "translation": "위",
+        "context": "Banner Pattern position"
+      }
+    ]
+  },
+  {
+    "original": "Cross",
+    "meanings": [
+      {
+        "translation": "십자",
+        "context": "Banner Pattern name"
+      }
+    ]
+  },
+  {
+    "original": "Pale",
+    "meanings": [
+      {
+        "translation": "중앙 세로띠",
+        "context": "Banner Pattern name"
+      }
+    ]
+  },
+  {
+    "original": "Sinister",
+    "meanings": [
+      {
+        "translation": "왼쪽",
+        "context": "Banner Pattern direction"
+      }
+    ]
+  },
+  {
+    "original": "Dexter",
+    "meanings": [
+      {
+        "translation": "오른쪽",
+        "context": "Banner Pattern direction"
+      }
+    ]
+  },
+  {
+    "original": "Bend",
+    "meanings": [
+      {
+        "translation": "오른쪽 위로부터의 사선",
+        "context": "Banner Pattern"
+      }
+    ]
+  },
+  {
+    "original": "Pale Dexter",
+    "meanings": [
+      {
+        "translation": "오른쪽 세로띠",
+        "context": "Banner Pattern"
+      }
+    ]
+  },
+  {
+    "original": "Fess",
+    "meanings": [
+      {
+        "translation": "중앙 가로띠",
+        "context": "Banner Pattern"
+      }
+    ]
+  },
+  {
+    "original": "Pale Sinister",
+    "meanings": [
+      {
+        "translation": "왼쪽 세로띠",
+        "context": "Banner Pattern"
+      }
+    ]
+  },
+  {
+    "original": "Chief",
+    "meanings": [
+      {
+        "translation": "위쪽 가로띠",
+        "context": "Banner Pattern"
+      }
+    ]
+  },
+  {
+    "original": "Chevron",
+    "meanings": [
+      {
+        "translation": "하단 삼각형",
+        "context": "Banner Pattern"
+      }
+    ]
+  },
+  {
+    "original": "Inverted Chevron",
+    "meanings": [
+      {
+        "translation": "상단 삼각형",
+        "context": "Banner Pattern"
+      }
+    ]
+  },
+  {
+    "original": "Black",
+    "meanings": [
+      {
+        "translation": "검은색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Red",
+    "meanings": [
+      {
+        "translation": "빨간색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Green",
+    "meanings": [
+      {
+        "translation": "초록색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Brown",
+    "meanings": [
+      {
+        "translation": "갈색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Blue",
+    "meanings": [
+      {
+        "translation": "파란색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Purple",
+    "meanings": [
+      {
+        "translation": "보라색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Cyan",
+    "meanings": [
+      {
+        "translation": "청록색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Light Gray",
+    "meanings": [
+      {
+        "translation": "회백색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Gray",
+    "meanings": [
+      {
+        "translation": "회색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Pink",
+    "meanings": [
+      {
+        "translation": "분홍색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Lime",
+    "meanings": [
+      {
+        "translation": "연두색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Yellow",
+    "meanings": [
+      {
+        "translation": "노란색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Light Blue",
+    "meanings": [
+      {
+        "translation": "하늘색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Magenta",
+    "meanings": [
+      {
+        "translation": "자홍색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Orange",
+    "meanings": [
+      {
+        "translation": "주황색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "White",
+    "meanings": [
+      {
+        "translation": "하얀색",
+        "context": "Color"
+      }
+    ]
+  },
+  {
+    "original": "Log",
+    "meanings": [
+      {
+        "translation": "원목",
+        "context": "A log block with bark, harvestable from trees."
+      }
+    ]
+  },
+  {
+    "original": "Planks",
+    "meanings": [
+      {
+        "translation": "판자",
+        "context": "Crafted from wood/logs."
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "A half-height block."
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "Stair-shaped blocks."
+      }
+    ]
+  },
+  {
+    "original": "Beacon",
+    "meanings": [
+      {
+        "translation": "신호기",
+        "context": "A block that emits a beam of light and provides status effects."
+      }
+    ]
+  },
+  {
+    "original": "Power",
+    "meanings": [
+      {
+        "translation": "효과",
+        "context": "Refers to the effect of a beacon."
+      }
+    ]
+  },
+  {
+    "original": "Bedrock",
+    "meanings": [
+      {
+        "translation": "기반암",
+        "context": "An indestructible block found at the bottom of the world."
+      }
+    ]
+  },
+  {
+    "original": "Blast Furnace",
+    "meanings": [
+      {
+        "translation": "용광로",
+        "context": "A furnace that smelts ores faster."
+      }
+    ]
+  },
+  {
+    "original": "Barrier",
+    "meanings": [
+      {
+        "translation": "방벽",
+        "context": "A transparent, impassable block."
+      }
+    ]
+  },
+  {
+    "original": "Nest",
+    "meanings": [
+      {
+        "translation": "벌집",
+        "context": "A naturally generating block where bees live."
+      }
+    ]
+  },
+  {
+    "original": "Hive",
+    "meanings": [
+      {
+        "translation": "벌통",
+        "context": "A craftable block for housing bees."
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "Used for wall-type blocks, often for decoration."
+      },
+      {
+        "translation": "벽",
+        "context": "When referring to an item placed on a vertical surface."
+      }
+    ]
+  },
+  {
+    "original": "Stained",
+    "meanings": [
+      {
+        "translation": "색",
+        "context": "Used for colored glass."
+      }
+    ]
+  },
+  {
+    "original": "Glazed",
+    "meanings": [
+      {
+        "translation": "유광",
+        "context": "Refers to Glazed Terracotta blocks with patterns."
+      }
+    ]
+  },
+  {
+    "original": "Concrete Powder",
+    "meanings": [
+      {
+        "translation": "콘크리트 가루",
+        "context": "The powder form of concrete, which solidifies with water."
+      }
+    ]
+  },
+  {
+    "original": "Base",
+    "meanings": [
+      {
+        "translation": "아래쪽",
+        "context": "Used in banner patterns, refers to the bottom part."
+      }
+    ]
+  },
+  {
+    "original": "Chief",
+    "meanings": [
+      {
+        "translation": "위쪽",
+        "context": "Used in banner patterns, refers to the top part."
+      }
+    ]
+  },
+  {
+    "original": "Indented",
+    "meanings": [
+      {
+        "translation": "톱니 모양",
+        "context": "A serrated or indented pattern on a banner."
+      }
+    ]
+  },
+  {
+    "original": "Chevron",
+    "meanings": [
+      {
+        "translation": "삼각형",
+        "context": "A V-shape, used in banner patterns."
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "아이템/블록 이름에 사용 (예: Block of Coal)"
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "블록 형태 (예: Brick Slab)"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "블록 형태 (예: Brick Stairs)"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "블록 형태 (예: Brick Wall)"
+      },
+      {
+        "translation": "벽",
+        "context": "벽 부착물 (예: Wall Fan)"
+      }
+    ]
+  },
+  {
+    "original": "Fence",
+    "meanings": [
+      {
+        "translation": "울타리",
+        "context": "블록 형태 (예: Cherry Fence)"
+      }
+    ]
+  },
+  {
+    "original": "Door",
+    "meanings": [
+      {
+        "translation": "문",
+        "context": "블록 형태 (예: Cherry Door)"
+      }
+    ]
+  },
+  {
+    "original": "Trapdoor",
+    "meanings": [
+      {
+        "translation": "다락문",
+        "context": "블록 형태 (예: Cherry Trapdoor)"
+      }
+    ]
+  },
+  {
+    "original": "Log",
+    "meanings": [
+      {
+        "translation": "원목",
+        "context": "나무 블록 (예: Cherry Log)"
+      }
+    ]
+  },
+  {
+    "original": "Planks",
+    "meanings": [
+      {
+        "translation": "판자",
+        "context": "나무 블록 (예: Cherry Planks)"
+      }
+    ]
+  },
+  {
+    "original": "Leaves",
+    "meanings": [
+      {
+        "translation": "잎",
+        "context": "나무 블록 (예: Cherry Leaves)"
+      }
+    ]
+  },
+  {
+    "original": "Sapling",
+    "meanings": [
+      {
+        "translation": "묘목",
+        "context": "식물 (예: Cherry Sapling)"
+      }
+    ]
+  },
+  {
+    "original": "Ore",
+    "meanings": [
+      {
+        "translation": "광석",
+        "context": "광물 블록 (예: Coal Ore)"
+      }
+    ]
+  },
+  {
+    "original": "Chiseled",
+    "meanings": [
+      {
+        "translation": "조각된",
+        "context": "블록 장식 (예: Chiseled Stone Bricks)"
+      }
+    ]
+  },
+  {
+    "original": "Carved",
+    "meanings": [
+      {
+        "translation": "조각된",
+        "context": "블록 장식 (예: Carved Pumpkin)"
+      }
+    ]
+  },
+  {
+    "original": "Cobbled",
+    "meanings": [
+      {
+        "translation": "조약돌",
+        "context": "블록 재료 (예: Cobbled Deepslate)"
+      }
+    ]
+  },
+  {
+    "original": "Bricks",
+    "meanings": [
+      {
+        "translation": "벽돌",
+        "context": "블록 재료 (예: Chiseled Nether Bricks)"
+      }
+    ]
+  },
+  {
+    "original": "Pane",
+    "meanings": [
+      {
+        "translation": "판",
+        "context": "얇은 블록 형태 (예: Blue Stained Glass Pane)"
+      }
+    ]
+  },
+  {
+    "original": "Stained",
+    "meanings": [
+      {
+        "translation": "색",
+        "context": "염색된 블록 접두사 (예: Blue Stained Glass)"
+      }
+    ]
+  },
+  {
+    "original": "Deepslate",
+    "meanings": [
+      {
+        "translation": "심층암",
+        "context": "블록 종류 (예: Cobbled Deepslate)"
+      }
+    ]
+  },
+  {
+    "original": "Copper",
+    "meanings": [
+      {
+        "translation": "구리",
+        "context": "As a material name"
+      }
+    ]
+  },
+  {
+    "original": "Cracked",
+    "meanings": [
+      {
+        "translation": "금 간",
+        "context": "As a block/item variant"
+      }
+    ]
+  },
+  {
+    "original": "Crimson",
+    "meanings": [
+      {
+        "translation": "진홍빛",
+        "context": "As a material/wood type"
+      }
+    ]
+  },
+  {
+    "original": "Cut",
+    "meanings": [
+      {
+        "translation": "깎인",
+        "context": "As a block/item variant"
+      }
+    ]
+  },
+  {
+    "original": "Cyan",
+    "meanings": [
+      {
+        "translation": "청록색",
+        "context": "As a color"
+      }
+    ]
+  },
+  {
+    "original": "Dark Oak",
+    "meanings": [
+      {
+        "translation": "짙은 참나무",
+        "context": "As a wood type"
+      }
+    ]
+  },
+  {
+    "original": "Dead",
+    "meanings": [
+      {
+        "translation": "죽은",
+        "context": "In \"Dead Coral\""
+      },
+      {
+        "translation": "마른",
+        "context": "In \"Dead Bush\""
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "As a block type"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "As a block type"
+      }
+    ]
+  },
+  {
+    "original": "Trapdoor",
+    "meanings": [
+      {
+        "translation": "다락문",
+        "context": "As a block type"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "As a block type, e.g., \"Cobblestone Wall\""
+      },
+      {
+        "translation": "벽",
+        "context": "As a modifier, e.g., \"Wall Head\""
+      }
+    ]
+  },
+  {
+    "original": "Sign",
+    "meanings": [
+      {
+        "translation": "표지판",
+        "context": "As a block type, e.g., \"Crimson Sign\""
+      }
+    ]
+  },
+  {
+    "original": "Hanging Sign",
+    "meanings": [
+      {
+        "translation": "매다는 표지판",
+        "context": "As a block type, e.g., \"Hanging Sign\""
+      }
+    ]
+  },
+  {
+    "original": "Head",
+    "meanings": [
+      {
+        "translation": "머리",
+        "context": "As an item, e.g., \"Creeper Head\""
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Grass Block (일반 블록)"
+      },
+      {
+        "translation": "[재료] 블록",
+        "context": "Block of [Material] (재료 블록)"
+      }
+    ]
+  },
+  {
+    "original": "Ore",
+    "meanings": [
+      {
+        "translation": "광석",
+        "context": "Diamond Ore (광석류)"
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "Diorite Slab (반 블록)"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "Diorite Stairs (계단 블록)"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "Diorite Wall (담장 블록)"
+      },
+      {
+        "translation": "벽",
+        "context": "... Wall Fan (벽에 설치된 아이템)"
+      }
+    ]
+  },
+  {
+    "original": "Deepslate",
+    "meanings": [
+      {
+        "translation": "심층암",
+        "context": "Deepslate Bricks (심층암 블록류)"
+      }
+    ]
+  },
+  {
+    "original": "Exposed",
+    "meanings": [
+      {
+        "translation": "약간 녹슨",
+        "context": "Exposed Copper (구리 산화 단계)"
+      }
+    ]
+  },
+  {
+    "original": "Cut",
+    "meanings": [
+      {
+        "translation": "깎인",
+        "context": "Cut Copper (가공된 블록)"
+      }
+    ]
+  },
+  {
+    "original": "Table",
+    "meanings": [
+      {
+        "translation": "작업대",
+        "context": "Fletching Table (제작 기능 블록)"
+      },
+      {
+        "translation": "마법 부여대",
+        "context": "Enchanting Table (마법 부여 기능 블록)"
+      }
+    ]
+  },
+  {
+    "original": "Fan",
+    "meanings": [
+      {
+        "translation": "부채형",
+        "context": "Coral Fan (산호 종류)"
+      }
+    ]
+  },
+  {
+    "original": "Head",
+    "meanings": [
+      {
+        "translation": "머리",
+        "context": "Dragon Head (엔티티 머리)"
+      }
+    ]
+  },
+  {
+    "original": "Bricks",
+    "meanings": [
+      {
+        "translation": "벽돌",
+        "context": "End Stone Bricks (벽돌 블록)"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Block of ~ 형태의 아이템 이름"
+      },
+      {
+        "translation": "블록",
+        "context": "~ Block 형태의 아이템 이름"
+      }
+    ]
+  },
+  {
+    "original": "Ore",
+    "meanings": [
+      {
+        "translation": "광석",
+        "context": "~ Ore 형태의 광석 이름"
+      }
+    ]
+  },
+  {
+    "original": "Bars",
+    "meanings": [
+      {
+        "translation": "창",
+        "context": "~ Bars 형태의 블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Door",
+    "meanings": [
+      {
+        "translation": "문",
+        "context": "~ Door 형태의 아이템 이름"
+      }
+    ]
+  },
+  {
+    "original": "Trapdoor",
+    "meanings": [
+      {
+        "translation": "다락문",
+        "context": "~ Trapdoor 형태의 아이템 이름"
+      }
+    ]
+  },
+  {
+    "original": "Pane",
+    "meanings": [
+      {
+        "translation": "판",
+        "context": "~ Pane 형태의 블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Sign",
+    "meanings": [
+      {
+        "translation": "표지판",
+        "context": "~ Sign 형태의 아이템 이름"
+      }
+    ]
+  },
+  {
+    "original": "Hanging Sign",
+    "meanings": [
+      {
+        "translation": "매다는 표지판",
+        "context": "~ Hanging Sign 형태의 아이템 이름"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "벽",
+        "context": "~ Wall ~ 형태의 벽에 부착된 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Infested",
+    "meanings": [
+      {
+        "translation": "벌레 먹은",
+        "context": "Infested ~ 형태의 블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Iron",
+    "meanings": [
+      {
+        "translation": "철",
+        "context": "Iron ~ 형태의 아이템/블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Jungle",
+    "meanings": [
+      {
+        "translation": "정글나무",
+        "context": "Jungle ~ 형태의 아이템/블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Kelp",
+    "meanings": [
+      {
+        "translation": "켈프",
+        "context": "Kelp, Kelp Plant 등의 식물 이름"
+      }
+    ]
+  },
+  {
+    "original": "Lapis Lazuli",
+    "meanings": [
+      {
+        "translation": "청금석",
+        "context": "Lapis Lazuli ~ 형태의 아이템/블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Stained Glass",
+    "meanings": [
+      {
+        "translation": "색유리",
+        "context": "~ Stained Glass 형태의 블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Terracotta",
+    "meanings": [
+      {
+        "translation": "테라코타",
+        "context": "~ Terracotta 형태의 블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Wool",
+    "meanings": [
+      {
+        "translation": "양털",
+        "context": "~ Wool 형태의 블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Carpet",
+    "meanings": [
+      {
+        "translation": "양탄자",
+        "context": "~ Carpet 형태의 블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Candle",
+    "meanings": [
+      {
+        "translation": "초",
+        "context": "~ Candle 형태의 아이템 이름"
+      }
+    ]
+  },
+  {
+    "original": "Pressure Plate",
+    "meanings": [
+      {
+        "translation": "압력판",
+        "context": "~ Pressure Plate 형태의 블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Magma Block"
+      },
+      {
+        "translation": "블록",
+        "context": "Block of Netherite"
+      }
+    ]
+  },
+  {
+    "original": "Bricks",
+    "meanings": [
+      {
+        "translation": "벽돌",
+        "context": "Nether Bricks"
+      }
+    ]
+  },
+  {
+    "original": "Carpet",
+    "meanings": [
+      {
+        "translation": "양탄자",
+        "context": "Lime Carpet"
+      },
+      {
+        "translation": "바닥",
+        "context": "Moss Carpet"
+      }
+    ]
+  },
+  {
+    "original": "Leaves",
+    "meanings": [
+      {
+        "translation": "잎",
+        "context": "Oak Leaves"
+      }
+    ]
+  },
+  {
+    "original": "Log",
+    "meanings": [
+      {
+        "translation": "원목",
+        "context": "Oak Log"
+      }
+    ]
+  },
+  {
+    "original": "Ore",
+    "meanings": [
+      {
+        "translation": "광석",
+        "context": "Nether Gold Ore"
+      }
+    ]
+  },
+  {
+    "original": "Planks",
+    "meanings": [
+      {
+        "translation": "판자",
+        "context": "Oak Planks"
+      }
+    ]
+  },
+  {
+    "original": "Pressure Plate",
+    "meanings": [
+      {
+        "translation": "압력판",
+        "context": "Oak Pressure Plate"
+      }
+    ]
+  },
+  {
+    "original": "Roots",
+    "meanings": [
+      {
+        "translation": "뿌리",
+        "context": "Mangrove Roots"
+      }
+    ]
+  },
+  {
+    "original": "Sign",
+    "meanings": [
+      {
+        "translation": "표지판",
+        "context": "Oak Sign"
+      },
+      {
+        "translation": "매다는 표지판",
+        "context": "Oak Hanging Sign"
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "Oak Slab"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "Oak Stairs"
+      }
+    ]
+  },
+  {
+    "original": "Stem",
+    "meanings": [
+      {
+        "translation": "줄기",
+        "context": "Melon Stem"
+      },
+      {
+        "translation": "자루",
+        "context": "Mushroom Stem"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "Mossy Cobblestone Wall"
+      }
+    ]
+  },
+  {
+    "original": "Wood",
+    "meanings": [
+      {
+        "translation": "나무",
+        "context": "Mangrove Wood"
+      }
+    ]
+  },
+  {
+    "original": "Mossy",
+    "meanings": [
+      {
+        "translation": "이끼 낀",
+        "context": "Mossy Cobblestone"
+      }
+    ]
+  },
+  {
+    "original": "Nether",
+    "meanings": [
+      {
+        "translation": "네더",
+        "context": "Nether Portal"
+      }
+    ]
+  },
+  {
+    "original": "Oak",
+    "meanings": [
+      {
+        "translation": "참나무",
+        "context": "Oak Wood, Oak Stairs"
+      }
+    ]
+  },
+  {
+    "original": "Copper",
+    "meanings": [
+      {
+        "translation": "구리",
+        "context": "Copper Bulb, Copper Door"
+      }
+    ]
+  },
+  {
+    "original": "Blackstone",
+    "meanings": [
+      {
+        "translation": "흑암",
+        "context": "Polished Blackstone"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "Stairs"
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "Slab"
+      }
+    ]
+  },
+  {
+    "original": "Trapdoor",
+    "meanings": [
+      {
+        "translation": "다락문",
+        "context": "Trapdoor"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "Polished Blackstone Wall"
+      },
+      {
+        "translation": "벽",
+        "context": "Oak Wall Sign"
+      }
+    ]
+  },
+  {
+    "original": "Sign",
+    "meanings": [
+      {
+        "translation": "매다는 표지판",
+        "context": "Hanging Sign"
+      },
+      {
+        "translation": "표지판",
+        "context": "Sign"
+      }
+    ]
+  },
+  {
+    "original": "Log",
+    "meanings": [
+      {
+        "translation": "원목",
+        "context": "Pale Oak Log"
+      }
+    ]
+  },
+  {
+    "original": "Planks",
+    "meanings": [
+      {
+        "translation": "판자",
+        "context": "Pale Oak Planks"
+      }
+    ]
+  },
+  {
+    "original": "Oxidized",
+    "meanings": [
+      {
+        "translation": "산화된",
+        "context": "Oxidized Copper"
+      }
+    ]
+  },
+  {
+    "original": "Polished",
+    "meanings": [
+      {
+        "translation": "윤나는",
+        "context": "Polished Andesite"
+      }
+    ]
+  },
+  {
+    "original": "Cut",
+    "meanings": [
+      {
+        "translation": "깎인",
+        "context": "Cut Copper"
+      }
+    ]
+  },
+  {
+    "original": "Chiseled",
+    "meanings": [
+      {
+        "translation": "조각된",
+        "context": "Chiseled Copper"
+      }
+    ]
+  },
+  {
+    "original": "Packed",
+    "meanings": [
+      {
+        "translation": "꽁꽁 언",
+        "context": "Packed Ice"
+      },
+      {
+        "translation": "단단한",
+        "context": "Packed Mud"
+      }
+    ]
+  },
+  {
+    "original": "Head",
+    "meanings": [
+      {
+        "translation": "머리",
+        "context": "Player Head, Piglin Head"
+      },
+      {
+        "translation": "헤드",
+        "context": "Piston Head"
+      }
+    ]
+  },
+  {
+    "original": "Bricks",
+    "meanings": [
+      {
+        "translation": "벽돌",
+        "context": "Polished Blackstone Bricks"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "As a block suffix, like \"Purpur Block\""
+      },
+      {
+        "translation": "~ 블록",
+        "context": "As a prefix, like \"Block of Quartz\""
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "A half-height block, like \"Prismarine Slab\""
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "A stair block, like \"Quartz Stairs\""
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "A wall block, like \"Prismarine Wall\""
+      }
+    ]
+  },
+  {
+    "original": "Pillar",
+    "meanings": [
+      {
+        "translation": "기둥",
+        "context": "A pillar block, like \"Purpur Pillar\""
+      }
+    ]
+  },
+  {
+    "original": "Polished",
+    "meanings": [
+      {
+        "translation": "윤나는",
+        "context": "A decorative prefix, like \"Polished Diorite\""
+      }
+    ]
+  },
+  {
+    "original": "Potted",
+    "meanings": [
+      {
+        "translation": "화분에 심은",
+        "context": "A prefix for a plant in a pot, like \"Potted Fern\""
+      }
+    ]
+  },
+  {
+    "original": "Bricks",
+    "meanings": [
+      {
+        "translation": "벽돌",
+        "context": "A block type, like \"Quartz Bricks\""
+      }
+    ]
+  },
+  {
+    "original": "Raw",
+    "meanings": [
+      {
+        "translation": "원석",
+        "context": "An unprocessed mineral, like \"Raw Iron\""
+      }
+    ]
+  },
+  {
+    "original": "Candle",
+    "meanings": [
+      {
+        "translation": "초",
+        "context": "A light source, like \"Red Candle\""
+      }
+    ]
+  },
+  {
+    "original": "Glass Pane",
+    "meanings": [
+      {
+        "translation": "유리 판",
+        "context": "A flat plane of glass, like \"Stained Glass Pane\""
+      }
+    ]
+  },
+  {
+    "original": "Rail",
+    "meanings": [
+      {
+        "translation": "레일",
+        "context": "A track for minecarts, like \"Powered Rail\""
+      }
+    ]
+  },
+  {
+    "original": "Powder",
+    "meanings": [
+      {
+        "translation": "가루",
+        "context": "A powdered form of a block, like \"Concrete Powder\""
+      }
+    ]
+  },
+  {
+    "original": "Red",
+    "meanings": [
+      {
+        "translation": "붉은",
+        "context": "재료의 일부 (붉은 네더 벽돌)"
+      },
+      {
+        "translation": "빨간색",
+        "context": "색상 이름 (빨간색 셜커 상자)"
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "블록 형태 (사암 반 블록)"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "블록 형태 (사암 계단)"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "블록 형태 (사암 담장)"
+      },
+      {
+        "translation": "벽",
+        "context": "벽에 붙은 형태 (벽 횃불)"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "재료 블록 (레드스톤 블록)"
+      }
+    ]
+  },
+  {
+    "original": "Box",
+    "meanings": [
+      {
+        "translation": "상자",
+        "context": "아이템/블록 이름 (셜커 상자)"
+      }
+    ]
+  },
+  {
+    "original": "Torch",
+    "meanings": [
+      {
+        "translation": "횃불",
+        "context": "아이템/블록 이름 (레드스톤 횃불)"
+      }
+    ]
+  },
+  {
+    "original": "Respawn",
+    "meanings": [
+      {
+        "translation": "리스폰",
+        "context": "아이템 접두사 (리스폰 정박기)"
+      }
+    ]
+  },
+  {
+    "original": "Spawn",
+    "meanings": [
+      {
+        "translation": "생성기",
+        "context": "몹 생성 블록 (몬스터 생성기)"
+      },
+      {
+        "translation": "생성",
+        "context": "몹 생성 아이템 (생성 알)"
+      }
+    ]
+  },
+  {
+    "original": "Smooth",
+    "meanings": [
+      {
+        "translation": "매끄러운",
+        "context": "블록 질감 (매끄러운 돌)"
+      }
+    ]
+  },
+  {
+    "original": "Soul",
+    "meanings": [
+      {
+        "translation": "영혼",
+        "context": "아이템/블록 계열 (영혼 모닥불)"
+      }
+    ]
+  },
+  {
+    "original": "Spruce",
+    "meanings": [
+      {
+        "translation": "가문비나무",
+        "context": "나무 종류 (가문비나무 원목)"
+      }
+    ]
+  },
+  {
+    "original": "Log",
+    "meanings": [
+      {
+        "translation": "원목",
+        "context": "나무 블록 (가문비나무 원목)"
+      }
+    ]
+  },
+  {
+    "original": "Planks",
+    "meanings": [
+      {
+        "translation": "판자",
+        "context": "가공된 나무 블록 (가문비나무 판자)"
+      }
+    ]
+  },
+  {
+    "original": "Wood",
+    "meanings": [
+      {
+        "translation": "나무",
+        "context": "Spruce Wood"
+      }
+    ]
+  },
+  {
+    "original": "Log",
+    "meanings": [
+      {
+        "translation": "원목",
+        "context": "Stripped Oak Log"
+      }
+    ]
+  },
+  {
+    "original": "Stripped",
+    "meanings": [
+      {
+        "translation": "껍질 벗긴",
+        "context": "Stripped... Log"
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "Stone Brick Slab"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "Stone Brick Stairs"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "담장",
+        "context": "Stone Brick Wall (as a block)"
+      },
+      {
+        "translation": "벽",
+        "context": "Wall Sign (as a modifier)"
+      }
+    ]
+  },
+  {
+    "original": "Sign",
+    "meanings": [
+      {
+        "translation": "표지판",
+        "context": "Spruce Wall Sign"
+      }
+    ]
+  },
+  {
+    "original": "Hanging Sign",
+    "meanings": [
+      {
+        "translation": "매다는 표지판",
+        "context": "Warped Hanging Sign"
+      }
+    ]
+  },
+  {
+    "original": "Bricks",
+    "meanings": [
+      {
+        "translation": "벽돌",
+        "context": "Stone Bricks"
+      }
+    ]
+  },
+  {
+    "original": "Stem",
+    "meanings": [
+      {
+        "translation": "자루",
+        "context": "Warped Stem"
+      }
+    ]
+  },
+  {
+    "original": "Hyphae",
+    "meanings": [
+      {
+        "translation": "균사",
+        "context": "Warped Hyphae"
+      }
+    ]
+  },
+  {
+    "original": "Warped",
+    "meanings": [
+      {
+        "translation": "뒤틀린",
+        "context": "Warped Stem"
+      }
+    ]
+  },
+  {
+    "original": "Crimson",
+    "meanings": [
+      {
+        "translation": "진홍빛",
+        "context": "Crimson Stem"
+      }
+    ]
+  },
+  {
+    "original": "Vines",
+    "meanings": [
+      {
+        "translation": "덩굴",
+        "context": "Twisting Vines"
+      }
+    ]
+  },
+  {
+    "original": "Torch",
+    "meanings": [
+      {
+        "translation": "횃불",
+        "context": "Wall Torch"
+      }
+    ]
+  },
+  {
+    "original": "Button",
+    "meanings": [
+      {
+        "translation": "버튼",
+        "context": "Stone Button"
+      }
+    ]
+  },
+  {
+    "original": "Pressure Plate",
+    "meanings": [
+      {
+        "translation": "압력판",
+        "context": "Stone Pressure Plate"
+      }
+    ]
+  },
+  {
+    "original": "Fence",
+    "meanings": [
+      {
+        "translation": "울타리",
+        "context": "Warped Fence"
+      }
+    ]
+  },
+  {
+    "original": "Trapdoor",
+    "meanings": [
+      {
+        "translation": "다락문",
+        "context": "Warped Trapdoor"
+      }
+    ]
+  },
+  {
+    "original": "Copper",
+    "meanings": [
+      {
+        "translation": "구리",
+        "context": "아이템/블록 재료"
+      }
+    ]
+  },
+  {
+    "original": "Waxed",
+    "meanings": [
+      {
+        "translation": "밀랍칠한",
+        "context": "아이템/블록 접두사"
+      }
+    ]
+  },
+  {
+    "original": "Exposed",
+    "meanings": [
+      {
+        "translation": "약간 녹슨",
+        "context": "구리 산화 단계"
+      }
+    ]
+  },
+  {
+    "original": "Weathered",
+    "meanings": [
+      {
+        "translation": "녹슨",
+        "context": "구리 산화 단계"
+      }
+    ]
+  },
+  {
+    "original": "Oxidized",
+    "meanings": [
+      {
+        "translation": "산화된",
+        "context": "구리 산화 단계"
+      }
+    ]
+  },
+  {
+    "original": "Cut",
+    "meanings": [
+      {
+        "translation": "깎인",
+        "context": "블록 형태"
+      }
+    ]
+  },
+  {
+    "original": "Chiseled",
+    "meanings": [
+      {
+        "translation": "조각된",
+        "context": "블록 형태"
+      }
+    ]
+  },
+  {
+    "original": "Slab",
+    "meanings": [
+      {
+        "translation": "반 블록",
+        "context": "블록 형태"
+      }
+    ]
+  },
+  {
+    "original": "Stairs",
+    "meanings": [
+      {
+        "translation": "계단",
+        "context": "블록 형태"
+      }
+    ]
+  },
+  {
+    "original": "Door",
+    "meanings": [
+      {
+        "translation": "문",
+        "context": "블록/아이템"
+      }
+    ]
+  },
+  {
+    "original": "Trapdoor",
+    "meanings": [
+      {
+        "translation": "다락문",
+        "context": "블록/아이템"
+      }
+    ]
+  },
+  {
+    "original": "Grate",
+    "meanings": [
+      {
+        "translation": "격자",
+        "context": "블록/아이템"
+      }
+    ]
+  },
+  {
+    "original": "Bulb",
+    "meanings": [
+      {
+        "translation": "전구",
+        "context": "블록/아이템"
+      }
+    ]
+  },
+  {
+    "original": "Head",
+    "meanings": [
+      {
+        "translation": "머리",
+        "context": "아이템/블록 (몹)"
+      }
+    ]
+  },
+  {
+    "original": "Skull",
+    "meanings": [
+      {
+        "translation": "해골",
+        "context": "아이템/블록 (몹)"
+      }
+    ]
+  },
+  {
+    "original": "Wall",
+    "meanings": [
+      {
+        "translation": "벽",
+        "context": "블록 접두사 (벽 장식)"
+      }
+    ]
+  },
+  {
+    "original": "Sign",
+    "meanings": [
+      {
+        "translation": "서명하다",
+        "context": "책 편집 (동사)"
+      },
+      {
+        "translation": "표지판",
+        "context": "블록/아이템"
+      }
+    ]
+  },
+  {
+    "original": "Copy",
+    "meanings": [
+      {
+        "translation": "복사본",
+        "context": "책 편집 (명사)"
+      },
+      {
+        "translation": "복사",
+        "context": "UI 동작 (클립보드)"
+      }
+    ]
+  },
+  {
+    "original": "Original",
+    "meanings": [
+      {
+        "translation": "원본",
+        "context": "책 편집 (명사)"
+      }
+    ]
+  },
+  {
+    "original": "Page",
+    "meanings": [
+      {
+        "translation": "쪽",
+        "context": "책 UI"
+      }
+    ]
+  },
+  {
+    "original": "Click",
+    "meanings": [
+      {
+        "translation": "클릭",
+        "context": "UI 동작"
+      }
+    ]
+  },
+  {
+    "original": "Advancement",
+    "meanings": [
+      {
+        "translation": "발전 과제",
+        "context": "Game progression system"
+      }
+    ]
+  },
+  {
+    "original": "Attribute",
+    "meanings": [
+      {
+        "translation": "특성",
+        "context": "Entity statistics"
+      }
+    ]
+  },
+  {
+    "original": "Ban",
+    "meanings": [
+      {
+        "translation": "차단",
+        "context": "Player/IP restriction"
+      }
+    ]
+  },
+  {
+    "original": "Chunk",
+    "meanings": [
+      {
+        "translation": "청크",
+        "context": "World segment"
+      }
+    ]
+  },
+  {
+    "original": "Command",
+    "meanings": [
+      {
+        "translation": "명령어",
+        "context": "Chat-based function"
+      }
+    ]
+  },
+  {
+    "original": "Criterion",
+    "meanings": [
+      {
+        "translation": "기준",
+        "context": "Advancement condition"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "Mobs, players, items"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "In-game object"
+      }
+    ]
+  },
+  {
+    "original": "Modifier",
+    "meanings": [
+      {
+        "translation": "변경자",
+        "context": "Attribute modification"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "User in the game"
+      }
+    ]
+  },
+  {
+    "original": "Server",
+    "meanings": [
+      {
+        "translation": "서버",
+        "context": "Game host"
+      }
+    ]
+  },
+  {
+    "original": "Value",
+    "meanings": [
+      {
+        "translation": "값",
+        "context": "General numerical value"
+      },
+      {
+        "translation": "기초 값",
+        "context": "Base value of attribute"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "Game map/environment"
+      }
+    ]
+  },
+  {
+    "original": "ban",
+    "meanings": [
+      {
+        "translation": "차단",
+        "context": "This ban affects"
+      },
+      {
+        "translation": "차단 항목",
+        "context": "There are ban(s)"
+      },
+      {
+        "translation": "차단 목록",
+        "context": "There are no bans"
+      }
+    ]
+  },
+  {
+    "original": "player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "unknown player"
+      }
+    ]
+  },
+  {
+    "original": "bossbar",
+    "meanings": [
+      {
+        "translation": "보스바",
+        "context": "A bossbar exists"
+      }
+    ]
+  },
+  {
+    "original": "custom",
+    "meanings": [
+      {
+        "translation": "사용자 지정",
+        "context": "custom bossbar"
+      }
+    ]
+  },
+  {
+    "original": "item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "Removed item(s)"
+      }
+    ]
+  },
+  {
+    "original": "block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "cloned block(s)"
+      }
+    ]
+  },
+  {
+    "original": "entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "Entity can't hold"
+      },
+      {
+        "translation": "블록 개체",
+        "context": "block entity"
+      }
+    ]
+  },
+  {
+    "original": "data",
+    "meanings": [
+      {
+        "translation": "데이터",
+        "context": "block data"
+      }
+    ]
+  },
+  {
+    "original": "damage",
+    "meanings": [
+      {
+        "translation": "피해",
+        "context": "Applied damage"
+      },
+      {
+        "translation": "피해 유형",
+        "context": "damage type"
+      }
+    ]
+  },
+  {
+    "original": "pack",
+    "meanings": [
+      {
+        "translation": "팩",
+        "context": "data pack"
+      }
+    ]
+  },
+  {
+    "original": "loot table",
+    "meanings": [
+      {
+        "translation": "노획물 목록",
+        "context": "has no loot table"
+      }
+    ]
+  },
+  {
+    "original": "difficulty",
+    "meanings": [
+      {
+        "translation": "난이도",
+        "context": "The difficulty is"
+      }
+    ]
+  },
+  {
+    "original": "tick",
+    "meanings": [
+      {
+        "translation": "틱",
+        "context": "tick profiler"
+      }
+    ]
+  },
+  {
+    "original": "profiler",
+    "meanings": [
+      {
+        "translation": "프로파일러",
+        "context": "tick profiler"
+      }
+    ]
+  },
+  {
+    "original": "operator",
+    "meanings": [
+      {
+        "translation": "서버 관리자",
+        "context": "server operator"
+      }
+    ]
+  },
+  {
+    "original": "Effect",
+    "meanings": [
+      {
+        "translation": "효과",
+        "context": "디버프, 버프 등 상태 이상을 지칭"
+      }
+    ]
+  },
+  {
+    "original": "Target",
+    "meanings": [
+      {
+        "translation": "대상",
+        "context": "명령의 대상이 되는 플레이어나 개체"
+      }
+    ]
+  },
+  {
+    "original": "Enchantment",
+    "meanings": [
+      {
+        "translation": "마법 부여",
+        "context": "마법을 부여하는 행위나 시스템 자체"
+      },
+      {
+        "translation": "마법",
+        "context": "아이템에 부여된 개별 마법"
+      }
+    ]
+  },
+  {
+    "original": "Experience",
+    "meanings": [
+      {
+        "translation": "경험 레벨",
+        "context": "플레이어의 레벨"
+      },
+      {
+        "translation": "경험치",
+        "context": "레벨업에 필요한 수치"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "게임 세계를 구성하는 기본 단위"
+      }
+    ]
+  },
+  {
+    "original": "Biome",
+    "meanings": [
+      {
+        "translation": "생물 군계",
+        "context": "특정 기후와 식생을 가진 지역"
+      }
+    ]
+  },
+  {
+    "original": "Chunk",
+    "meanings": [
+      {
+        "translation": "청크",
+        "context": "게임 세계를 나누는 16x384x16 단위"
+      }
+    ]
+  },
+  {
+    "original": "Force Load",
+    "meanings": [
+      {
+        "translation": "강제 불러오기",
+        "context": "청크를 메모리에 강제로 상주시키는 행위"
+      },
+      {
+        "translation": "강제로 불러오는",
+        "context": "청크가 강제로 로드되는 상태를 설명"
+      }
+    ]
+  },
+  {
+    "original": "Function",
+    "meanings": [
+      {
+        "translation": "함수",
+        "context": "명령어의 집합을 실행하는 단위"
+      }
+    ]
+  },
+  {
+    "original": "Command",
+    "meanings": [
+      {
+        "translation": "명령어",
+        "context": "게임 내 동작을 실행하는 텍스트 기반 지시"
+      }
+    ]
+  },
+  {
+    "original": "Game Mode",
+    "meanings": [
+      {
+        "translation": "게임 모드",
+        "context": "서바이벌, 크리에이티브 등 게임 플레이 방식"
+      }
+    ]
+  },
+  {
+    "original": "Gamerule",
+    "meanings": [
+      {
+        "translation": "게임 규칙",
+        "context": "게임의 세부 규칙 (예: 몹 생성 여부)"
+      }
+    ]
+  },
+  {
+    "original": "Give",
+    "meanings": [
+      {
+        "translation": "지급하다",
+        "context": "아이템이나 경험치를 플레이어에게 전달하는 행위"
+      }
+    ]
+  },
+  {
+    "original": "Slot",
+    "meanings": [
+      {
+        "translation": "슬롯",
+        "context": "인벤토리나 컨테이너의 한 칸"
+      }
+    ]
+  },
+  {
+    "original": "Container",
+    "meanings": [
+      {
+        "translation": "용기",
+        "context": "아이템을 보관할 수 있는 블록 (상자 등)"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "움직이는 모든 객체 (동물, 몬스터, 플레이어 등)"
+      }
+    ]
+  },
+  {
+    "original": "Kick",
+    "meanings": [
+      {
+        "translation": "추방하다",
+        "context": "서버에서 플레이어를 내보내는 행위"
+      }
+    ]
+  },
+  {
+    "original": "Kill",
+    "meanings": [
+      {
+        "translation": "죽이다",
+        "context": "개체를 죽이는 행위"
+      }
+    ]
+  },
+  {
+    "original": "Structure",
+    "meanings": [
+      {
+        "translation": "구조물",
+        "context": "마을, 사원 등 월드에 자연적으로 생성되는 건축물"
+      }
+    ]
+  },
+  {
+    "original": "Operator",
+    "meanings": [
+      {
+        "translation": "관리자",
+        "context": "서버 관리 권한을 가진 플레이어"
+      }
+    ]
+  },
+  {
+    "original": "Ban",
+    "meanings": [
+      {
+        "translation": "차단하다",
+        "context": "서버 접속을 막는 행위"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "As a noun, a game element"
+      },
+      {
+        "translation": "개체 ~개",
+        "context": "As a countable noun"
+      }
+    ]
+  },
+  {
+    "original": "Structure",
+    "meanings": [
+      {
+        "translation": "구조물",
+        "context": "A placeable world element"
+      }
+    ]
+  },
+  {
+    "original": "Recipe",
+    "meanings": [
+      {
+        "translation": "제작법",
+        "context": "A gameplay mechanic for crafting"
+      }
+    ]
+  },
+  {
+    "original": "Tick",
+    "meanings": [
+      {
+        "translation": "틱",
+        "context": "A unit of game time"
+      }
+    ]
+  },
+  {
+    "original": "Objective",
+    "meanings": [
+      {
+        "translation": "목표",
+        "context": "A goal in the scoreboard system"
+      }
+    ]
+  },
+  {
+    "original": "Display slot",
+    "meanings": [
+      {
+        "translation": "표시 슬롯",
+        "context": "A UI element for scoreboards"
+      }
+    ]
+  },
+  {
+    "original": "Display name",
+    "meanings": [
+      {
+        "translation": "표시 이름",
+        "context": "A user-facing name for an item or entity"
+      }
+    ]
+  },
+  {
+    "original": "Ride",
+    "meanings": [
+      {
+        "translation": "올라타다",
+        "context": "To begin riding an entity"
+      },
+      {
+        "translation": "타고 있다",
+        "context": "To be currently on an entity"
+      },
+      {
+        "translation": "내리다",
+        "context": "To get off of an entity"
+      }
+    ]
+  },
+  {
+    "original": "Generate",
+    "meanings": [
+      {
+        "translation": "생성하다",
+        "context": "To create a world element"
+      }
+    ]
+  },
+  {
+    "original": "Place",
+    "meanings": [
+      {
+        "translation": "설치하다",
+        "context": "To place a world element"
+      }
+    ]
+  },
+  {
+    "original": "Feature",
+    "meanings": [
+      {
+        "translation": "지물",
+        "context": "A world generation element"
+      }
+    ]
+  },
+  {
+    "original": "Template",
+    "meanings": [
+      {
+        "translation": "템플릿",
+        "context": "A data-driven element for generation"
+      }
+    ]
+  },
+  {
+    "original": "Particle",
+    "meanings": [
+      {
+        "translation": "입자",
+        "context": "Visual effect element"
+      }
+    ]
+  },
+  {
+    "original": "Save",
+    "meanings": [
+      {
+        "translation": "저장",
+        "context": "The act of saving progress"
+      },
+      {
+        "translation": "저장하다",
+        "context": "Verb for saving the game"
+      }
+    ]
+  },
+  {
+    "original": "Schedule",
+    "meanings": [
+      {
+        "translation": "예정 사항",
+        "context": "A command or function to be run later"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "Unable to summon entity"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Could not set the block"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "The player idle timeout"
+      }
+    ]
+  },
+  {
+    "original": "Spawn",
+    "meanings": [
+      {
+        "translation": "세계 스폰",
+        "context": "world spawn"
+      },
+      {
+        "translation": "스폰 지점",
+        "context": "Set spawn point to"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "Set the world spawn"
+      }
+    ]
+  },
+  {
+    "original": "Team",
+    "meanings": [
+      {
+        "translation": "팀",
+        "context": "Created team %s"
+      }
+    ]
+  },
+  {
+    "original": "Tag",
+    "meanings": [
+      {
+        "translation": "태그",
+        "context": "Added tag '%s'"
+      }
+    ]
+  },
+  {
+    "original": "Teleport",
+    "meanings": [
+      {
+        "translation": "순간이동",
+        "context": "Invalid position for teleport"
+      }
+    ]
+  },
+  {
+    "original": "Summon",
+    "meanings": [
+      {
+        "translation": "소환",
+        "context": "Invalid position for summon"
+      }
+    ]
+  },
+  {
+    "original": "Spectate",
+    "meanings": [
+      {
+        "translation": "관전",
+        "context": "Cannot spectate yourself"
+      }
+    ]
+  },
+  {
+    "original": "Structure",
+    "meanings": [
+      {
+        "translation": "구조물",
+        "context": "Cleared %s structure(s)"
+      }
+    ]
+  },
+  {
+    "original": "Server",
+    "meanings": [
+      {
+        "translation": "서버",
+        "context": "Stopping the server"
+      }
+    ]
+  },
+  {
+    "original": "Set",
+    "meanings": [
+      {
+        "translation": "설정했습니다",
+        "context": "Set %s for %s entities to %s"
+      },
+      {
+        "translation": "설정되었습니다",
+        "context": "Team prefix set to %s"
+      }
+    ]
+  },
+  {
+    "original": "Reset",
+    "meanings": [
+      {
+        "translation": "초기화했습니다",
+        "context": "Reset %s for %s"
+      }
+    ]
+  },
+  {
+    "original": "Remove",
+    "meanings": [
+      {
+        "translation": "뺐습니다",
+        "context": "Removed %s from %s for %s entities"
+      },
+      {
+        "translation": "제거했습니다",
+        "context": "Removed tag '%s' from %s"
+      }
+    ]
+  },
+  {
+    "original": "Add",
+    "meanings": [
+      {
+        "translation": "추가했습니다",
+        "context": "Added tag '%s' to %s"
+      }
+    ]
+  },
+  {
+    "original": "Spread",
+    "meanings": [
+      {
+        "translation": "산개",
+        "context": "Could not spread %s entity/entities"
+      }
+    ]
+  },
+  {
+    "original": "Sound",
+    "meanings": [
+      {
+        "translation": "소리",
+        "context": "Stopped sound '%s'"
+      }
+    ]
+  },
+  {
+    "original": "Position",
+    "meanings": [
+      {
+        "translation": "위치",
+        "context": "Invalid position for teleport"
+      }
+    ]
+  },
+  {
+    "original": "Test",
+    "meanings": [
+      {
+        "translation": "테스트",
+        "context": "A session to check game functionality"
+      }
+    ]
+  },
+  {
+    "original": "Tick",
+    "meanings": [
+      {
+        "translation": "틱",
+        "context": "A single unit of game time"
+      }
+    ]
+  },
+  {
+    "original": "Sprint",
+    "meanings": [
+      {
+        "translation": "가속",
+        "context": "Accelerating game ticks"
+      }
+    ]
+  },
+  {
+    "original": "Step",
+    "meanings": [
+      {
+        "translation": "진행",
+        "context": "Advancing game ticks one by one"
+      }
+    ]
+  },
+  {
+    "original": "Title",
+    "meanings": [
+      {
+        "translation": "제목",
+        "context": "On-screen message text"
+      }
+    ]
+  },
+  {
+    "original": "Transfer",
+    "meanings": [
+      {
+        "translation": "이송",
+        "context": "Moving a player to another server"
+      }
+    ]
+  },
+  {
+    "original": "Trigger",
+    "meanings": [
+      {
+        "translation": "트리거",
+        "context": "An objective type"
+      },
+      {
+        "translation": "작동시키다",
+        "context": "To activate an objective"
+      }
+    ]
+  },
+  {
+    "original": "Objective",
+    "meanings": [
+      {
+        "translation": "목표",
+        "context": "A task or goal for a player"
+      }
+    ]
+  },
+  {
+    "original": "Whitelist",
+    "meanings": [
+      {
+        "translation": "화이트리스트",
+        "context": "A list of approved players for a server"
+      }
+    ]
+  },
+  {
+    "original": "World Border",
+    "meanings": [
+      {
+        "translation": "세계 경계",
+        "context": "The boundary of the playable world"
+      }
+    ]
+  },
+  {
+    "original": "Damage",
+    "meanings": [
+      {
+        "translation": "피해",
+        "context": "Harm caused by the world border"
+      }
+    ]
+  },
+  {
+    "original": "Warning",
+    "meanings": [
+      {
+        "translation": "경고",
+        "context": "An alert about the world border"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "The game map or environment"
+      }
+    ]
+  },
+  {
+    "original": "Crafting",
+    "meanings": [
+      {
+        "translation": "제작",
+        "context": "The user interface for creating items"
+      }
+    ]
+  },
+  {
+    "original": "Enchant",
+    "meanings": [
+      {
+        "translation": "마법 부여",
+        "context": "The user interface for enchanting items"
+      }
+    ]
+  },
+  {
+    "original": "Level",
+    "meanings": [
+      {
+        "translation": "레벨",
+        "context": "Player's enchantment level"
+      }
+    ]
+  },
+  {
+    "original": "Anvil",
+    "meanings": [
+      {
+        "translation": "모루",
+        "context": "떨어지는 모루 (사망 메시지)"
+      }
+    ]
+  },
+  {
+    "original": "Biome",
+    "meanings": [
+      {
+        "translation": "생물 군계",
+        "context": "생물 군계 선택"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "떨어지는 블록 (사망 메시지)"
+      }
+    ]
+  },
+  {
+    "original": "Bundle",
+    "meanings": [
+      {
+        "translation": "꾸러미",
+        "context": "실험적 아이템인 꾸러미"
+      }
+    ]
+  },
+  {
+    "original": "Controls",
+    "meanings": [
+      {
+        "translation": "조작",
+        "context": "조작 설정"
+      }
+    ]
+  },
+  {
+    "original": "Credits",
+    "meanings": [
+      {
+        "translation": "제작진",
+        "context": "제작진 및 이용 저작물"
+      }
+    ]
+  },
+  {
+    "original": "Data Pack",
+    "meanings": [
+      {
+        "translation": "데이터 팩",
+        "context": "데이터 팩 선택"
+      }
+    ]
+  },
+  {
+    "original": "Default",
+    "meanings": [
+      {
+        "translation": "기본",
+        "context": "기본 데이터 팩"
+      },
+      {
+        "translation": "기본값",
+        "context": "기본값으로 초기화"
+      }
+    ]
+  },
+  {
+    "original": "Enchantment",
+    "meanings": [
+      {
+        "translation": "마법 부여",
+        "context": "마법 부여 비용"
+      },
+      {
+        "translation": "마법 풀기",
+        "context": "수리 및 마법 풀기"
+      }
+    ]
+  },
+  {
+    "original": "Game",
+    "meanings": [
+      {
+        "translation": "게임",
+        "context": "게임 설정 메뉴"
+      }
+    ]
+  },
+  {
+    "original": "Gear",
+    "meanings": [
+      {
+        "translation": "장비",
+        "context": "장비 강화 UI"
+      }
+    ]
+  },
+  {
+    "original": "Inventory",
+    "meanings": [
+      {
+        "translation": "보관함",
+        "context": "보관함 UI"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "아이템 호퍼"
+      }
+    ]
+  },
+  {
+    "original": "Key",
+    "meanings": [
+      {
+        "translation": "키",
+        "context": "키 지정"
+      }
+    ]
+  },
+  {
+    "original": "Layer",
+    "meanings": [
+      {
+        "translation": "레이어",
+        "context": "레이어 제거 (완전한 평지)"
+      }
+    ]
+  },
+  {
+    "original": "Level",
+    "meanings": [
+      {
+        "translation": "레벨",
+        "context": "레벨 필요 (마법 부여)"
+      }
+    ]
+  },
+  {
+    "original": "Minecart",
+    "meanings": [
+      {
+        "translation": "광산 수레",
+        "context": "광산 수레 개선"
+      }
+    ]
+  },
+  {
+    "original": "Preset",
+    "meanings": [
+      {
+        "translation": "사전 설정",
+        "context": "사전 설정 사용"
+      }
+    ]
+  },
+  {
+    "original": "Redstone",
+    "meanings": [
+      {
+        "translation": "레드스톤",
+        "context": "레드스톤 실험"
+      }
+    ]
+  },
+  {
+    "original": "Repair",
+    "meanings": [
+      {
+        "translation": "수리",
+        "context": "수리 및 이름 바꾸기"
+      }
+    ]
+  },
+  {
+    "original": "Reset",
+    "meanings": [
+      {
+        "translation": "초기화",
+        "context": "초기화 버튼"
+      }
+    ]
+  },
+  {
+    "original": "Safe Mode",
+    "meanings": [
+      {
+        "translation": "안전 모드",
+        "context": "안전 모드 (월드 로딩)"
+      }
+    ]
+  },
+  {
+    "original": "Smithing Template",
+    "meanings": [
+      {
+        "translation": "대장장이 형판",
+        "context": "대장장이 형판 추가"
+      }
+    ]
+  },
+  {
+    "original": "Update",
+    "meanings": [
+      {
+        "translation": "업데이트",
+        "context": "1.21 업데이트"
+      }
+    ]
+  },
+  {
+    "original": "Villager",
+    "meanings": [
+      {
+        "translation": "주민",
+        "context": "주민 거래 재조정"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "세계 생성 준비 중"
+      }
+    ]
+  },
+  {
+    "original": "Fall",
+    "meanings": [
+      {
+        "translation": "추락",
+        "context": "As a noun (e.g., doomed to fall)"
+      },
+      {
+        "translation": "떨어지다",
+        "context": "As a verb (e.g., fell from a high place)"
+      }
+    ]
+  },
+  {
+    "original": "Fire",
+    "meanings": [
+      {
+        "translation": "불",
+        "context": "General term for fire"
+      }
+    ]
+  },
+  {
+    "original": "Flames",
+    "meanings": [
+      {
+        "translation": "화염",
+        "context": "When engulfed in fire"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "Game world"
+      }
+    ]
+  },
+  {
+    "original": "Magic",
+    "meanings": [
+      {
+        "translation": "마법",
+        "context": "Sorcery or enchantment"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "Dynamic creatures or objects (mobs, items)"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Game world cube"
+      }
+    ]
+  },
+  {
+    "original": "Chunk",
+    "meanings": [
+      {
+        "translation": "청크",
+        "context": "A 16x16 segment of the world"
+      }
+    ]
+  },
+  {
+    "original": "Respawn",
+    "meanings": [
+      {
+        "translation": "리스폰",
+        "context": "UI Button / Action to come back to life"
+      }
+    ]
+  },
+  {
+    "original": "Spectate",
+    "meanings": [
+      {
+        "translation": "관전",
+        "context": "To observe the game world without interacting"
+      }
+    ]
+  },
+  {
+    "original": "Game Mode",
+    "meanings": [
+      {
+        "translation": "게임 모드",
+        "context": "Gameplay style (e.g., Survival, Creative)"
+      }
+    ]
+  },
+  {
+    "original": "Copy",
+    "meanings": [
+      {
+        "translation": "복사",
+        "context": "Clipboard action"
+      }
+    ]
+  },
+  {
+    "original": "Shown",
+    "meanings": [
+      {
+        "translation": "표시",
+        "context": "UI element state (visible)"
+      }
+    ]
+  },
+  {
+    "original": "Hidden",
+    "meanings": [
+      {
+        "translation": "숨김",
+        "context": "UI element state (not visible)"
+      }
+    ]
+  },
+  {
+    "original": "Enabled",
+    "meanings": [
+      {
+        "translation": "켜짐",
+        "context": "Setting state (on)"
+      }
+    ]
+  },
+  {
+    "original": "Disabled",
+    "meanings": [
+      {
+        "translation": "꺼짐",
+        "context": "Setting state (off)"
+      }
+    ]
+  },
+  {
+    "original": "Advanced tooltips",
+    "meanings": [
+      {
+        "translation": "고급 도구 설명",
+        "context": "Detailed information display"
+      }
+    ]
+  },
+  {
+    "original": "Key bindings",
+    "meanings": [
+      {
+        "translation": "키 바인딩",
+        "context": "Control settings"
+      }
+    ]
+  },
+  {
+    "original": "Reload",
+    "meanings": [
+      {
+        "translation": "새로 고침",
+        "context": "데이터(리소스 팩, 청크)를 다시 불러오는 동작"
+      }
+    ]
+  },
+  {
+    "original": "Chunk",
+    "meanings": [
+      {
+        "translation": "청크",
+        "context": "게임 세계의 구획 단위"
+      }
+    ]
+  },
+  {
+    "original": "Hitbox",
+    "meanings": [
+      {
+        "translation": "히트박스",
+        "context": "엔티티의 피격 판정 범위"
+      }
+    ]
+  },
+  {
+    "original": "Resource Pack",
+    "meanings": [
+      {
+        "translation": "리소스 팩",
+        "context": "게임의 모습과 소리를 바꾸는 파일 모음"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "게임이 진행되는 공간"
+      }
+    ]
+  },
+  {
+    "original": "Difficulty",
+    "meanings": [
+      {
+        "translation": "난이도",
+        "context": "게임의 어려움 수준 설정"
+      }
+    ]
+  },
+  {
+    "original": "Inventory",
+    "meanings": [
+      {
+        "translation": "보관함",
+        "context": "플레이어의 아이템 소지 공간"
+      }
+    ]
+  },
+  {
+    "original": "Key",
+    "meanings": [
+      {
+        "translation": "키",
+        "context": "키보드의 버튼 (예: E 키)"
+      }
+    ]
+  },
+  {
+    "original": "Resistance",
+    "meanings": [
+      {
+        "translation": "저항",
+        "context": "상태 효과 (예: 화염 저항)"
+      }
+    ]
+  },
+  {
+    "original": "Protection",
+    "meanings": [
+      {
+        "translation": "보호",
+        "context": "마법 부여 (예: 폭발로부터 보호)"
+      }
+    ]
+  },
+  {
+    "original": "Fire",
+    "meanings": [
+      {
+        "translation": "화염",
+        "context": "피해 유형 (화염 저항)"
+      },
+      {
+        "translation": "발화",
+        "context": "공격 마법 부여 (Fire Aspect)"
+      }
+    ]
+  },
+  {
+    "original": "Falling",
+    "meanings": [
+      {
+        "translation": "낙하",
+        "context": "상태 효과 (느린 낙하)"
+      },
+      {
+        "translation": "착지",
+        "context": "마법 부여 (가벼운 착지)"
+      }
+    ]
+  },
+  {
+    "original": "Omen",
+    "meanings": [
+      {
+        "translation": "징조",
+        "context": "상태 효과 (예: 흉조, 습격 징조)"
+      }
+    ]
+  },
+  {
+    "original": "Wither",
+    "meanings": [
+      {
+        "translation": "위더",
+        "context": "생명력을 흡수하는 상태 효과"
+      }
+    ]
+  },
+  {
+    "original": "Curse",
+    "meanings": [
+      {
+        "translation": "저주",
+        "context": "불리한 효과를 가진 마법 부여 (예: 귀속 저주)"
+      }
+    ]
+  },
+  {
+    "original": "Protection",
+    "meanings": [
+      {
+        "translation": "보호",
+        "context": "일반 마법 부여 (Protection)"
+      },
+      {
+        "translation": "발사체로부터 보호",
+        "context": "특정 마법 부여 (Projectile Protection)"
+      }
+    ]
+  },
+  {
+    "original": "Wind",
+    "meanings": [
+      {
+        "translation": "돌풍",
+        "context": "마법 부여 (Wind Burst)"
+      },
+      {
+        "translation": "돌풍구",
+        "context": "아이템 (Wind Charge)"
+      }
+    ]
+  },
+  {
+    "original": "Charge",
+    "meanings": [
+      {
+        "translation": "장전",
+        "context": "마법 부여 (Quick Charge)"
+      },
+      {
+        "translation": "돌풍구",
+        "context": "아이템 (Wind Charge)"
+      }
+    ]
+  },
+  {
+    "original": "Display",
+    "meanings": [
+      {
+        "translation": "표시",
+        "context": "기술 엔티티 (Block/Item Display)"
+      }
+    ]
+  },
+  {
+    "original": "Falling",
+    "meanings": [
+      {
+        "translation": "떨어지는",
+        "context": "엔티티 상태 (Falling Block)"
+      }
+    ]
+  },
+  {
+    "original": "Thrown",
+    "meanings": [
+      {
+        "translation": "던져진",
+        "context": "투사체 상태 (Thrown Egg)"
+      }
+    ]
+  },
+  {
+    "original": "with Chest",
+    "meanings": [
+      {
+        "translation": "상자가 실린",
+        "context": "아이템 변형 (Boat with Chest)"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "일반 명사 (Item)"
+      },
+      {
+        "translation": "액자",
+        "context": "블록의 일부 (Glow Item Frame)"
+      }
+    ]
+  },
+  {
+    "original": "Boat",
+    "meanings": [
+      {
+        "translation": "보트",
+        "context": "[나무 종류] + 보트 (예: Jungle Boat)"
+      }
+    ]
+  },
+  {
+    "original": "with Chest",
+    "meanings": [
+      {
+        "translation": "상자가 실린",
+        "context": "상자가 실린 [나무 종류] 보트 (예: Oak Boat with Chest)"
+      }
+    ]
+  },
+  {
+    "original": "Minecart",
+    "meanings": [
+      {
+        "translation": "광산 수레",
+        "context": "광산 수레 (예: Minecart with TNT)"
+      }
+    ]
+  },
+  {
+    "original": "Lingering",
+    "meanings": [
+      {
+        "translation": "잔류형",
+        "context": "물약의 종류를 나타내는 접두사 (예: Lingering Potion)"
+      }
+    ]
+  },
+  {
+    "original": "Splash",
+    "meanings": [
+      {
+        "translation": "투척용",
+        "context": "물약의 종류를 나타내는 접두사 (예: Splash Potion)"
+      }
+    ]
+  },
+  {
+    "original": "Potion",
+    "meanings": [
+      {
+        "translation": "물약",
+        "context": "기본 물약 (예: Potion)"
+      }
+    ]
+  },
+  {
+    "original": "Spawner",
+    "meanings": [
+      {
+        "translation": "생성기",
+        "context": "아이템/몬스터를 생성하는 블록 (예: Ominous Item Spawner)"
+      }
+    ]
+  },
+  {
+    "original": "Frame",
+    "meanings": [
+      {
+        "translation": "액자",
+        "context": "아이템을 전시하는 블록 (예: Item Frame)"
+      }
+    ]
+  },
+  {
+    "original": "Arrow",
+    "meanings": [
+      {
+        "translation": "화살",
+        "context": "발사체 (예: Spectral Arrow)"
+      }
+    ]
+  },
+  {
+    "original": "Primed",
+    "meanings": [
+      {
+        "translation": "점화된",
+        "context": "활성화된 상태를 나타내는 접두사 (예: Primed TNT)"
+      }
+    ]
+  },
+  {
+    "original": "Villager",
+    "meanings": [
+      {
+        "translation": "주민",
+        "context": "NPC (예: Villager)"
+      }
+    ]
+  },
+  {
+    "original": "Piglin",
+    "meanings": [
+      {
+        "translation": "피글린",
+        "context": "몬스터 (예: Piglin, Piglin Brute)"
+      }
+    ]
+  },
+  {
+    "original": "Horse",
+    "meanings": [
+      {
+        "translation": "말",
+        "context": "동물 (예: Skeleton Horse)"
+      }
+    ]
+  },
+  {
+    "original": "Tropical Fish",
+    "meanings": [
+      {
+        "translation": "열대어",
+        "context": "열대어의 총칭"
+      },
+      {
+        "translation": "흰동가리",
+        "context": "열대어 종류 (Clownfish)"
+      },
+      {
+        "translation": "나비고기",
+        "context": "열대어 종류 (Butterflyfish)"
+      },
+      {
+        "translation": "남양쥐돔",
+        "context": "열대어 종류 (Blue Tang)"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "게임 내 모든 독립적인 객체 (몹, 아이템, 플레이어 등)"
+      }
+    ]
+  },
+  {
+    "original": "Mob",
+    "meanings": [
+      {
+        "translation": "몹",
+        "context": "움직이는 비플레이어 캐릭터 (동물, 몬스터)"
+      }
+    ]
+  },
+  {
+    "original": "Spawn",
+    "meanings": [
+      {
+        "translation": "생성",
+        "context": "개체나 몹이 세계에 나타나는 것"
+      }
+    ]
+  },
+  {
+    "original": "Drop",
+    "meanings": [
+      {
+        "translation": "떨굼",
+        "context": "블록 파괴나 몹 처치 시 아이템이 나오는 행위"
+      }
+    ]
+  },
+  {
+    "original": "Loot",
+    "meanings": [
+      {
+        "translation": "노획물",
+        "context": "몹 처치나 상자에서 얻는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Recipe",
+    "meanings": [
+      {
+        "translation": "제작법",
+        "context": "아이템 제작에 필요한 재료와 배열"
+      }
+    ]
+  },
+  {
+    "original": "Crafting",
+    "meanings": [
+      {
+        "translation": "제작",
+        "context": "재료를 조합하여 아이템을 만드는 행위"
+      }
+    ]
+  },
+  {
+    "original": "Tick",
+    "meanings": [
+      {
+        "translation": "틱",
+        "context": "게임의 가장 작은 시간 단위, 게임 내 상태 변화 주기"
+      }
+    ]
+  },
+  {
+    "original": "Update",
+    "meanings": [
+      {
+        "translation": "갱신",
+        "context": "블록, 날씨 등 게임 세계의 상태 변화"
+      }
+    ]
+  },
+  {
+    "original": "Mode",
+    "meanings": [
+      {
+        "translation": "모드",
+        "context": "게임 플레이 방식 (서바이벌, 크리에이티브 등)"
+      }
+    ]
+  },
+  {
+    "original": "Raid",
+    "meanings": [
+      {
+        "translation": "습격",
+        "context": "주민 마을에서 발생하는 적대적인 이벤트"
+      }
+    ]
+  },
+  {
+    "original": "Map",
+    "meanings": [
+      {
+        "translation": "지도",
+        "context": "지형이나 구조물의 위치를 보여주는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Level",
+    "meanings": [
+      {
+        "translation": "레벨",
+        "context": "플레이어 경험치 또는 지도 축척 단계"
+      }
+    ]
+  },
+  {
+    "original": "Damage",
+    "meanings": [
+      {
+        "translation": "피해",
+        "context": "개체의 생명력을 감소시키는 것"
+      }
+    ]
+  },
+  {
+    "original": "Trader",
+    "meanings": [
+      {
+        "translation": "상인",
+        "context": "플레이어와 아이템을 거래하는 개체"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "Game rule name"
+      }
+    ]
+  },
+  {
+    "original": "Mob",
+    "meanings": [
+      {
+        "translation": "몹",
+        "context": "Game rule name"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Game rule name"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "Game rule name"
+      }
+    ]
+  },
+  {
+    "original": "Report",
+    "meanings": [
+      {
+        "translation": "신고",
+        "context": "As a noun (e.g., a report)"
+      },
+      {
+        "translation": "신고하다",
+        "context": "As a verb (e.g., to report)"
+      }
+    ]
+  },
+  {
+    "original": "Damage",
+    "meanings": [
+      {
+        "translation": "낙하 피해",
+        "context": "fall damage"
+      },
+      {
+        "translation": "불 피해",
+        "context": "fire damage"
+      },
+      {
+        "translation": "동상 피해",
+        "context": "freeze damage"
+      }
+    ]
+  },
+  {
+    "original": "Portal / Gateway",
+    "meanings": [
+      {
+        "translation": "차원문",
+        "context": "Nether Portal"
+      },
+      {
+        "translation": "관문",
+        "context": "End Gateway"
+      }
+    ]
+  },
+  {
+    "original": "Source",
+    "meanings": [
+      {
+        "translation": "용암 원천",
+        "context": "lava source"
+      },
+      {
+        "translation": "물 원천",
+        "context": "water source"
+      }
+    ]
+  },
+  {
+    "original": "Tick",
+    "meanings": [
+      {
+        "translation": "틱",
+        "context": "Game mechanic"
+      }
+    ]
+  },
+  {
+    "original": "Chunk",
+    "meanings": [
+      {
+        "translation": "청크",
+        "context": "World generation unit"
+      }
+    ]
+  },
+  {
+    "original": "Biome",
+    "meanings": [
+      {
+        "translation": "생물 군계",
+        "context": "World generation type"
+      }
+    ]
+  },
+  {
+    "original": "Spawn / Respawn",
+    "meanings": [
+      {
+        "translation": "스폰",
+        "context": "Initial spawn point"
+      },
+      {
+        "translation": "리스폰",
+        "context": "Player respawn"
+      }
+    ]
+  },
+  {
+    "original": "Loot / Drops",
+    "meanings": [
+      {
+        "translation": "노획물/드롭 아이템",
+        "context": "Item drops from mobs/blocks"
+      }
+    ]
+  },
+  {
+    "original": "Custom",
+    "meanings": [
+      {
+        "translation": "사용자 지정",
+        "context": "Game setting"
+      }
+    ]
+  },
+  {
+    "original": "Amplified",
+    "meanings": [
+      {
+        "translation": "증폭",
+        "context": "World type"
+      }
+    ]
+  },
+  {
+    "original": "Superflat",
+    "meanings": [
+      {
+        "translation": "완전한 평지",
+        "context": "World type"
+      }
+    ]
+  },
+  {
+    "original": "Debug",
+    "meanings": [
+      {
+        "translation": "디버그",
+        "context": "Game mode/feature"
+      }
+    ]
+  },
+  {
+    "original": "Inventory",
+    "meanings": [
+      {
+        "translation": "보관함",
+        "context": "Player inventory"
+      }
+    ]
+  },
+  {
+    "original": "Command",
+    "meanings": [
+      {
+        "translation": "명령",
+        "context": "In-game command"
+      }
+    ]
+  },
+  {
+    "original": "Cancel",
+    "meanings": [
+      {
+        "translation": "취소",
+        "context": "UI button to stop an action"
+      }
+    ]
+  },
+  {
+    "original": "Chat",
+    "meanings": [
+      {
+        "translation": "대화",
+        "context": "In-game messaging system"
+      }
+    ]
+  },
+  {
+    "original": "Continue",
+    "meanings": [
+      {
+        "translation": "계속하기",
+        "context": "UI button to proceed"
+      }
+    ]
+  },
+  {
+    "original": "Message",
+    "meanings": [
+      {
+        "translation": "메시지",
+        "context": "A single entry in chat"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "General game entity"
+      }
+    ]
+  },
+  {
+    "original": "Report",
+    "meanings": [
+      {
+        "translation": "신고",
+        "context": "As a noun (e.g., Send Report)"
+      },
+      {
+        "translation": "신고하기",
+        "context": "As a verb (e.g., Report Player)"
+      }
+    ]
+  },
+  {
+    "original": "Search",
+    "meanings": [
+      {
+        "translation": "검색",
+        "context": "Input field for searching"
+      }
+    ]
+  },
+  {
+    "original": "Select",
+    "meanings": [
+      {
+        "translation": "선택",
+        "context": "As a verb or part of a button"
+      }
+    ]
+  },
+  {
+    "original": "Skin",
+    "meanings": [
+      {
+        "translation": "스킨",
+        "context": "Player appearance"
+      }
+    ]
+  },
+  {
+    "original": "Advancements",
+    "meanings": [
+      {
+        "translation": "발전 과제",
+        "context": "In-game achievement system"
+      }
+    ]
+  },
+  {
+    "original": "All",
+    "meanings": [
+      {
+        "translation": "모두",
+        "context": "Filter or selector"
+      }
+    ]
+  },
+  {
+    "original": "Back",
+    "meanings": [
+      {
+        "translation": "뒤로",
+        "context": "UI navigation button"
+      }
+    ]
+  },
+  {
+    "original": "None",
+    "meanings": [
+      {
+        "translation": "없음",
+        "context": "Filter or selector"
+      }
+    ]
+  },
+  {
+    "original": "Showing",
+    "meanings": [
+      {
+        "translation": "표시 중",
+        "context": "UI status for filters"
+      }
+    ]
+  },
+  {
+    "original": "Craftable",
+    "meanings": [
+      {
+        "translation": "제작 가능한",
+        "context": "Filter for items that can be crafted"
+      }
+    ]
+  },
+  {
+    "original": "Smeltable",
+    "meanings": [
+      {
+        "translation": "제련 가능한",
+        "context": "Filter for items that can be smelted"
+      }
+    ]
+  },
+  {
+    "original": "Blastable",
+    "meanings": [
+      {
+        "translation": "용광 가능한",
+        "context": "Filter for items for a blast furnace"
+      }
+    ]
+  },
+  {
+    "original": "Smokable",
+    "meanings": [
+      {
+        "translation": "훈연 가능한",
+        "context": "Filter for items for a smoker"
+      }
+    ]
+  },
+  {
+    "original": "Type",
+    "meanings": [
+      {
+        "translation": "유형",
+        "context": "Category or classification label"
+      }
+    ]
+  },
+  {
+    "original": "Report",
+    "meanings": [
+      {
+        "translation": "신고",
+        "context": "UI button/action"
+      }
+    ]
+  },
+  {
+    "original": "Blocked",
+    "meanings": [
+      {
+        "translation": "차단",
+        "context": "Player status"
+      }
+    ]
+  },
+  {
+    "original": "Hidden",
+    "meanings": [
+      {
+        "translation": "숨김",
+        "context": "Message/player status"
+      }
+    ]
+  },
+  {
+    "original": "Offline",
+    "meanings": [
+      {
+        "translation": "오프라인",
+        "context": "Player status"
+      }
+    ]
+  },
+  {
+    "original": "Statistics",
+    "meanings": [
+      {
+        "translation": "통계",
+        "context": "UI screen title"
+      }
+    ]
+  },
+  {
+    "original": "Up",
+    "meanings": [
+      {
+        "translation": "위로",
+        "context": "UI Navigation"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "General term for objects"
+      }
+    ]
+  },
+  {
+    "original": "Durability",
+    "meanings": [
+      {
+        "translation": "내구도",
+        "context": "Item attribute"
+      }
+    ]
+  },
+  {
+    "original": "Unknown",
+    "meanings": [
+      {
+        "translation": "알 수 없음",
+        "context": "Default/error status"
+      }
+    ]
+  },
+  {
+    "original": "Color",
+    "meanings": [
+      {
+        "translation": "색",
+        "context": "General attribute"
+      }
+    ]
+  },
+  {
+    "original": "Empty",
+    "meanings": [
+      {
+        "translation": "비어 있음",
+        "context": "Container/item status"
+      }
+    ]
+  },
+  {
+    "original": "Full",
+    "meanings": [
+      {
+        "translation": "꽉 참",
+        "context": "Container/item status"
+      }
+    ]
+  },
+  {
+    "original": "Spawn Egg",
+    "meanings": [
+      {
+        "translation": "생성 알",
+        "context": "Item to spawn entities"
+      }
+    ]
+  },
+  {
+    "original": "Shard",
+    "meanings": [
+      {
+        "translation": "조각",
+        "context": "Crafting item (e.g., Amethyst Shard)"
+      }
+    ]
+  },
+  {
+    "original": "Pottery Sherd",
+    "meanings": [
+      {
+        "translation": "도자기 조각",
+        "context": "Item for decorating pottery"
+      }
+    ]
+  },
+  {
+    "original": "Bucket",
+    "meanings": [
+      {
+        "translation": "양동이",
+        "context": "Tool for carrying liquids/mobs"
+      }
+    ]
+  },
+  {
+    "original": "Dye",
+    "meanings": [
+      {
+        "translation": "염료",
+        "context": "Item for changing color"
+      }
+    ]
+  },
+  {
+    "original": "Rod",
+    "meanings": [
+      {
+        "translation": "막대기",
+        "context": "Crafting item (e.g., Blaze Rod)"
+      }
+    ]
+  },
+  {
+    "original": "Powder",
+    "meanings": [
+      {
+        "translation": "가루",
+        "context": "Crafting item (e.g., Blaze Powder)"
+      }
+    ]
+  },
+  {
+    "original": "Seeds",
+    "meanings": [
+      {
+        "translation": "씨앗",
+        "context": "Item for planting crops"
+      }
+    ]
+  },
+  {
+    "original": "Soup",
+    "meanings": [
+      {
+        "translation": "수프",
+        "context": "Consumable food item"
+      }
+    ]
+  },
+  {
+    "original": "Bundle",
+    "meanings": [
+      {
+        "translation": "꾸러미",
+        "context": "Item for storing other items"
+      }
+    ]
+  },
+  {
+    "original": "Smithing Template",
+    "meanings": [
+      {
+        "translation": "대장장이 형판",
+        "context": "Item for upgrading gear"
+      }
+    ]
+  },
+  {
+    "original": "Armor Trim",
+    "meanings": [
+      {
+        "translation": "갑옷 장식",
+        "context": "Cosmetic pattern for armor"
+      }
+    ]
+  },
+  {
+    "original": "Banner Pattern",
+    "meanings": [
+      {
+        "translation": "현수막 무늬",
+        "context": "Item to create banner designs"
+      }
+    ]
+  },
+  {
+    "original": "Bone",
+    "meanings": [
+      {
+        "translation": "뼈다귀",
+        "context": "Item dropped by skeletons"
+      }
+    ]
+  },
+  {
+    "original": "Bone Meal",
+    "meanings": [
+      {
+        "translation": "뼛가루",
+        "context": "Fertilizer and crafting item"
+      }
+    ]
+  },
+  {
+    "original": "Brick",
+    "meanings": [
+      {
+        "translation": "벽돌",
+        "context": "Crafting item and building block"
+      }
+    ]
+  },
+  {
+    "original": "Spawn Egg",
+    "meanings": [
+      {
+        "translation": "생성 알",
+        "context": "엔티티를 소환하는 아이템 (예: Cat Spawn Egg)"
+      }
+    ]
+  },
+  {
+    "original": "Raw",
+    "meanings": [
+      {
+        "translation": "익히지 않은",
+        "context": "조리되지 않은 음식 (예: Raw Chicken)"
+      }
+    ]
+  },
+  {
+    "original": "Cooked",
+    "meanings": [
+      {
+        "translation": "익힌",
+        "context": "조리된 음식 (예: Cooked Chicken)"
+      }
+    ]
+  },
+  {
+    "original": "Armor Trim",
+    "meanings": [
+      {
+        "translation": "갑옷 장식",
+        "context": "갑옷을 꾸미는 아이템 (예: Coast Armor Trim)"
+      }
+    ]
+  },
+  {
+    "original": "Charge",
+    "meanings": [
+      {
+        "translation": "모양",
+        "context": "현수막 무늬 (예: Creeper Charge)"
+      },
+      {
+        "translation": "화염구",
+        "context": "아이템 (예: Fire Charge)"
+      }
+    ]
+  },
+  {
+    "original": "Shard",
+    "meanings": [
+      {
+        "translation": "조각",
+        "context": "아이템의 조각 (예: Echo Shard, Pottery Shard)"
+      }
+    ]
+  },
+  {
+    "original": "Disc",
+    "meanings": [
+      {
+        "translation": "음반",
+        "context": "음악 디스크 (예: Music Disc)"
+      }
+    ]
+  },
+  {
+    "original": "-shaped",
+    "meanings": [
+      {
+        "translation": "모양",
+        "context": "폭죽의 모양 (예: Star-shaped)"
+      }
+    ]
+  },
+  {
+    "original": "Ball",
+    "meanings": [
+      {
+        "translation": "덩이",
+        "context": "재료 덩어리 (예: Clay Ball)"
+      },
+      {
+        "translation": "구형",
+        "context": "폭죽 모양 (예: Large Ball)"
+      }
+    ]
+  },
+  {
+    "original": "Stick",
+    "meanings": [
+      {
+        "translation": "낚싯대",
+        "context": "도구 (예: Carrot on a Stick)"
+      },
+      {
+        "translation": "막대기",
+        "context": "도구 (예: Debug Stick)"
+      }
+    ]
+  },
+  {
+    "original": "Pattern",
+    "meanings": [
+      {
+        "translation": "무늬",
+        "context": "현수막의 도안 (예: Banner Pattern)"
+      }
+    ]
+  },
+  {
+    "original": "Horse Armor",
+    "meanings": [
+      {
+        "translation": "말 갑옷",
+        "context": "아이템 (예: Diamond Horse Armor)"
+      }
+    ]
+  },
+  {
+    "original": "Armor Trim",
+    "meanings": [
+      {
+        "translation": "갑옷 장식",
+        "context": "아이템 종류 (갑옷 장식)"
+      }
+    ]
+  },
+  {
+    "original": "Banner Pattern",
+    "meanings": [
+      {
+        "translation": "현수막 무늬",
+        "context": "아이템 종류 (현수막 무늬)"
+      }
+    ]
+  },
+  {
+    "original": "Spawn Egg",
+    "meanings": [
+      {
+        "translation": "생성 알",
+        "context": "아이템 종류 (생성 알)"
+      }
+    ]
+  },
+  {
+    "original": "Pottery Sherd",
+    "meanings": [
+      {
+        "translation": "도자기 조각",
+        "context": "아이템 종류 (도자기 조각)"
+      }
+    ]
+  },
+  {
+    "original": "Horse Armor",
+    "meanings": [
+      {
+        "translation": "말 갑옷",
+        "context": "아이템 종류 (말 갑옷)"
+      }
+    ]
+  },
+  {
+    "original": "Glow",
+    "meanings": [
+      {
+        "translation": "발광",
+        "context": "아이템 접두사 (발광)"
+      }
+    ]
+  },
+  {
+    "original": "Ingot",
+    "meanings": [
+      {
+        "translation": "주괴",
+        "context": "재료 형태 (주괴)"
+      }
+    ]
+  },
+  {
+    "original": "Nugget",
+    "meanings": [
+      {
+        "translation": "조각",
+        "context": "재료 형태 (조각)"
+      }
+    ]
+  },
+  {
+    "original": "Iron",
+    "meanings": [
+      {
+        "translation": "철",
+        "context": "재료/접두사 (철)"
+      }
+    ]
+  },
+  {
+    "original": "Leather",
+    "meanings": [
+      {
+        "translation": "가죽",
+        "context": "재료/접두사 (가죽)"
+      }
+    ]
+  },
+  {
+    "original": "Golden",
+    "meanings": [
+      {
+        "translation": "황금",
+        "context": "특수 아이템 (황금 사과 등)"
+      },
+      {
+        "translation": "금",
+        "context": "도구/방어구 (금 도끼 등)"
+      }
+    ]
+  },
+  {
+    "original": "Boots",
+    "meanings": [
+      {
+        "translation": "부츠",
+        "context": "금/철 방어구"
+      },
+      {
+        "translation": "장화",
+        "context": "가죽 방어구"
+      }
+    ]
+  },
+  {
+    "original": "Bottle",
+    "meanings": [
+      {
+        "translation": "유리병",
+        "context": "빈 병 (유리병)"
+      },
+      {
+        "translation": "~이 든 병",
+        "context": "내용물이 든 병 (꿀이 든 병)"
+      }
+    ]
+  },
+  {
+    "original": "Lingering",
+    "meanings": [
+      {
+        "translation": "잔류형",
+        "context": "물약 종류 (잔류형)"
+      }
+    ]
+  },
+  {
+    "original": "Potion of",
+    "meanings": [
+      {
+        "translation": "~의 물약",
+        "context": "물약 이름 (~의 물약)"
+      }
+    ]
+  },
+  {
+    "original": "Potion",
+    "meanings": [
+      {
+        "translation": "물약",
+        "context": "아이템 이름 (예: 어색한 물약)"
+      },
+      {
+        "translation": "~의 물약",
+        "context": "효과 이름 접미사 (예: 힘의 물약)"
+      }
+    ]
+  },
+  {
+    "original": "Lingering",
+    "meanings": [
+      {
+        "translation": "잔류형",
+        "context": "물약 종류 접두사 (예: 잔류형 물약)"
+      }
+    ]
+  },
+  {
+    "original": "Spawn Egg",
+    "meanings": [
+      {
+        "translation": "생성 알",
+        "context": "엔티티 생성 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Bundle",
+    "meanings": [
+      {
+        "translation": "꾸러미",
+        "context": "아이템 보관 주머니 (예: 자홍색 꾸러미)"
+      }
+    ]
+  },
+  {
+    "original": "Dye",
+    "meanings": [
+      {
+        "translation": "염료",
+        "context": "염색용 아이템 (예: 주황색 염료)"
+      }
+    ]
+  },
+  {
+    "original": "Pottery Shard / Sherd",
+    "meanings": [
+      {
+        "translation": "도자기 조각",
+        "context": "도자기 파편 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Nether",
+    "meanings": [
+      {
+        "translation": "네더",
+        "context": "차원 이름 (예: 네더의 별)"
+      }
+    ]
+  },
+  {
+    "original": "Ingot",
+    "meanings": [
+      {
+        "translation": "주괴",
+        "context": "제련된 금속 (예: 네더라이트 주괴)"
+      }
+    ]
+  },
+  {
+    "original": "Scrap",
+    "meanings": [
+      {
+        "translation": "파편",
+        "context": "재료 조각 (예: 네더라이트 파편)"
+      }
+    ]
+  },
+  {
+    "original": "Upgrade",
+    "meanings": [
+      {
+        "translation": "강화",
+        "context": "대장장이 형판 (예: 네더라이트 강화)"
+      }
+    ]
+  },
+  {
+    "original": "Raw",
+    "meanings": [
+      {
+        "translation": "익히지 않은",
+        "context": "조리 전 음식 (예: 익히지 않은 양고기)"
+      }
+    ]
+  },
+  {
+    "original": "Ominous",
+    "meanings": [
+      {
+        "translation": "불길한",
+        "context": "'불길한 징조' 관련 아이템 접두사"
+      }
+    ]
+  },
+  {
+    "original": "Music Disc",
+    "meanings": [
+      {
+        "translation": "음반",
+        "context": "주크박스 재생용 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Music Box",
+    "meanings": [
+      {
+        "translation": "오르골",
+        "context": "음반의 오르골 버전"
+      }
+    ]
+  },
+  {
+    "original": "Snout",
+    "meanings": [
+      {
+        "translation": "돼지 코",
+        "context": "아이템 및 현수막 무늬 이름"
+      }
+    ]
+  },
+  {
+    "original": "Raw",
+    "meanings": [
+      {
+        "translation": "원석",
+        "context": "광물 원석 (e.g., Raw Iron)"
+      },
+      {
+        "translation": "익히지 않은",
+        "context": "익히지 않은 음식 (e.g., Raw Salmon)"
+      }
+    ]
+  },
+  {
+    "original": "Bucket",
+    "meanings": [
+      {
+        "translation": "양동이",
+        "context": "액체나 가루가 담긴 경우 (e.g., Powder Snow Bucket)"
+      },
+      {
+        "translation": "~가 담긴 양동이",
+        "context": "생물이 담긴 경우 (e.g., Bucket of Pufferfish)"
+      }
+    ]
+  },
+  {
+    "original": "Potion",
+    "meanings": [
+      {
+        "translation": "물약",
+        "context": "마시는 일반 물약 (e.g., Potion of Water Breathing)"
+      },
+      {
+        "translation": "투척용 물약",
+        "context": "던지는 물약 (e.g., Splash Potion of Harming)"
+      }
+    ]
+  },
+  {
+    "original": "Shard",
+    "meanings": [
+      {
+        "translation": "조각",
+        "context": "일반 아이템 조각 (e.g., Prismarine Shard)"
+      },
+      {
+        "translation": "도자기 조각",
+        "context": "도자기 파편 (e.g., Prize Pottery Shard)"
+      }
+    ]
+  },
+  {
+    "original": "Spawn Egg",
+    "meanings": [
+      {
+        "translation": "생성 알",
+        "context": "몹을 생성하는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Armor Trim",
+    "meanings": [
+      {
+        "translation": "갑옷 장식",
+        "context": "갑옷을 장식하는 아이템"
+      }
+    ]
+  },
+  {
+    "original": "Dye",
+    "meanings": [
+      {
+        "translation": "염료",
+        "context": "아이템을 염색하는 재료"
+      }
+    ]
+  },
+  {
+    "original": "Shield",
+    "meanings": [
+      {
+        "translation": "방패",
+        "context": "방어용 도구"
+      }
+    ]
+  },
+  {
+    "original": "Charge",
+    "meanings": [
+      {
+        "translation": "모양",
+        "context": "현수막 무늬 (e.g., Skull Charge)"
+      }
+    ]
+  },
+  {
+    "original": "Upgrade",
+    "meanings": [
+      {
+        "translation": "강화",
+        "context": "아이템 성능 향상 (e.g., Smithing Table UI)"
+      }
+    ]
+  },
+  {
+    "original": "Crystal",
+    "meanings": [
+      {
+        "translation": "수정",
+        "context": "결정체 형태의 재료 (e.g., Prismarine Crystals)"
+      }
+    ]
+  },
+  {
+    "original": "Ingot",
+    "meanings": [
+      {
+        "translation": "주괴",
+        "context": "제련된 금속 주괴 (e.g., Netherite Ingot)"
+      }
+    ]
+  },
+  {
+    "original": "Armor",
+    "meanings": [
+      {
+        "translation": "갑옷",
+        "context": "착용하는 방어구"
+      }
+    ]
+  },
+  {
+    "original": "Splash",
+    "meanings": [
+      {
+        "translation": "투척용",
+        "context": "When modifying a Potion"
+      },
+      {
+        "translation": "분무",
+        "context": "When modifying an Arrow"
+      }
+    ]
+  },
+  {
+    "original": "Potion",
+    "meanings": [
+      {
+        "translation": "물약",
+        "context": "General item name"
+      }
+    ]
+  },
+  {
+    "original": "Spawn Egg",
+    "meanings": [
+      {
+        "translation": "생성 알",
+        "context": "Item to spawn a mob"
+      }
+    ]
+  },
+  {
+    "original": "Spawn",
+    "meanings": [
+      {
+        "translation": "생성",
+        "context": "Part of 'Spawn Egg'"
+      }
+    ]
+  },
+  {
+    "original": "Egg",
+    "meanings": [
+      {
+        "translation": "알",
+        "context": "Part of 'Spawn Egg'"
+      }
+    ]
+  },
+  {
+    "original": "Arrow",
+    "meanings": [
+      {
+        "translation": "화살",
+        "context": "Ammunition for bows"
+      }
+    ]
+  },
+  {
+    "original": "Stone",
+    "meanings": [
+      {
+        "translation": "돌",
+        "context": "As a material prefix for tools/weapons"
+      }
+    ]
+  },
+  {
+    "original": "Wooden",
+    "meanings": [
+      {
+        "translation": "나무",
+        "context": "As a material prefix for tools/weapons"
+      }
+    ]
+  },
+  {
+    "original": "Armor Trim",
+    "meanings": [
+      {
+        "translation": "갑옷 장식",
+        "context": "Item for customizing armor"
+      }
+    ]
+  },
+  {
+    "original": "Armor",
+    "meanings": [
+      {
+        "translation": "갑옷",
+        "context": "Wearable protective gear"
+      }
+    ]
+  },
+  {
+    "original": "Trim",
+    "meanings": [
+      {
+        "translation": "장식",
+        "context": "Part of 'Armor Trim'"
+      }
+    ]
+  },
+  {
+    "original": "Bucket",
+    "meanings": [
+      {
+        "translation": "양동이",
+        "context": "Container for liquids/mobs"
+      }
+    ]
+  },
+  {
+    "original": "Seeds",
+    "meanings": [
+      {
+        "translation": "씨앗",
+        "context": "Item for planting crops"
+      }
+    ]
+  },
+  {
+    "original": "Dye",
+    "meanings": [
+      {
+        "translation": "염료",
+        "context": "Item for changing color"
+      }
+    ]
+  },
+  {
+    "original": "Stick",
+    "meanings": [
+      {
+        "translation": "막대기",
+        "context": "Common crafting ingredient"
+      }
+    ]
+  },
+  {
+    "original": "Key",
+    "meanings": [
+      {
+        "translation": "열쇠",
+        "context": "Item for unlocking"
+      }
+    ]
+  },
+  {
+    "original": "Shell",
+    "meanings": [
+      {
+        "translation": "등딱지",
+        "context": "From a Turtle"
+      }
+    ]
+  },
+  {
+    "original": "Scute",
+    "meanings": [
+      {
+        "translation": "인갑",
+        "context": "From a baby Turtle"
+      }
+    ]
+  },
+  {
+    "original": "Book",
+    "meanings": [
+      {
+        "translation": "책",
+        "context": "General item name"
+      }
+    ]
+  },
+  {
+    "original": "Spawn Egg",
+    "meanings": [
+      {
+        "translation": "생성 알",
+        "context": "아이템 종류"
+      }
+    ]
+  },
+  {
+    "original": "Hand",
+    "meanings": [
+      {
+        "translation": "주로 사용하는 손",
+        "context": "주 사용 손에 장착"
+      },
+      {
+        "translation": "다른 손",
+        "context": "보조 손에 장착"
+      }
+    ]
+  },
+  {
+    "original": "Blocks",
+    "meanings": [
+      {
+        "translation": "건축 블록",
+        "context": "아이템 그룹 (건축)"
+      },
+      {
+        "translation": "색깔 블록",
+        "context": "아이템 그룹 (색깔)"
+      },
+      {
+        "translation": "기능 블록",
+        "context": "아이템 그룹 (기능)"
+      },
+      {
+        "translation": "자연 블록",
+        "context": "아이템 그룹 (자연)"
+      },
+      {
+        "translation": "레드스톤 블록",
+        "context": "아이템 그룹 (레드스톤)"
+      }
+    ]
+  },
+  {
+    "original": "Inventory",
+    "meanings": [
+      {
+        "translation": "보관함",
+        "context": "플레이어 소지품 창"
+      }
+    ]
+  },
+  {
+    "original": "Hotbar",
+    "meanings": [
+      {
+        "translation": "단축 바",
+        "context": "화면 하단 아이템 슬롯"
+      }
+    ]
+  },
+  {
+    "original": "Generate",
+    "meanings": [
+      {
+        "translation": "생성",
+        "context": "구조물 생성 설정"
+      }
+    ]
+  },
+  {
+    "original": "Priority",
+    "meanings": [
+      {
+        "translation": "설치 우선도",
+        "context": "블록 설치 순서"
+      },
+      {
+        "translation": "선택 우선도",
+        "context": "블록 선택 순서"
+      }
+    ]
+  },
+  {
+    "original": "Open",
+    "meanings": [
+      {
+        "translation": "열기",
+        "context": "UI 화면 열기 (대화, 명령어)"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "게임 내 물건"
+      }
+    ]
+  },
+  {
+    "original": "Walk",
+    "meanings": [
+      {
+        "translation": "걷기",
+        "context": "플레이어 이동 조작"
+      }
+    ]
+  },
+  {
+    "original": "Keypad",
+    "meanings": [
+      {
+        "translation": "키패드",
+        "context": "키보드 숫자 패드"
+      }
+    ]
+  },
+  {
+    "original": "Arrow",
+    "meanings": [
+      {
+        "translation": "화살표",
+        "context": "키보드 방향키"
+      }
+    ]
+  },
+  {
+    "original": "Combat",
+    "meanings": [
+      {
+        "translation": "전투",
+        "context": "아이템 그룹 (전투)"
+      }
+    ]
+  },
+  {
+    "original": "Tools",
+    "meanings": [
+      {
+        "translation": "도구",
+        "context": "아이템 그룹 (도구)"
+      }
+    ]
+  },
+  {
+    "original": "Unbreakable",
+    "meanings": [
+      {
+        "translation": "부서지지 않음",
+        "context": "아이템 속성"
+      }
+    ]
+  },
+  {
+    "original": "Drop",
+    "meanings": [
+      {
+        "translation": "떨어뜨리기",
+        "context": "아이템 버리기 동작"
+      }
+    ]
+  },
+  {
+    "original": "Game",
+    "meanings": [
+      {
+        "translation": "게임",
+        "context": "Game Difficulty"
+      },
+      {
+        "translation": "게임",
+        "context": "Game Mode"
+      },
+      {
+        "translation": "게임",
+        "context": "Game Server Version"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Pick Block"
+      },
+      {
+        "translation": "블록",
+        "context": "Place Block"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "Use Item"
+      },
+      {
+        "translation": "아이템",
+        "context": "Swap Item"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "List Players"
+      },
+      {
+        "translation": "플레이어",
+        "context": "Highlight Players"
+      },
+      {
+        "translation": "플레이어",
+        "context": "Other Players"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "LAN World"
+      },
+      {
+        "translation": "세계",
+        "context": "Reset World"
+      },
+      {
+        "translation": "세계",
+        "context": "Upload World"
+      },
+      {
+        "translation": "세계",
+        "context": "World Type"
+      },
+      {
+        "translation": "세계",
+        "context": "Generate world"
+      },
+      {
+        "translation": "세계",
+        "context": "World Backups"
+      }
+    ]
+  },
+  {
+    "original": "Button",
+    "meanings": [
+      {
+        "translation": "버튼",
+        "context": "Left Button"
+      },
+      {
+        "translation": "버튼",
+        "context": "Right Button"
+      },
+      {
+        "translation": "버튼",
+        "context": "Middle Button"
+      }
+    ]
+  },
+  {
+    "original": "Server",
+    "meanings": [
+      {
+        "translation": "서버",
+        "context": "Report Server Bug"
+      },
+      {
+        "translation": "서버",
+        "context": "Game Server Version"
+      }
+    ]
+  },
+  {
+    "original": "Version",
+    "meanings": [
+      {
+        "translation": "버전",
+        "context": "Game Server Version"
+      },
+      {
+        "translation": "버전",
+        "context": "Incompatible version"
+      },
+      {
+        "translation": "버전",
+        "context": "Client version"
+      }
+    ]
+  },
+  {
+    "original": "Backup",
+    "meanings": [
+      {
+        "translation": "백업",
+        "context": "Backup (%s)"
+      },
+      {
+        "translation": "백업",
+        "context": "World Backups"
+      }
+    ]
+  },
+  {
+    "original": "Download",
+    "meanings": [
+      {
+        "translation": "다운로드",
+        "context": "Download Latest"
+      },
+      {
+        "translation": "다운로드됨",
+        "context": "Downloaded"
+      }
+    ]
+  },
+  {
+    "original": "Restore",
+    "meanings": [
+      {
+        "translation": "복원",
+        "context": "Restore (verb)"
+      }
+    ]
+  },
+  {
+    "original": "Play",
+    "meanings": [
+      {
+        "translation": "플레이",
+        "context": "Play (verb)"
+      }
+    ]
+  },
+  {
+    "original": "Port",
+    "meanings": [
+      {
+        "translation": "포트",
+        "context": "Port Number"
+      },
+      {
+        "translation": "포트",
+        "context": "Port not available"
+      }
+    ]
+  },
+  {
+    "original": "Realm",
+    "meanings": [
+      {
+        "translation": "Realm",
+        "context": "Close Realm"
+      },
+      {
+        "translation": "Realm",
+        "context": "Restoring your Realm"
+      }
+    ]
+  },
+  {
+    "original": "Upgrade",
+    "meanings": [
+      {
+        "translation": "상위 버전으로 변환",
+        "context": "Upgrade (a world)"
+      }
+    ]
+  },
+  {
+    "original": "Downgrade",
+    "meanings": [
+      {
+        "translation": "하위 버전으로 변환",
+        "context": "Downgrade (a world)"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "게임 세계, 월드 (예: World Name)"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "게임 내 사용자 (예: Invite Player)"
+      }
+    ]
+  },
+  {
+    "original": "Settings",
+    "meanings": [
+      {
+        "translation": "설정",
+        "context": "게임 또는 세계 설정 메뉴 (예: Settings)"
+      }
+    ]
+  },
+  {
+    "original": "Options",
+    "meanings": [
+      {
+        "translation": "설정",
+        "context": "구성 선택 항목 (예: More options)"
+      }
+    ]
+  },
+  {
+    "original": "Delete",
+    "meanings": [
+      {
+        "translation": "삭제",
+        "context": "영구적으로 제거하는 동작 (예: Delete Realm)"
+      }
+    ]
+  },
+  {
+    "original": "Remove",
+    "meanings": [
+      {
+        "translation": "제거",
+        "context": "플레이어 등을 목록에서 없애는 동작 (예: Remove)"
+      }
+    ]
+  },
+  {
+    "original": "Create",
+    "meanings": [
+      {
+        "translation": "만들기",
+        "context": "새로운 세계를 만드는 동작 (예: Create World)"
+      },
+      {
+        "translation": "생성",
+        "context": "일반적인 생성 버튼 (예: Create)"
+      }
+    ]
+  },
+  {
+    "original": "Spawn",
+    "meanings": [
+      {
+        "translation": "생성",
+        "context": "게임 내 개체 생성 (예: Spawn Animals)"
+      }
+    ]
+  },
+  {
+    "original": "Invite",
+    "meanings": [
+      {
+        "translation": "초대",
+        "context": "명사 또는 동사 (예: Invite Player)"
+      },
+      {
+        "translation": "초대됨",
+        "context": "초대를 받은 상태 (예: Invited)"
+      },
+      {
+        "translation": "초대함",
+        "context": "다른 사람을 초대한 상태 (예: Invited (%s))"
+      }
+    ]
+  },
+  {
+    "original": "Join",
+    "meanings": [
+      {
+        "translation": "참여",
+        "context": "게임이나 Realm에 들어가는 동작 (예: Join)"
+      }
+    ]
+  },
+  {
+    "original": "Switch",
+    "meanings": [
+      {
+        "translation": "전환",
+        "context": "세계, 미니게임 등을 바꾸는 동작 (예: Switch to world)"
+      }
+    ]
+  },
+  {
+    "original": "Download",
+    "meanings": [
+      {
+        "translation": "다운로드",
+        "context": "데이터를 전송받는 과정 (예: Downloading)"
+      }
+    ]
+  },
+  {
+    "original": "Realm",
+    "meanings": [
+      {
+        "translation": "Realm",
+        "context": "마인크래프트 개인 서버 서비스 (예: Open Realm)"
+      }
+    ]
+  },
+  {
+    "original": "Subscription",
+    "meanings": [
+      {
+        "translation": "구독",
+        "context": "정기 결제 서비스 (예: Subscription)"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "게임 맵 또는 환경을 지칭 (예: \"New World\", \"Switching World\")"
+      }
+    ]
+  },
+  {
+    "original": "Select",
+    "meanings": [
+      {
+        "translation": "선택",
+        "context": "선택을 위한 버튼 또는 동사 (예: \"Select\", \"Please make a selection\")"
+      }
+    ]
+  },
+  {
+    "original": "Switch",
+    "meanings": [
+      {
+        "translation": "전환",
+        "context": "항목을 전환하거나 변경하는 버튼 (예: \"Switch\", \"Switching World\")"
+      }
+    ]
+  },
+  {
+    "original": "Configure",
+    "meanings": [
+      {
+        "translation": "설정",
+        "context": "설정 또는 구성 옵션을 여는 버튼"
+      }
+    ]
+  },
+  {
+    "original": "Create",
+    "meanings": [
+      {
+        "translation": "만들기",
+        "context": "새로운 것을 만드는 동작 (예: \"Create Realm\")"
+      }
+    ]
+  },
+  {
+    "original": "Add",
+    "meanings": [
+      {
+        "translation": "추가",
+        "context": "항목을 추가하는 동작 (예: \"Add Realm\")"
+      }
+    ]
+  },
+  {
+    "original": "Leave",
+    "meanings": [
+      {
+        "translation": "떠나기",
+        "context": "그룹이나 장소를 나가는 동작 (예: \"Leave Realm\")"
+      }
+    ]
+  },
+  {
+    "original": "Close",
+    "meanings": [
+      {
+        "translation": "닫기",
+        "context": "창이나 대화 상자를 닫는 버튼"
+      }
+    ]
+  },
+  {
+    "original": "Dismiss",
+    "meanings": [
+      {
+        "translation": "닫기",
+        "context": "알림을 해제하는 버튼"
+      }
+    ]
+  },
+  {
+    "original": "Template",
+    "meanings": [
+      {
+        "translation": "견본",
+        "context": "미리 디자인된 세계 또는 구조 (예: \"World template\")"
+      }
+    ]
+  },
+  {
+    "original": "Renew",
+    "meanings": [
+      {
+        "translation": "갱신",
+        "context": "구독 또는 아이템을 연장하는 동작"
+      }
+    ]
+  },
+  {
+    "original": "Subscribe",
+    "meanings": [
+      {
+        "translation": "구독",
+        "context": "서비스에 가입하는 동작"
+      }
+    ]
+  },
+  {
+    "original": "Authors",
+    "meanings": [
+      {
+        "translation": "제작",
+        "context": "콘텐츠 제작자를 지칭 (문맥: \"제작: [이름]\")"
+      }
+    ]
+  },
+  {
+    "original": "Publisher",
+    "meanings": [
+      {
+        "translation": "게시자",
+        "context": "콘텐츠를 게시하는 주체"
+      }
+    ]
+  },
+  {
+    "original": "version",
+    "meanings": [
+      {
+        "translation": "버전",
+        "context": "게임 또는 소프트웨어의 특정 릴리스"
+      }
+    ]
+  },
+  {
+    "original": "Seed",
+    "meanings": [
+      {
+        "translation": "시드",
+        "context": "세계를 생성하는 데 사용되는 코드"
+      }
+    ]
+  },
+  {
+    "original": "Button",
+    "meanings": [
+      {
+        "translation": "버튼",
+        "context": "클릭 가능한 UI 요소"
+      }
+    ]
+  },
+  {
+    "original": "Open",
+    "meanings": [
+      {
+        "translation": "열기",
+        "context": "링크나 파일을 여는 동작 (예: \"Open Link\")"
+      }
+    ]
+  },
+  {
+    "original": "Upload",
+    "meanings": [
+      {
+        "translation": "업로드",
+        "context": "서버로 데이터를 전송하는 동작 (예: \"Upload world\")"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "World templates, singleplayer world"
+      }
+    ]
+  },
+  {
+    "original": "Upload",
+    "meanings": [
+      {
+        "translation": "업로드",
+        "context": "As a noun or verb root"
+      },
+      {
+        "translation": "업로드 중",
+        "context": "Uploading"
+      },
+      {
+        "translation": "업로드 완료",
+        "context": "Upload done"
+      },
+      {
+        "translation": "업로드 실패",
+        "context": "Upload failed"
+      }
+    ]
+  },
+  {
+    "original": "Server",
+    "meanings": [
+      {
+        "translation": "서버",
+        "context": "Server Links, Server closed"
+      }
+    ]
+  },
+  {
+    "original": "Game",
+    "meanings": [
+      {
+        "translation": "게임",
+        "context": "Game Menu, Quit Game"
+      }
+    ]
+  },
+  {
+    "original": "Quit",
+    "meanings": [
+      {
+        "translation": "종료",
+        "context": "Quit Game"
+      },
+      {
+        "translation": "나가기",
+        "context": "Save and Quit to Title"
+      }
+    ]
+  },
+  {
+    "original": "Save",
+    "meanings": [
+      {
+        "translation": "저장",
+        "context": "Save and Quit to Title"
+      },
+      {
+        "translation": "저장 중",
+        "context": "Saving chunks/world"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "Player Reporting, Invalid player data"
+      }
+    ]
+  },
+  {
+    "original": "Invalid",
+    "meanings": [
+      {
+        "translation": "잘못된",
+        "context": "Invalid entity/packet/data"
+      }
+    ]
+  },
+  {
+    "original": "Key",
+    "meanings": [
+      {
+        "translation": "키",
+        "context": "profile public key"
+      }
+    ]
+  },
+  {
+    "original": "Packet",
+    "meanings": [
+      {
+        "translation": "패킷",
+        "context": "invalid packet, chat packet"
+      }
+    ]
+  },
+  {
+    "original": "Trades",
+    "meanings": [
+      {
+        "translation": "거래",
+        "context": "Villager trades"
+      }
+    ]
+  },
+  {
+    "original": "Novice",
+    "meanings": [
+      {
+        "translation": "초심자",
+        "context": "Villager trade level"
+      }
+    ]
+  },
+  {
+    "original": "Apprentice",
+    "meanings": [
+      {
+        "translation": "수습생",
+        "context": "Villager trade level"
+      }
+    ]
+  },
+  {
+    "original": "Journeyman",
+    "meanings": [
+      {
+        "translation": "기능공",
+        "context": "Villager trade level"
+      }
+    ]
+  },
+  {
+    "original": "Expert",
+    "meanings": [
+      {
+        "translation": "전문가",
+        "context": "Villager trade level"
+      }
+    ]
+  },
+  {
+    "original": "Master",
+    "meanings": [
+      {
+        "translation": "달인",
+        "context": "Villager trade level"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "Optimize World"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "Online players"
+      }
+    ]
+  },
+  {
+    "original": "Chunk",
+    "meanings": [
+      {
+        "translation": "청크",
+        "context": "Total chunks"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "Upgrading all entities"
+      }
+    ]
+  },
+  {
+    "original": "Resource Pack",
+    "meanings": [
+      {
+        "translation": "리소스 팩",
+        "context": "custom resource pack"
+      }
+    ]
+  },
+  {
+    "original": "Recipe",
+    "meanings": [
+      {
+        "translation": "제작법",
+        "context": "Recipe for %s"
+      }
+    ]
+  },
+  {
+    "original": "Difficulty",
+    "meanings": [
+      {
+        "translation": "난이도",
+        "context": "Difficulty lock"
+      }
+    ]
+  },
+  {
+    "original": "Version",
+    "meanings": [
+      {
+        "translation": "버전",
+        "context": "Incompatible version"
+      }
+    ]
+  },
+  {
+    "original": "Server",
+    "meanings": [
+      {
+        "translation": "서버",
+        "context": "New server found"
+      }
+    ]
+  },
+  {
+    "original": "Terrain",
+    "meanings": [
+      {
+        "translation": "지형",
+        "context": "Loading terrain"
+      }
+    ]
+  },
+  {
+    "original": "Button",
+    "meanings": [
+      {
+        "translation": "버튼",
+        "context": "Button: %s"
+      }
+    ]
+  },
+  {
+    "original": "Checkbox",
+    "meanings": [
+      {
+        "translation": "체크상자",
+        "context": "Checkbox: %s"
+      }
+    ]
+  },
+  {
+    "original": "Edit box",
+    "meanings": [
+      {
+        "translation": "편집 상자",
+        "context": "Edit box: %s"
+      }
+    ]
+  },
+  {
+    "original": "Slider",
+    "meanings": [
+      {
+        "translation": "슬라이더",
+        "context": "Drag slider"
+      }
+    ]
+  },
+  {
+    "original": "Tab",
+    "meanings": [
+      {
+        "translation": "탭",
+        "context": "Selected tab"
+      }
+    ]
+  },
+  {
+    "original": "Loading",
+    "meanings": [
+      {
+        "translation": "불러오는 중...",
+        "context": "Loading..."
+      }
+    ]
+  },
+  {
+    "original": "Online",
+    "meanings": [
+      {
+        "translation": "온라인",
+        "context": "players online"
+      }
+    ]
+  },
+  {
+    "original": "Reset",
+    "meanings": [
+      {
+        "translation": "초기화",
+        "context": "Reset button"
+      }
+    ]
+  },
+  {
+    "original": "Finished",
+    "meanings": [
+      {
+        "translation": "완료됨",
+        "context": "Status text"
+      }
+    ]
+  },
+  {
+    "original": "Cancelled",
+    "meanings": [
+      {
+        "translation": "취소됨",
+        "context": "Status text"
+      }
+    ]
+  },
+  {
+    "original": "UI",
+    "meanings": [
+      {
+        "translation": "UI",
+        "context": "UI element"
+      }
+    ]
+  },
+  {
+    "original": "Background",
+    "meanings": [
+      {
+        "translation": "배경",
+        "context": "Menu, Text"
+      }
+    ]
+  },
+  {
+    "original": "Settings",
+    "meanings": [
+      {
+        "translation": "설정",
+        "context": "Game setting"
+      }
+    ]
+  },
+  {
+    "original": "Server",
+    "meanings": [
+      {
+        "translation": "서버",
+        "context": "Difficulty, Listings"
+      }
+    ]
+  },
+  {
+    "original": "Graphics",
+    "meanings": [
+      {
+        "translation": "그래픽",
+        "context": "General setting"
+      }
+    ]
+  },
+  {
+    "original": "OFF",
+    "meanings": [
+      {
+        "translation": "꺼짐",
+        "context": "Setting value"
+      }
+    ]
+  },
+  {
+    "original": "Maximum",
+    "meanings": [
+      {
+        "translation": "최대",
+        "context": "Setting value"
+      }
+    ]
+  },
+  {
+    "original": "Hotbar",
+    "meanings": [
+      {
+        "translation": "단축 바",
+        "context": "UI element"
+      }
+    ]
+  },
+  {
+    "original": "Auto-Jump",
+    "meanings": [
+      {
+        "translation": "자동 점프",
+        "context": "Core game mechanic"
+      }
+    ]
+  },
+  {
+    "original": "Biome",
+    "meanings": [
+      {
+        "translation": "생물 군계",
+        "context": "Core game concept"
+      }
+    ]
+  },
+  {
+    "original": "Chunk",
+    "meanings": [
+      {
+        "translation": "청크",
+        "context": "Core game concept"
+      }
+    ]
+  },
+  {
+    "original": "Controls",
+    "meanings": [
+      {
+        "translation": "조작",
+        "context": "Game setting"
+      }
+    ]
+  },
+  {
+    "original": "Difficulty",
+    "meanings": [
+      {
+        "translation": "난이도",
+        "context": "Game setting"
+      }
+    ]
+  },
+  {
+    "original": "Normal",
+    "meanings": [
+      {
+        "translation": "일반",
+        "context": "Game difficulty"
+      },
+      {
+        "translation": "보통",
+        "context": "Biome Blend speed"
+      }
+    ]
+  },
+  {
+    "original": "Fast",
+    "meanings": [
+      {
+        "translation": "빠르게",
+        "context": "Graphics quality"
+      },
+      {
+        "translation": "빠름",
+        "context": "Biome Blend speed"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "Distance, Shadows"
+      }
+    ]
+  },
+  {
+    "original": "FOV",
+    "meanings": [
+      {
+        "translation": "시야 범위",
+        "context": "Game setting"
+      }
+    ]
+  },
+  {
+    "original": "Glint",
+    "meanings": [
+      {
+        "translation": "반짝임",
+        "context": "Enchanted item effect"
+      }
+    ]
+  },
+  {
+    "original": "Options",
+    "meanings": [
+      {
+        "translation": "설정",
+        "context": "Game configuration menu"
+      }
+    ]
+  },
+  {
+    "original": "Graphics",
+    "meanings": [
+      {
+        "translation": "그래픽",
+        "context": "Graphics setting"
+      }
+    ]
+  },
+  {
+    "original": "Chat",
+    "meanings": [
+      {
+        "translation": "대화",
+        "context": "Player messaging system"
+      }
+    ]
+  },
+  {
+    "original": "ON",
+    "meanings": [
+      {
+        "translation": "켜짐",
+        "context": "Setting toggle state"
+      }
+    ]
+  },
+  {
+    "original": "OFF",
+    "meanings": [
+      {
+        "translation": "꺼짐",
+        "context": "Setting toggle state"
+      }
+    ]
+  },
+  {
+    "original": "Toggle / Hold",
+    "meanings": [
+      {
+        "translation": "토글",
+        "context": "Control activation method"
+      },
+      {
+        "translation": "홀드",
+        "context": "Control activation method"
+      }
+    ]
+  },
+  {
+    "original": "Hand",
+    "meanings": [
+      {
+        "translation": "주로 사용하는 손",
+        "context": "Player's primary hand"
+      },
+      {
+        "translation": "왼손",
+        "context": "Player's hand"
+      },
+      {
+        "translation": "오른손",
+        "context": "Player's hand"
+      }
+    ]
+  },
+  {
+    "original": "Skin Customization",
+    "meanings": [
+      {
+        "translation": "스킨 사용자 지정",
+        "context": "Player appearance customization"
+      }
+    ]
+  },
+  {
+    "original": "Cape",
+    "meanings": [
+      {
+        "translation": "망토",
+        "context": "Player cosmetic item"
+      }
+    ]
+  },
+  {
+    "original": "Hat",
+    "meanings": [
+      {
+        "translation": "모자",
+        "context": "Player cosmetic item"
+      }
+    ]
+  },
+  {
+    "original": "Sensitivity",
+    "meanings": [
+      {
+        "translation": "감도",
+        "context": "Mouse or input control"
+      }
+    ]
+  },
+  {
+    "original": "Distance",
+    "meanings": [
+      {
+        "translation": "렌더 거리",
+        "context": "Graphics setting for view distance"
+      },
+      {
+        "translation": "시뮬레이션 거리",
+        "context": "World processing distance"
+      }
+    ]
+  },
+  {
+    "original": "Chunk",
+    "meanings": [
+      {
+        "translation": "청크",
+        "context": "World data segment"
+      }
+    ]
+  },
+  {
+    "original": "Particles",
+    "meanings": [
+      {
+        "translation": "입자",
+        "context": "Visual effects"
+      }
+    ]
+  },
+  {
+    "original": "Clouds",
+    "meanings": [
+      {
+        "translation": "구름",
+        "context": "Weather and sky visuals"
+      }
+    ]
+  },
+  {
+    "original": "Minecart",
+    "meanings": [
+      {
+        "translation": "광산 수레",
+        "context": "Vehicle entity"
+      }
+    ]
+  },
+  {
+    "original": "Resource Packs",
+    "meanings": [
+      {
+        "translation": "리소스 팩",
+        "context": "Asset modification package"
+      }
+    ]
+  },
+  {
+    "original": "Operator",
+    "meanings": [
+      {
+        "translation": "관리자",
+        "context": "Player with server permissions"
+      }
+    ]
+  },
+  {
+    "original": "Items Tab",
+    "meanings": [
+      {
+        "translation": "아이템 탭",
+        "context": "Creative mode inventory section"
+      }
+    ]
+  },
+  {
+    "original": "world",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "게임 플레이 공간"
+      }
+    ]
+  },
+  {
+    "original": "server",
+    "meanings": [
+      {
+        "translation": "서버",
+        "context": "멀티플레이"
+      }
+    ]
+  },
+  {
+    "original": "entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "몹, 아이템 드롭 등"
+      }
+    ]
+  },
+  {
+    "original": "recipe",
+    "meanings": [
+      {
+        "translation": "제작법",
+        "context": "아이템 제작"
+      }
+    ]
+  },
+  {
+    "original": "Commands",
+    "meanings": [
+      {
+        "translation": "명령어",
+        "context": "게임 내 기능 실행"
+      }
+    ]
+  },
+  {
+    "original": "Cheats",
+    "meanings": [
+      {
+        "translation": "치트",
+        "context": "게임 규칙 변경"
+      }
+    ]
+  },
+  {
+    "original": "pack",
+    "meanings": [
+      {
+        "translation": "팩",
+        "context": "리소스/데이터 팩"
+      }
+    ]
+  },
+  {
+    "original": "Resource",
+    "meanings": [
+      {
+        "translation": "리소스",
+        "context": "게임 애셋 (텍스처, 소리)"
+      }
+    ]
+  },
+  {
+    "original": "particle",
+    "meanings": [
+      {
+        "translation": "입자",
+        "context": "그래픽 효과"
+      }
+    ]
+  },
+  {
+    "original": "Select",
+    "meanings": [
+      {
+        "translation": "선택",
+        "context": "동작 (예: Select Packs)"
+      },
+      {
+        "translation": "선택됨",
+        "context": "상태 (예: Selected)"
+      }
+    ]
+  },
+  {
+    "original": "Edit",
+    "meanings": [
+      {
+        "translation": "편집",
+        "context": "설정 변경"
+      }
+    ]
+  },
+  {
+    "original": "Join",
+    "meanings": [
+      {
+        "translation": "참여",
+        "context": "서버 접속"
+      }
+    ]
+  },
+  {
+    "original": "Refresh",
+    "meanings": [
+      {
+        "translation": "새로 고침",
+        "context": "목록 새로고침"
+      }
+    ]
+  },
+  {
+    "original": "recover",
+    "meanings": [
+      {
+        "translation": "복구",
+        "context": "손상된 데이터 복원"
+      }
+    ]
+  },
+  {
+    "original": "restore",
+    "meanings": [
+      {
+        "translation": "복원",
+        "context": "이전 상태로 되돌리기"
+      }
+    ]
+  },
+  {
+    "original": "Backup",
+    "meanings": [
+      {
+        "translation": "백업",
+        "context": "데이터 예비 저장"
+      }
+    ]
+  },
+  {
+    "original": "Available",
+    "meanings": [
+      {
+        "translation": "사용 가능",
+        "context": "상태"
+      }
+    ]
+  },
+  {
+    "original": "Incompatible",
+    "meanings": [
+      {
+        "translation": "호환되지 않음",
+        "context": "버전 호환성"
+      }
+    ]
+  },
+  {
+    "original": "built-in",
+    "meanings": [
+      {
+        "translation": "내장",
+        "context": "기본 포함 기능"
+      }
+    ]
+  },
+  {
+    "original": "local",
+    "meanings": [
+      {
+        "translation": "로컬",
+        "context": "사용자 컴퓨터"
+      }
+    ]
+  },
+  {
+    "original": "Customized",
+    "meanings": [
+      {
+        "translation": "사용자 지정",
+        "context": "설정"
+      }
+    ]
+  },
+  {
+    "original": "Experimental",
+    "meanings": [
+      {
+        "translation": "실험적",
+        "context": "정식 기능이 아님"
+      }
+    ]
+  },
+  {
+    "original": "variant",
+    "meanings": [
+      {
+        "translation": "종류",
+        "context": "개체/블록의 다른 형태"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "게임 맵/차원을 지칭 (예: Create New World)"
+      }
+    ]
+  },
+  {
+    "original": "Load / Loading / Reading",
+    "meanings": [
+      {
+        "translation": "불러오기",
+        "context": "UI 버튼 (예: Load Anyway)"
+      },
+      {
+        "translation": "불러오는 중",
+        "context": "진행 상태 표시 (예: Loading World List)"
+      },
+      {
+        "translation": "읽는 중",
+        "context": "데이터를 읽는 동작 (예: Reading world data)"
+      }
+    ]
+  },
+  {
+    "original": "Create / Generate",
+    "meanings": [
+      {
+        "translation": "만들기",
+        "context": "새로운 것을 만듦 (예: Create New World)"
+      },
+      {
+        "translation": "생성",
+        "context": "지형, 구조물 등을 자동 생성 (예: Generate Structures)"
+      }
+    ]
+  },
+  {
+    "original": "Customize",
+    "meanings": [
+      {
+        "translation": "사용자 지정",
+        "context": "설정, 옵션 등을 변경 (예: Customize)"
+      }
+    ]
+  },
+  {
+    "original": "Version",
+    "meanings": [
+      {
+        "translation": "버전",
+        "context": "게임 또는 소프트웨어의 버전 (예: Incompatible version)"
+      }
+    ]
+  },
+  {
+    "original": "Backup",
+    "meanings": [
+      {
+        "translation": "백업",
+        "context": "데이터 사본 저장 (예: Make Backup)"
+      }
+    ]
+  },
+  {
+    "original": "Resources",
+    "meanings": [
+      {
+        "translation": "자원",
+        "context": "게임 내 수집 아이템 (예: Search for resources)"
+      },
+      {
+        "translation": "리소스",
+        "context": "게임 에셋 (텍스처, 사운드 등) (예: Preparing Resources)"
+      }
+    ]
+  },
+  {
+    "original": "Survival",
+    "meanings": [
+      {
+        "translation": "서바이벌",
+        "context": "게임 모드 (예: Survival Mode)"
+      }
+    ]
+  },
+  {
+    "original": "Creative",
+    "meanings": [
+      {
+        "translation": "크리에이티브",
+        "context": "게임 모드 (예: Creative)"
+      }
+    ]
+  },
+  {
+    "original": "Spectator",
+    "meanings": [
+      {
+        "translation": "관전",
+        "context": "게임 모드 (예: Spectator)"
+      }
+    ]
+  },
+  {
+    "original": "Game Rules",
+    "meanings": [
+      {
+        "translation": "게임 규칙",
+        "context": "게임 내 규칙 및 설정 (예: Game Rules)"
+      }
+    ]
+  },
+  {
+    "original": "Cheats",
+    "meanings": [
+      {
+        "translation": "치트",
+        "context": "명령어 사용 허용 여부 (예: Cheats)"
+      }
+    ]
+  },
+  {
+    "original": "Commands",
+    "meanings": [
+      {
+        "translation": "명령어",
+        "context": "텍스트 기반 명령어 (예: Commands)"
+      }
+    ]
+  },
+  {
+    "original": "Data Packs",
+    "meanings": [
+      {
+        "translation": "데이터 팩",
+        "context": "게임 데이터 수정 팩 (예: Data Packs)"
+      }
+    ]
+  },
+  {
+    "original": "Experimental",
+    "meanings": [
+      {
+        "translation": "실험적",
+        "context": "개발 중인 기능 (예: Experimental Features)"
+      }
+    ]
+  },
+  {
+    "original": "Features",
+    "meanings": [
+      {
+        "translation": "기능",
+        "context": "게임의 기능 (예: Experimental Features)"
+      }
+    ]
+  },
+  {
+    "original": "Craft",
+    "meanings": [
+      {
+        "translation": "제작",
+        "context": "아이템 제작 (예: craft, gain levels)"
+      }
+    ]
+  },
+  {
+    "original": "Level",
+    "meanings": [
+      {
+        "translation": "레벨",
+        "context": "경험치 레벨 (예: gain levels)"
+      }
+    ]
+  },
+  {
+    "original": "Health",
+    "meanings": [
+      {
+        "translation": "생명력",
+        "context": "플레이어 생명 수치 (예: health and hunger)"
+      }
+    ]
+  },
+  {
+    "original": "Hunger",
+    "meanings": [
+      {
+        "translation": "배고픔",
+        "context": "플레이어 배고픔 수치 (예: health and hunger)"
+      }
+    ]
+  },
+  {
+    "original": "Slot",
+    "meanings": [
+      {
+        "translation": "슬롯",
+        "context": "인벤토리, UI 등의 공간 (예: Unknown slot)"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "아이템/블록을 지칭하는 일반 명사"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "아이템을 지칭하는 일반 명사"
+      }
+    ]
+  },
+  {
+    "original": "Creature",
+    "meanings": [
+      {
+        "translation": "생명체",
+        "context": "엔티티(개체)의 종류를 나타냄"
+      }
+    ]
+  },
+  {
+    "original": "Damage",
+    "meanings": [
+      {
+        "translation": "피해",
+        "context": "게임 내 통계 수치"
+      },
+      {
+        "translation": "입힌 피해",
+        "context": "가한 피해량 통계"
+      },
+      {
+        "translation": "받은 피해",
+        "context": "받은 피해량 통계"
+      }
+    ]
+  },
+  {
+    "original": "Craft",
+    "meanings": [
+      {
+        "translation": "제작",
+        "context": "아이템 제작 행위 또는 통계"
+      }
+    ]
+  },
+  {
+    "original": "Mine",
+    "meanings": [
+      {
+        "translation": "채굴",
+        "context": "블록 파괴 행위 또는 통계"
+      }
+    ]
+  },
+  {
+    "original": "Use",
+    "meanings": [
+      {
+        "translation": "사용",
+        "context": "아이템/블록 사용 행위 또는 통계"
+      }
+    ]
+  },
+  {
+    "original": "Clean",
+    "meanings": [
+      {
+        "translation": "탈색",
+        "context": "갑옷, 현수막 등의 색을 제거하는 행위"
+      }
+    ]
+  },
+  {
+    "original": "Teleport",
+    "meanings": [
+      {
+        "translation": "순간이동",
+        "context": "순간적으로 위치를 옮기는 능력/명령어"
+      }
+    ]
+  },
+  {
+    "original": "Times",
+    "meanings": [
+      {
+        "translation": "횟수",
+        "context": "통계 수치 뒤에 붙는 단위"
+      }
+    ]
+  },
+  {
+    "original": "Distance",
+    "meanings": [
+      {
+        "translation": "거리",
+        "context": "이동 관련 통계"
+      }
+    ]
+  },
+  {
+    "original": "Crafting Table",
+    "meanings": [
+      {
+        "translation": "제작대",
+        "context": "블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Furnace",
+    "meanings": [
+      {
+        "translation": "화로",
+        "context": "블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Blast Furnace",
+    "meanings": [
+      {
+        "translation": "용광로",
+        "context": "블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Smoker",
+    "meanings": [
+      {
+        "translation": "훈연기",
+        "context": "블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Chest",
+    "meanings": [
+      {
+        "translation": "상자",
+        "context": "블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Ender Chest",
+    "meanings": [
+      {
+        "translation": "엔더 상자",
+        "context": "블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Anvil",
+    "meanings": [
+      {
+        "translation": "모루",
+        "context": "블록 이름"
+      }
+    ]
+  },
+  {
+    "original": "Shield",
+    "meanings": [
+      {
+        "translation": "방패",
+        "context": "아이템 이름"
+      }
+    ]
+  },
+  {
+    "original": "Structure",
+    "meanings": [
+      {
+        "translation": "구조물",
+        "context": "Game mechanic or generated building"
+      }
+    ]
+  },
+  {
+    "original": "Entities",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "General term for all non-player creatures"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "The basic building unit of the game world"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "An object held and used by the player"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "The user-controlled character"
+      }
+    ]
+  },
+  {
+    "original": "Villager",
+    "meanings": [
+      {
+        "translation": "주민",
+        "context": "A non-player character in villages"
+      }
+    ]
+  },
+  {
+    "original": "Raid",
+    "meanings": [
+      {
+        "translation": "습격",
+        "context": "A game event where mobs attack a village"
+      }
+    ]
+  },
+  {
+    "original": "Chest",
+    "meanings": [
+      {
+        "translation": "상자",
+        "context": "A block used for storing items"
+      }
+    ]
+  },
+  {
+    "original": "Anvil",
+    "meanings": [
+      {
+        "translation": "모루",
+        "context": "A block for repairing or enchanting items"
+      }
+    ]
+  },
+  {
+    "original": "Beacon",
+    "meanings": [
+      {
+        "translation": "신호기",
+        "context": "A block that projects a beam and provides status effects"
+      }
+    ]
+  },
+  {
+    "original": "Barrel",
+    "meanings": [
+      {
+        "translation": "통",
+        "context": "A block for storing items, similar to a chest"
+      }
+    ]
+  },
+  {
+    "original": "Blast Furnace",
+    "meanings": [
+      {
+        "translation": "용광로",
+        "context": "A faster furnace for smelting ores"
+      }
+    ]
+  },
+  {
+    "original": "Brewing Stand",
+    "meanings": [
+      {
+        "translation": "양조기",
+        "context": "A block used to create potions"
+      }
+    ]
+  },
+  {
+    "original": "Campfire",
+    "meanings": [
+      {
+        "translation": "모닥불",
+        "context": "A block that provides light and can cook food"
+      }
+    ]
+  },
+  {
+    "original": "Cauldron",
+    "meanings": [
+      {
+        "translation": "가마솥",
+        "context": "A block that can hold water, lava, or potions"
+      }
+    ]
+  },
+  {
+    "original": "Note Block",
+    "meanings": [
+      {
+        "translation": "소리 블록",
+        "context": "A block that produces sound when hit"
+      }
+    ]
+  },
+  {
+    "original": "Load",
+    "meanings": [
+      {
+        "translation": "불러오기",
+        "context": "UI action to load from a file or memory"
+      }
+    ]
+  },
+  {
+    "original": "Save",
+    "meanings": [
+      {
+        "translation": "저장",
+        "context": "UI action to save to a file or memory"
+      }
+    ]
+  },
+  {
+    "original": "Data",
+    "meanings": [
+      {
+        "translation": "데이터",
+        "context": "Information or game logic values"
+      }
+    ]
+  },
+  {
+    "original": "Mode",
+    "meanings": [
+      {
+        "translation": "모드",
+        "context": "A setting or a state of operation (e.g., Save Mode)"
+      }
+    ]
+  },
+  {
+    "original": "Position",
+    "meanings": [
+      {
+        "translation": "위치",
+        "context": "A location in the game world"
+      }
+    ]
+  },
+  {
+    "original": "Size",
+    "meanings": [
+      {
+        "translation": "크기",
+        "context": "The dimensions of an object or structure"
+      }
+    ]
+  },
+  {
+    "original": "Name",
+    "meanings": [
+      {
+        "translation": "이름",
+        "context": "A label for an item, structure, or entity"
+      }
+    ]
+  },
+  {
+    "original": "Seed",
+    "meanings": [
+      {
+        "translation": "시드",
+        "context": "A value used to generate a unique world"
+      }
+    ]
+  },
+  {
+    "original": "Open",
+    "meanings": [
+      {
+        "translation": "열림",
+        "context": "Chest/Trapdoor opens"
+      },
+      {
+        "translation": "눈을 뜸",
+        "context": "Eyeblossom opens"
+      }
+    ]
+  },
+  {
+    "original": "Close",
+    "meanings": [
+      {
+        "translation": "닫힘",
+        "context": "Trapdoor closes"
+      },
+      {
+        "translation": "눈을 감음",
+        "context": "Eyeblossom closes"
+      }
+    ]
+  },
+  {
+    "original": "Click",
+    "meanings": [
+      {
+        "translation": "딸깍함",
+        "context": "Lever/Pressure Plate clicks"
+      },
+      {
+        "translation": "반응함",
+        "context": "Sculk Sensor clicks"
+      }
+    ]
+  },
+  {
+    "original": "Crackle",
+    "meanings": [
+      {
+        "translation": "타오름",
+        "context": "Fire crackles"
+      },
+      {
+        "translation": "안이 타오름",
+        "context": "Furnace crackles"
+      }
+    ]
+  },
+  {
+    "original": "Activate",
+    "meanings": [
+      {
+        "translation": "작동함",
+        "context": "Conduit activates"
+      },
+      {
+        "translation": "작동함",
+        "context": "Trial Spawner charges up"
+      }
+    ]
+  },
+  {
+    "original": "Deactivate",
+    "meanings": [
+      {
+        "translation": "작동을 멈춤",
+        "context": "Conduit deactivates"
+      }
+    ]
+  },
+  {
+    "original": "Turn on",
+    "meanings": [
+      {
+        "translation": "켜짐",
+        "context": "Copper Bulb turns on"
+      }
+    ]
+  },
+  {
+    "original": "Turn off",
+    "meanings": [
+      {
+        "translation": "꺼짐",
+        "context": "Copper Bulb turns off"
+      }
+    ]
+  },
+  {
+    "original": "Craft",
+    "meanings": [
+      {
+        "translation": "제작함",
+        "context": "Crafter crafts"
+      }
+    ]
+  },
+  {
+    "original": "Dispense",
+    "meanings": [
+      {
+        "translation": "발사됨",
+        "context": "Dispensed item"
+      }
+    ]
+  },
+  {
+    "original": "Hatch",
+    "meanings": [
+      {
+        "translation": "부화함",
+        "context": "Sniffer Egg hatches"
+      }
+    ]
+  },
+  {
+    "original": "Place",
+    "meanings": [
+      {
+        "translation": "놓임",
+        "context": "Block placed"
+      }
+    ]
+  },
+  {
+    "original": "Break",
+    "meanings": [
+      {
+        "translation": "부서짐",
+        "context": "Block broken"
+      }
+    ]
+  },
+  {
+    "original": "Use",
+    "meanings": [
+      {
+        "translation": "사용함",
+        "context": "Enchanting Table used"
+      }
+    ]
+  },
+  {
+    "original": "Drip",
+    "meanings": [
+      {
+        "translation": "떨어짐",
+        "context": "Lava/Water drips"
+      }
+    ]
+  },
+  {
+    "original": "Fail",
+    "meanings": [
+      {
+        "translation": "실패함",
+        "context": "Crafter fails"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "Item"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Block"
+      }
+    ]
+  },
+  {
+    "original": "Portal",
+    "meanings": [
+      {
+        "translation": "차원문",
+        "context": "Portal"
+      }
+    ]
+  },
+  {
+    "original": "Spawner",
+    "meanings": [
+      {
+        "translation": "생성기",
+        "context": "Spawner"
+      }
+    ]
+  },
+  {
+    "original": "Vault",
+    "meanings": [
+      {
+        "translation": "금고",
+        "context": "Entity name"
+      }
+    ]
+  },
+  {
+    "original": "Book",
+    "meanings": [
+      {
+        "translation": "책",
+        "context": "Item name"
+      },
+      {
+        "translation": "마법이 부여된 책",
+        "context": "Enchanted Book"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "General term for objects"
+      }
+    ]
+  },
+  {
+    "original": "Arrow",
+    "meanings": [
+      {
+        "translation": "화살",
+        "context": "Projectile item"
+      }
+    ]
+  },
+  {
+    "original": "Scute",
+    "meanings": [
+      {
+        "translation": "인갑",
+        "context": "Item dropped by Armadillo"
+      }
+    ]
+  },
+  {
+    "original": "Wind Charge",
+    "meanings": [
+      {
+        "translation": "돌풍구",
+        "context": "Projectile item"
+      }
+    ]
+  },
+  {
+    "original": "Saddle",
+    "meanings": [
+      {
+        "translation": "안장",
+        "context": "Item for riding mobs"
+      }
+    ]
+  },
+  {
+    "original": "dies",
+    "meanings": [
+      {
+        "translation": "죽음",
+        "context": "Entity death"
+      }
+    ]
+  },
+  {
+    "original": "hurts",
+    "meanings": [
+      {
+        "translation": "상처를 입음",
+        "context": "Entity taking damage"
+      }
+    ]
+  },
+  {
+    "original": "eats",
+    "meanings": [
+      {
+        "translation": "먹음",
+        "context": "Entity eating"
+      }
+    ]
+  },
+  {
+    "original": "placed",
+    "meanings": [
+      {
+        "translation": "꽂음",
+        "context": "Book placed"
+      }
+    ]
+  },
+  {
+    "original": "taken",
+    "meanings": [
+      {
+        "translation": "빼냄",
+        "context": "Book taken"
+      }
+    ]
+  },
+  {
+    "original": "hits",
+    "meanings": [
+      {
+        "translation": "명중함",
+        "context": "Arrow hits"
+      }
+    ]
+  },
+  {
+    "original": "shoots",
+    "meanings": [
+      {
+        "translation": "화염구를 쏨",
+        "context": "Blaze shoots"
+      },
+      {
+        "translation": "돌풍구를 쏨",
+        "context": "Breeze shoots"
+      }
+    ]
+  },
+  {
+    "original": "lands",
+    "meanings": [
+      {
+        "translation": "착지함",
+        "context": "Entity lands"
+      }
+    ]
+  },
+  {
+    "original": "Entity Action",
+    "meanings": [
+      {
+        "translation": "죽음",
+        "context": "dies"
+      },
+      {
+        "translation": "상처를 입음",
+        "context": "hurts"
+      },
+      {
+        "translation": "공격함",
+        "context": "attacks"
+      },
+      {
+        "translation": "먹음",
+        "context": "eats"
+      },
+      {
+        "translation": "뜀",
+        "context": "jumps"
+      },
+      {
+        "translation": "헤엄침",
+        "context": "swims"
+      },
+      {
+        "translation": "순간이동함",
+        "context": "teleports"
+      }
+    ]
+  },
+  {
+    "original": "Entity Name",
+    "meanings": [
+      {
+        "translation": "소",
+        "context": "Cow"
+      },
+      {
+        "translation": "크리퍼",
+        "context": "Creeper"
+      },
+      {
+        "translation": "돌고래",
+        "context": "Dolphin"
+      },
+      {
+        "translation": "당나귀",
+        "context": "Donkey"
+      },
+      {
+        "translation": "드라운드",
+        "context": "Drowned"
+      },
+      {
+        "translation": "엘더 가디언",
+        "context": "Elder Guardian"
+      },
+      {
+        "translation": "드래곤",
+        "context": "Dragon"
+      },
+      {
+        "translation": "엔더맨",
+        "context": "Enderman"
+      },
+      {
+        "translation": "엔더마이트",
+        "context": "Endermite"
+      },
+      {
+        "translation": "소환사",
+        "context": "Evoker"
+      },
+      {
+        "translation": "여우",
+        "context": "Fox"
+      },
+      {
+        "translation": "개구리",
+        "context": "Frog"
+      }
+    ]
+  },
+  {
+    "original": "flaps",
+    "meanings": [
+      {
+        "translation": "펄럭거림",
+        "context": "Dragon flaps"
+      },
+      {
+        "translation": "퍼덕거림",
+        "context": "Elder Guardian flaps"
+      }
+    ]
+  },
+  {
+    "original": "jumps",
+    "meanings": [
+      {
+        "translation": "튀어 오름",
+        "context": "Dolphin jumps"
+      },
+      {
+        "translation": "뜀",
+        "context": "Donkey jumps"
+      }
+    ]
+  },
+  {
+    "original": "shoots",
+    "meanings": [
+      {
+        "translation": "화염구를 쏨",
+        "context": "Dragon shoots"
+      },
+      {
+        "translation": "던짐",
+        "context": "Eye of Ender shoots"
+      }
+    ]
+  },
+  {
+    "original": "splashes",
+    "meanings": [
+      {
+        "translation": "첨벙거리는 소리",
+        "context": "Sound event"
+      },
+      {
+        "translation": "첨벙거림",
+        "context": "Dolphin splashes"
+      }
+    ]
+  },
+  {
+    "original": "prepares",
+    "meanings": [
+      {
+        "translation": "공격을 준비함",
+        "context": "Evoker prepares attack"
+      },
+      {
+        "translation": "소환을 준비함",
+        "context": "Evoker prepares summoning"
+      },
+      {
+        "translation": "마법을 준비함",
+        "context": "Evoker prepares charming"
+      }
+    ]
+  },
+  {
+    "original": "Eye of Ender",
+    "meanings": [
+      {
+        "translation": "엔더의 눈",
+        "context": "falls"
+      },
+      {
+        "translation": "엔더의 눈",
+        "context": "shoots"
+      }
+    ]
+  },
+  {
+    "original": "Ender Pearl",
+    "meanings": [
+      {
+        "translation": "엔더 진주",
+        "context": "flies"
+      }
+    ]
+  },
+  {
+    "original": "Bobber",
+    "meanings": [
+      {
+        "translation": "낚시찌",
+        "context": "retrieved"
+      },
+      {
+        "translation": "낚시찌",
+        "context": "thrown"
+      }
+    ]
+  },
+  {
+    "original": "Firework",
+    "meanings": [
+      {
+        "translation": "폭발함",
+        "context": "blasts"
+      },
+      {
+        "translation": "발사됨",
+        "context": "launches"
+      },
+      {
+        "translation": "반짝임",
+        "context": "twinkles"
+      }
+    ]
+  },
+  {
+    "original": "Item Frame",
+    "meanings": [
+      {
+        "translation": "아이템 액자",
+        "context": "UI 요소, 아이템을 전시하는 블록 (예: Item Frame placed)"
+      }
+    ]
+  },
+  {
+    "original": "Glow Item Frame",
+    "meanings": [
+      {
+        "translation": "발광 아이템 액자",
+        "context": "UI 요소, 빛나는 아이템 액자 (예: Glow Item Frame placed)"
+      }
+    ]
+  },
+  {
+    "original": "Iron Golem",
+    "meanings": [
+      {
+        "translation": "철 골렘",
+        "context": "엔티티, 플레이어를 보호하는 몹 (예: Iron Golem attacks)"
+      }
+    ]
+  },
+  {
+    "original": "Hoglin",
+    "meanings": [
+      {
+        "translation": "호글린",
+        "context": "엔티티, 네더에 서식하는 적대적인 몹 (예: Hoglin attacks)"
+      }
+    ]
+  },
+  {
+    "original": "Horse",
+    "meanings": [
+      {
+        "translation": "말",
+        "context": "엔티티, 길들일 수 있는 동물 (예: Horse gallops)"
+      }
+    ]
+  },
+  {
+    "original": "Horse armor",
+    "meanings": [
+      {
+        "translation": "말 갑옷",
+        "context": "아이템명, 말에게 입히는 갑옷 (예: Horse armor equips)"
+      }
+    ]
+  },
+  {
+    "original": "Minecart",
+    "meanings": [
+      {
+        "translation": "광산 수레",
+        "context": "아이템명, 레일 위를 달리는 운송 수단 (예: Minecart rolls)"
+      }
+    ]
+  },
+  {
+    "original": "Leash Knot",
+    "meanings": [
+      {
+        "translation": "끈 매듭",
+        "context": "아이템명, 몹을 묶는 데 사용 (예: Leash Knot tied)"
+      }
+    ]
+  },
+  {
+    "original": "hurts",
+    "meanings": [
+      {
+        "translation": "상처를 입음",
+        "context": "엔티티 행동, 몹이 피해를 입음 (예: Ghast hurts)"
+      }
+    ]
+  },
+  {
+    "original": "dies",
+    "meanings": [
+      {
+        "translation": "죽음",
+        "context": "엔티티 행동, 몹이 죽음 (예: Goat dies)"
+      }
+    ]
+  },
+  {
+    "original": "eats",
+    "meanings": [
+      {
+        "translation": "먹음",
+        "context": "엔티티 행동, 몹이 먹음 (예: Llama eats)"
+      }
+    ]
+  },
+  {
+    "original": "breaks",
+    "meanings": [
+      {
+        "translation": "부서짐",
+        "context": "블록/아이템 파괴 (예: Iron Golem breaks)"
+      },
+      {
+        "translation": "부러짐",
+        "context": "일부 아이템 파괴 (예: Goat Horn breaks off)"
+      }
+    ]
+  },
+  {
+    "original": "Attack",
+    "meanings": [
+      {
+        "translation": "공격",
+        "context": "Critical attack"
+      },
+      {
+        "translation": "공격",
+        "context": "Knockback attack"
+      },
+      {
+        "translation": "공격",
+        "context": "Strong attack"
+      },
+      {
+        "translation": "공격",
+        "context": "Sweeping attack"
+      },
+      {
+        "translation": "공격",
+        "context": "Weak attack"
+      }
+    ]
+  },
+  {
+    "original": "Player",
+    "meanings": [
+      {
+        "translation": "플레이어",
+        "context": "Player dies"
+      },
+      {
+        "translation": "플레이어",
+        "context": "Player freezes"
+      },
+      {
+        "translation": "플레이어",
+        "context": "Player hurts"
+      },
+      {
+        "translation": "플레이어",
+        "context": "Player drowning"
+      },
+      {
+        "translation": "플레이어",
+        "context": "Player burns"
+      }
+    ]
+  },
+  {
+    "original": "Piglin",
+    "meanings": [
+      {
+        "translation": "피글린",
+        "context": "admires item"
+      },
+      {
+        "translation": "피글린",
+        "context": "celebrates"
+      },
+      {
+        "translation": "피글린",
+        "context": "retreats"
+      },
+      {
+        "translation": "피글린",
+        "context": "converts to Zombified"
+      }
+    ]
+  },
+  {
+    "original": "Piglin Brute",
+    "meanings": [
+      {
+        "translation": "난폭한 피글린",
+        "context": "snorts angrily"
+      },
+      {
+        "translation": "난폭한 피글린",
+        "context": "converts to Zombified"
+      }
+    ]
+  },
+  {
+    "original": "hurts",
+    "meanings": [
+      {
+        "translation": "상처를 입음",
+        "context": "Entity hurts"
+      }
+    ]
+  },
+  {
+    "original": "dies",
+    "meanings": [
+      {
+        "translation": "죽음",
+        "context": "Entity dies"
+      }
+    ]
+  },
+  {
+    "original": "eats",
+    "meanings": [
+      {
+        "translation": "먹음",
+        "context": "Entity eats"
+      }
+    ]
+  },
+  {
+    "original": "Bottle",
+    "meanings": [
+      {
+        "translation": "병",
+        "context": "Bottle smashes"
+      },
+      {
+        "translation": "병",
+        "context": "Bottle thrown"
+      }
+    ]
+  },
+  {
+    "original": "Pufferfish",
+    "meanings": [
+      {
+        "translation": "복어",
+        "context": "Pufferfish deflates"
+      },
+      {
+        "translation": "복어",
+        "context": "Pufferfish inflates"
+      }
+    ]
+  },
+  {
+    "original": "Painting",
+    "meanings": [
+      {
+        "translation": "그림",
+        "context": "Painting broken"
+      },
+      {
+        "translation": "그림",
+        "context": "Painting placed"
+      }
+    ]
+  },
+  {
+    "original": "bites",
+    "meanings": [
+      {
+        "translation": "물어뜯음",
+        "context": "Ravager bites"
+      }
+    ]
+  },
+  {
+    "original": "breaks",
+    "meanings": [
+      {
+        "translation": "부서짐",
+        "context": "Shulker Bullet breaks"
+      },
+      {
+        "translation": "깨짐",
+        "context": "Turtle Egg breaks"
+      }
+    ]
+  },
+  {
+    "original": "chirps",
+    "meanings": [
+      {
+        "translation": "소리를 냄",
+        "context": "Strider chirps"
+      },
+      {
+        "translation": "욺",
+        "context": "Turtle chirps"
+      }
+    ]
+  },
+  {
+    "original": "dies",
+    "meanings": [
+      {
+        "translation": "죽음",
+        "context": "[Entity] dies"
+      }
+    ]
+  },
+  {
+    "original": "digs",
+    "meanings": [
+      {
+        "translation": "땅을 파헤침",
+        "context": "Sniffer digs"
+      }
+    ]
+  },
+  {
+    "original": "eats",
+    "meanings": [
+      {
+        "translation": "먹음",
+        "context": "[Entity] eats"
+      }
+    ]
+  },
+  {
+    "original": "fizzes",
+    "meanings": [
+      {
+        "translation": "점화됨",
+        "context": "TNT fizzes"
+      }
+    ]
+  },
+  {
+    "original": "flops",
+    "meanings": [
+      {
+        "translation": "퍼덕거림",
+        "context": "[Fish/Tadpole] flops"
+      }
+    ]
+  },
+  {
+    "original": "grows up",
+    "meanings": [
+      {
+        "translation": "자라남",
+        "context": "Tadpole grows up"
+      }
+    ]
+  },
+  {
+    "original": "hurts",
+    "meanings": [
+      {
+        "translation": "상처를 입음",
+        "context": "[Entity] hurts"
+      }
+    ]
+  },
+  {
+    "original": "lays egg",
+    "meanings": [
+      {
+        "translation": "알을 낳음",
+        "context": "Turtle lays egg"
+      }
+    ]
+  },
+  {
+    "original": "Ravager",
+    "meanings": [
+      {
+        "translation": "파괴수",
+        "context": "Ravager"
+      }
+    ]
+  },
+  {
+    "original": "shoots",
+    "meanings": [
+      {
+        "translation": "탄환을 쏨",
+        "context": "Shulker shoots"
+      },
+      {
+        "translation": "화살을 쏨",
+        "context": "Skeleton shoots"
+      },
+      {
+        "translation": "먹물을 뿜음",
+        "context": "Squid shoots ink"
+      }
+    ]
+  },
+  {
+    "original": "Shulker",
+    "meanings": [
+      {
+        "translation": "셜커",
+        "context": "Shulker"
+      }
+    ]
+  },
+  {
+    "original": "Shulker Bullet",
+    "meanings": [
+      {
+        "translation": "셜커 탄환",
+        "context": "Shulker Bullet"
+      }
+    ]
+  },
+  {
+    "original": "Sniffer",
+    "meanings": [
+      {
+        "translation": "스니퍼",
+        "context": "Sniffer"
+      }
+    ]
+  },
+  {
+    "original": "Stray",
+    "meanings": [
+      {
+        "translation": "스트레이",
+        "context": "Stray"
+      }
+    ]
+  },
+  {
+    "original": "Strider",
+    "meanings": [
+      {
+        "translation": "스트라이더",
+        "context": "Strider"
+      }
+    ]
+  },
+  {
+    "original": "swims",
+    "meanings": [
+      {
+        "translation": "헤엄침",
+        "context": "[Entity] swims"
+      }
+    ]
+  },
+  {
+    "original": "Turtle Egg",
+    "meanings": [
+      {
+        "translation": "거북알",
+        "context": "Turtle Egg"
+      }
+    ]
+  },
+  {
+    "original": "Villager",
+    "meanings": [
+      {
+        "translation": "주민",
+        "context": "마인크래프트 NPC"
+      }
+    ]
+  },
+  {
+    "original": "Wandering Trader",
+    "meanings": [
+      {
+        "translation": "떠돌이 상인",
+        "context": "마인크래프트 NPC"
+      }
+    ]
+  },
+  {
+    "original": "Warden",
+    "meanings": [
+      {
+        "translation": "워든",
+        "context": "마인크래프트 적대적 엔티티"
+      }
+    ]
+  },
+  {
+    "original": "works",
+    "meanings": [
+      {
+        "translation": "일함",
+        "context": "주민 직업별 행동 (예: Armorer works)"
+      }
+    ]
+  },
+  {
+    "original": "trades",
+    "meanings": [
+      {
+        "translation": "교환함",
+        "context": "주민과 아이템 교환"
+      },
+      {
+        "translation": "거래함",
+        "context": "떠돌이 상인과 아이템 거래"
+      }
+    ]
+  },
+  {
+    "original": "agrees",
+    "meanings": [
+      {
+        "translation": "승낙함",
+        "context": "주민이 거래에 동의"
+      }
+    ]
+  },
+  {
+    "original": "disagrees",
+    "meanings": [
+      {
+        "translation": "거절함",
+        "context": "주민이 거래에 거절"
+      }
+    ]
+  },
+  {
+    "original": "hurts",
+    "meanings": [
+      {
+        "translation": "상처를 입음",
+        "context": "엔티티가 피해를 입을 때"
+      }
+    ]
+  },
+  {
+    "original": "dies",
+    "meanings": [
+      {
+        "translation": "죽음",
+        "context": "엔티티가 죽을 때"
+      }
+    ]
+  },
+  {
+    "original": "drinks",
+    "meanings": [
+      {
+        "translation": "물약을 마심",
+        "context": "마녀가 물약을 마실 때"
+      },
+      {
+        "translation": "우유를 마심",
+        "context": "떠돌이 상인이 우유를 마실 때"
+      }
+    ]
+  },
+  {
+    "original": "takes notice",
+    "meanings": [
+      {
+        "translation": "경계함",
+        "context": "워든이 플레이어를 감지"
+      }
+    ]
+  },
+  {
+    "original": "attacks",
+    "meanings": [
+      {
+        "translation": "공격함",
+        "context": "엔티티가 공격할 때"
+      }
+    ]
+  },
+  {
+    "original": "whines",
+    "meanings": [
+      {
+        "translation": "욺",
+        "context": "워든이 내는 소리"
+      },
+      {
+        "translation": "낑낑거림",
+        "context": "늑대가 내는 소리"
+      }
+    ]
+  },
+  {
+    "original": "growls",
+    "meanings": [
+      {
+        "translation": "으르렁거림",
+        "context": "늑대가 내는 소리"
+      },
+      {
+        "translation": "욺",
+        "context": "조글린이 내는 소리"
+      }
+    ]
+  },
+  {
+    "original": "steps",
+    "meanings": [
+      {
+        "translation": "걸음",
+        "context": "엔티티의 발소리"
+      }
+    ]
+  },
+  {
+    "original": "Bottle",
+    "meanings": [
+      {
+        "translation": "유리병",
+        "context": "Bottle fills (유리병을 채움)"
+      },
+      {
+        "translation": "병",
+        "context": "Bottle empties (병을 비움)"
+      }
+    ]
+  },
+  {
+    "original": "Axe",
+    "meanings": [
+      {
+        "translation": "도끼",
+        "context": "Axe scrapes (도끼로 긁어냄)"
+      }
+    ]
+  },
+  {
+    "original": "strips",
+    "meanings": [
+      {
+        "translation": "긁어냄",
+        "context": "Axe strips (도끼로 긁어냄)"
+      }
+    ]
+  },
+  {
+    "original": "scrapes",
+    "meanings": [
+      {
+        "translation": "긁어냄",
+        "context": "Axe scrapes (도끼로 긁어냄)"
+      }
+    ]
+  },
+  {
+    "original": "Wax on",
+    "meanings": [
+      {
+        "translation": "밀랍칠함",
+        "context": "Wax on (밀랍칠함)"
+      }
+    ]
+  },
+  {
+    "original": "Wax off",
+    "meanings": [
+      {
+        "translation": "밀랍칠을 벗김",
+        "context": "Wax off (밀랍칠을 벗김)"
+      }
+    ]
+  },
+  {
+    "original": "Brushing",
+    "meanings": [
+      {
+        "translation": "솔질",
+        "context": "Brushing Gravel (자갈 솔질)"
+      }
+    ]
+  },
+  {
+    "original": "Bucket",
+    "meanings": [
+      {
+        "translation": "양동이",
+        "context": "Bucket empties (양동이를 비움)"
+      }
+    ]
+  },
+  {
+    "original": "fills",
+    "meanings": [
+      {
+        "translation": "채움",
+        "context": "Bucket fills (양동이를 채움)"
+      }
+    ]
+  },
+  {
+    "original": "empties",
+    "meanings": [
+      {
+        "translation": "비움",
+        "context": "Bucket empties (양동이를 비움)"
+      }
+    ]
+  },
+  {
+    "original": "Crossbow",
+    "meanings": [
+      {
+        "translation": "쇠뇌",
+        "context": "Crossbow fires (쇠뇌를 쏨)"
+      }
+    ]
+  },
+  {
+    "original": "Trident",
+    "meanings": [
+      {
+        "translation": "삼지창",
+        "context": "Trident stabs (삼지창이 박힘)"
+      }
+    ]
+  },
+  {
+    "original": "Shield",
+    "meanings": [
+      {
+        "translation": "방패",
+        "context": "Shield blocks (방패로 막음)"
+      }
+    ]
+  },
+  {
+    "original": "Shovel",
+    "meanings": [
+      {
+        "translation": "삽",
+        "context": "Shovel flattens (삽으로 땅을 다짐)"
+      }
+    ]
+  },
+  {
+    "original": "Hoe",
+    "meanings": [
+      {
+        "translation": "괭이",
+        "context": "Hoe tills (괭이로 땅을 갊)"
+      }
+    ]
+  },
+  {
+    "original": "Shears",
+    "meanings": [
+      {
+        "translation": "가위",
+        "context": "Shears click (가위가 찰칵함)"
+      }
+    ]
+  },
+  {
+    "original": "Spyglass",
+    "meanings": [
+      {
+        "translation": "망원경",
+        "context": "Spyglass expands (망원경을 확장함)"
+      }
+    ]
+  },
+  {
+    "original": "Wolf Armor",
+    "meanings": [
+      {
+        "translation": "늑대 갑옷",
+        "context": "Wolf Armor is fastened (늑대 갑옷을 입힘)"
+      }
+    ]
+  },
+  {
+    "original": "Omen",
+    "meanings": [
+      {
+        "translation": "징조",
+        "context": "Omen takes hold (징조가 나타남)"
+      }
+    ]
+  },
+  {
+    "original": "Raid",
+    "meanings": [
+      {
+        "translation": "습격",
+        "context": "Raid looms nearby (습격이 근처에 나타남)"
+      }
+    ]
+  },
+  {
+    "original": "team",
+    "meanings": [
+      {
+        "translation": "팀",
+        "context": "Push other teams (다른 팀만 밀기)"
+      }
+    ]
+  },
+  {
+    "original": "symbolic links",
+    "meanings": [
+      {
+        "translation": "심볼릭 링크",
+        "context": "World folder contains symbolic links"
+      }
+    ]
+  },
+  {
+    "original": "Advancement",
+    "meanings": [
+      {
+        "translation": "발전 과제",
+        "context": "게임 내 도전 과제"
+      }
+    ]
+  },
+  {
+    "original": "Block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "게임의 기본 구성 단위"
+      }
+    ]
+  },
+  {
+    "original": "Client",
+    "meanings": [
+      {
+        "translation": "클라이언트",
+        "context": "사용자 측 게임 환경"
+      }
+    ]
+  },
+  {
+    "original": "Container",
+    "meanings": [
+      {
+        "translation": "보관함",
+        "context": "아이템을 담는 공간 (상자, 인벤토리 등)"
+      }
+    ]
+  },
+  {
+    "original": "Entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "움직이는 모든 객체 (몹, 플레이어 등)"
+      }
+    ]
+  },
+  {
+    "original": "Fail",
+    "meanings": [
+      {
+        "translation": "실패",
+        "context": "테스트/조건 불충족"
+      }
+    ]
+  },
+  {
+    "original": "Item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "인벤토리에 보관 가능한 객체"
+      }
+    ]
+  },
+  {
+    "original": "Load",
+    "meanings": [
+      {
+        "translation": "불러오기",
+        "context": "(동사) 게임/월드 로딩"
+      },
+      {
+        "translation": "로드",
+        "context": "(명사) 불러온 상태/시간"
+      }
+    ]
+  },
+  {
+    "original": "Log",
+    "meanings": [
+      {
+        "translation": "기록",
+        "context": "메시지/데이터 출력"
+      }
+    ]
+  },
+  {
+    "original": "Mode",
+    "meanings": [
+      {
+        "translation": "모드",
+        "context": "동작 방식 또는 상태"
+      }
+    ]
+  },
+  {
+    "original": "Modded",
+    "meanings": [
+      {
+        "translation": "모드 여부",
+        "context": "모드 설치 상태"
+      }
+    ]
+  },
+  {
+    "original": "Property",
+    "meanings": [
+      {
+        "translation": "속성",
+        "context": "블록/개체의 특성"
+      }
+    ]
+  },
+  {
+    "original": "Reset",
+    "meanings": [
+      {
+        "translation": "초기화",
+        "context": "상태를 처음으로 되돌림"
+      }
+    ]
+  },
+  {
+    "original": "Run",
+    "meanings": [
+      {
+        "translation": "실행",
+        "context": "테스트/기능 시작"
+      }
+    ]
+  },
+  {
+    "original": "Save",
+    "meanings": [
+      {
+        "translation": "저장",
+        "context": "데이터/상태 보존"
+      }
+    ]
+  },
+  {
+    "original": "Server",
+    "meanings": [
+      {
+        "translation": "서버",
+        "context": "멀티플레이어 게임 환경"
+      }
+    ]
+  },
+  {
+    "original": "Structure",
+    "meanings": [
+      {
+        "translation": "구조물",
+        "context": "블록으로 이루어진 건축물"
+      }
+    ]
+  },
+  {
+    "original": "Tick",
+    "meanings": [
+      {
+        "translation": "틱",
+        "context": "게임 내 시간 단위"
+      }
+    ]
+  },
+  {
+    "original": "World",
+    "meanings": [
+      {
+        "translation": "세계",
+        "context": "게임 플레이 공간"
+      }
+    ]
+  },
+  {
+    "original": "block entity",
+    "meanings": [
+      {
+        "translation": "블록 개체",
+        "context": "Missing block entity"
+      }
+    ]
+  },
+  {
+    "original": "block",
+    "meanings": [
+      {
+        "translation": "블록",
+        "context": "Did not expect block to be %s"
+      }
+    ]
+  },
+  {
+    "original": "item",
+    "meanings": [
+      {
+        "translation": "아이템",
+        "context": "Did not expect item of type %s"
+      }
+    ]
+  },
+  {
+    "original": "entity",
+    "meanings": [
+      {
+        "translation": "개체",
+        "context": "Failed to create entity %s"
+      }
+    ]
+  },
+  {
+    "original": "Material",
+    "meanings": [
+      {
+        "translation": "소재",
+        "context": "Amethyst Material"
+      }
+    ]
+  },
+  {
+    "original": "recipe book",
+    "meanings": [
+      {
+        "translation": "제작법 책",
+        "context": "The recipe book can help"
+      }
+    ]
+  },
+  {
+    "original": "inventory",
+    "meanings": [
+      {
+        "translation": "보관함",
+        "context": "Open your inventory"
+      }
+    ]
+  },
+  {
+    "original": "Multiplayer",
+    "meanings": [
+      {
+        "translation": "멀티플레이",
+        "context": "Multiplayer (LAN)"
+      }
+    ]
+  },
+  {
+    "original": "tick",
+    "meanings": [
+      {
+        "translation": "틱",
+        "context": "on tick %s"
+      }
+    ]
+  },
+  {
+    "original": "structure",
+    "meanings": [
+      {
+        "translation": "구조물",
+        "context": "Failed to place test structure"
+      }
+    ]
+  },
+  {
+    "original": "biome",
+    "meanings": [
+      {
+        "translation": "생물 군계",
+        "context": "Failed to set biome for test"
+      }
+    ]
+  },
+  {
+    "original": "Craft",
+    "meanings": [
+      {
+        "translation": "제작하세요",
+        "context": "Craft wooden planks"
+      }
+    ]
+  },
+  {
+    "original": "collect",
+    "meanings": [
+      {
+        "translation": "수집하세요",
+        "context": "Punch it to collect wood"
+      }
+    ]
+  },
+  {
+    "original": "Open",
+    "meanings": [
+      {
+        "translation": "열",
+        "context": "Press %s to open"
+      }
+    ]
+  },
+  {
+    "original": "Right Click",
+    "meanings": [
+      {
+        "translation": "우클릭",
+        "context": "Right Click to add items"
+      }
+    ]
+  }
+]
