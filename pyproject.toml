@@ -5,7 +5,7 @@ description = "모드팩 자동 번역 애플리케이션"
 readme = "README.md"
 requires-python = ">=3.12"
 authors = [
-    { name = "Auto Translate Developer", email = "dev@example.com" }
+    { name = "2odk", email = "git@2odk.com" }
 ]
 dependencies = [
     "flet>=0.28.3",
@@ -27,15 +27,6 @@ dependencies = [
     "langchain-ollama>=0.3.3",
     "vertexai>=1.71.1",
 ]
-
-[tool.flet]
-org = "com.autotranslate"
-product = "AutoTranslate"
-company = "Auto Translate"
-copyright = "Copyright (C) 2025 by Auto Translate"
-
-[tool.flet.app]
-path = "src"
 
 [project.scripts]
 auto-translate = "main:main"
