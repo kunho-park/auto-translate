@@ -35,7 +35,7 @@ call .venv\Scripts\activate.bat
 
 :: Run the program
 echo [3/3] Running the program...
-python run_flet_gui.py
+uv run python run_flet_gui.py
 
 :: Deactivate virtual environment
 echo [4/4] Deactivating virtual environment...

@@ -8,7 +8,7 @@ authors = [
     { name = "2odk", email = "git@2odk.com" }
 ]
 dependencies = [
-    "flet>=0.28.3",
+    "flet[all]>=0.28.3",
     "aiohttp>=3.9.0",
     "qasync>=0.26.0",
     "langchain>=0.1.0",
