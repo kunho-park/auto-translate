@@ -19,3 +19,6 @@ output/
 
 old/
 .pytest_cache/
+
+# Node.js
+node_modules/
