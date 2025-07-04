@@ -6,16 +6,16 @@ import flet as ft
 
 
 def create_modpack_card(modpack_info, on_click):
-    """Create a modpack card as a simple function"""
+    """모드팩 정보를 표시하는 카드 생성"""
     name_text = modpack_info.get("name", "N/A")
     author_text = f"by {modpack_info.get('author', 'N/A')}"
     version_text = modpack_info.get("version", "")
 
-    # Image container - try to load thumbnail or show default icon
+    # 이미지 컨테이너 - 썸네일을 로드하거나 기본 아이콘을 표시
     thumbnail_url = modpack_info.get("thumbnail_url", "")
     if thumbnail_url and thumbnail_url.startswith("http"):
         try:
-            # Try to use network image
+            # 네트워크 이미지 사용 시도
             image_content = ft.Image(
                 src=thumbnail_url,
                 width=180,
@@ -24,13 +24,13 @@ def create_modpack_card(modpack_info, on_click):
                 border_radius=8,
             )
         except:
-            # Fallback to default icon
+            # 실패 시 기본 아이콘으로 대체
             image_content = ft.Icon(
                 ft.Icons.EXTENSION,
                 size=60,
             )
     else:
-        # Default icon
+        # 기본 아이콘
         image_content = ft.Icon(
             ft.Icons.EXTENSION,
             size=60,
@@ -50,7 +50,7 @@ def create_modpack_card(modpack_info, on_click):
                 content=ft.Column(
                     [
                         image_container,
-                        ft.Container(height=8),  # Spacing
+                        ft.Container(height=8),  # 간격
                         # 모드팩 이름 - 길이 제한으로 넘침 방지
                         ft.Container(
                             content=ft.Text(

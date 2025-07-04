@@ -20,10 +20,10 @@ class ModpackBrowser:
         self.page = page
         self.modpacks = []
         self.selected_modpack = None
-        self.current_view = "main"  # "main" or "detail"
-        self.current_language = "ko"  # Default language
+        self.current_view = "main"  # "main" 또는 "detail"
+        self.current_language = "ko"  # 기본 언어
 
-        # UI components
+        # UI 컴포넌트들
         self.modpack_grid = None
         self.theme_button = None
         self.language_dropdown = None
@@ -35,15 +35,15 @@ class ModpackBrowser:
         # 번역 페이지 콜백
         self.on_translation_start = None
 
-        # Setup page
+        # 페이지 설정
         self.setup_page()
         self.build_main_ui()
 
-        # Load modpacks after page is ready
+        # 페이지가 준비된 후 모드팩 로드
         self.page.on_resize = self.on_page_resize
 
     def setup_page(self):
-        """Configure page settings"""
+        """페이지 설정 구성"""
         set_language(self.current_language)
 
         self.page.title = get_message("gui.app_title")
@@ -54,8 +54,8 @@ class ModpackBrowser:
         self.page.scroll = ft.ScrollMode.AUTO
 
     def build_main_ui(self):
-        """Build the main UI (modpack browser)"""
-        # Language dropdown
+        """메인 UI (모드팩 브라우저) 구성"""
+        # 언어 드롭다운
         self.language_dropdown = ft.Dropdown(
             label=get_message("gui.button.language"),
             options=[
@@ -67,14 +67,14 @@ class ModpackBrowser:
             width=150,
         )
 
-        # Theme toggle button
+        # 테마 토글 버튼
         self.theme_button = ft.IconButton(
             icon=ft.Icons.LIGHT_MODE,
             tooltip=get_message("gui.button.theme_toggle"),
             on_click=self.toggle_theme,
         )
 
-        # Search field
+        # 검색 필드
         self.search_field = ft.TextField(
             hint_text=get_message("gui.search_hint"),
             prefix_icon=ft.Icons.SEARCH,
@@ -82,17 +82,17 @@ class ModpackBrowser:
             width=300,
         )
 
-        # Modpack grid view
+        # 모드팩 그리드 뷰
         self.modpack_grid = ft.GridView(
             expand=True,
-            runs_count=0,  # Auto-fit based on width
-            max_extent=220,  # Increased width for better layout
-            child_aspect_ratio=0.65,  # Height/Width ratio adjusted for new card height
+            runs_count=0,  # 너비에 따라 자동 맞춤
+            max_extent=220,  # 더 나은 레이아웃을 위해 너비 증가
+            child_aspect_ratio=0.65,  # 새 카드 높이에 맞게 높이/너비 비율 조정
             spacing=20,
             run_spacing=20,
         )
 
-        # Main layout - full width now
+        # 메인 레이아웃 - 이제 전체 너비 사용
         self.main_content = ft.Column(
             [
                 ft.Row(
@@ -102,11 +102,11 @@ class ModpackBrowser:
                             size=32,
                             weight=ft.FontWeight.BOLD,
                         ),
-                        ft.Container(expand=True),  # Spacer
+                        ft.Container(expand=True),  # 스페이서
                         self.search_field,
-                        ft.Container(width=15),  # Spacing
+                        ft.Container(width=15),  # 간격
                         self.language_dropdown,
-                        ft.Container(width=15),  # Spacing
+                        ft.Container(width=15),  # 간격
                         self.theme_button,
                     ]
                 ),
@@ -130,11 +130,11 @@ class ModpackBrowser:
         )
 
     async def on_page_resize(self, e):
-        """Handle page resize events"""
+        """페이지 크기 조정 이벤트 처리"""
         pass
 
     async def load_modpacks(self):
-        """Load modpacks asynchronously by running the blocking part in an executor."""
+        """실행기에서 블로킹 부분을 실행하여 모드팩을 비동기적으로 로드합니다."""
         success, message = await self.page.loop.run_in_executor(
             None, self._load_modpacks_blocking
         )
@@ -144,7 +144,7 @@ class ModpackBrowser:
             await self.show_error_async(message)
 
     def _load_modpacks_blocking(self):
-        """Load modpacks synchronously (blocking). This should only perform I/O and data processing."""
+        """모드팩을 동기적으로 로드 (블로킹). I/O 및 데이터 처리만 수행해야 합니다."""
         curseforge_path = os.path.join(
             os.path.expanduser("~"), "curseforge", "minecraft", "Instances"
         )
@@ -169,7 +169,7 @@ class ModpackBrowser:
                 self.modpacks.append(modpack_info)
                 modpacks_loaded += 1
 
-        # Set filtered modpacks to all modpacks initially
+        # 초기에 필터링된 모드팩을 모든 모드팩으로 설정
         self.filtered_modpacks = self.modpacks.copy()
 
         logger.info(f"Finished scanning. Loaded {modpacks_loaded} modpacks.")
@@ -183,7 +183,7 @@ class ModpackBrowser:
         return True, ""
 
     async def toggle_theme(self, e):
-        """Toggle between light and dark theme"""
+        """밝은 테마와 어두운 테마 간 전환"""
         if self.page.theme_mode == ft.ThemeMode.DARK:
             self.page.theme_mode = ft.ThemeMode.LIGHT
             self.theme_button.icon = ft.Icons.DARK_MODE
@@ -193,10 +193,10 @@ class ModpackBrowser:
         self.page.update()
 
     async def on_search_change(self, e):
-        """Handle search input change"""
+        """검색 입력 변경 처리"""
         search_term = e.control.value.lower()
 
-        # Filter modpacks based on search term
+        # 검색어에 따라 모드팩 필터링
         if search_term:
             self.filtered_modpacks = [
                 modpack
@@ -207,11 +207,11 @@ class ModpackBrowser:
         else:
             self.filtered_modpacks = self.modpacks.copy()
 
-        # Update grid
+        # 그리드 업데이트
         await self.update_modpack_grid()
 
     async def update_modpack_grid(self):
-        """Update the modpack grid with filtered results"""
+        """필터링된 결과로 모드팩 그리드 업데이트"""
         self.modpack_grid.controls.clear()
 
         for modpack_info in self.filtered_modpacks:
@@ -221,16 +221,16 @@ class ModpackBrowser:
         self.page.update()
 
     async def on_language_change(self, e):
-        """Handle language change"""
+        """언어 변경 처리"""
         new_language = e.control.value
         if new_language != self.current_language:
             self.current_language = new_language
             set_language(new_language)
 
-            # Update page title
+            # 페이지 제목 업데이트
             self.page.title = get_message("gui.app_title")
 
-            # Rebuild UI based on current view
+            # 현재 뷰에 따라 UI 다시 빌드
             if self.current_view == "main":
                 self.page.clean()
                 self.build_main_ui()
@@ -242,10 +242,10 @@ class ModpackBrowser:
             self.page.update()
 
     def parse_modpack_data(self, instance_dir):
-        """Parse modpack data from manifest.json and minecraftinstance.json"""
+        """manifest.json 및 minecraftinstance.json에서 모드팩 데이터 파싱"""
         modpack_info = {}
 
-        # Try manifest.json first (contains reliable modpack info)
+        # 먼저 manifest.json 시도 (신뢰할 수 있는 모드팩 정보 포함)
         manifest_path = os.path.join(instance_dir, "manifest.json")
         if os.path.exists(manifest_path):
             try:

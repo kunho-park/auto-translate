@@ -1,4 +1,0 @@
-{
-    "bcc.gui.tooltip.compatible_server": "§3서버: %s\n§2클라이언트 (당신): %s",
-    "bcc.gui.tooltip.incompatible_server": "§6서버와 동일한 버전의 모드팩을 실행하고 있지 않습니다 :( \n\n§4서버: %s\n§4클라이언트 (당신): %s"
-}

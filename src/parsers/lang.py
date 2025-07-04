@@ -9,9 +9,9 @@ from .base import BaseParser
 
 
 class LangParser(BaseParser):
-    """Parse Minecraft 1.12- style *.lang* files (key=value per line).
+    """마인크래프트 1.12 스타일의 *.lang* 파일을 파싱합니다 (한 줄에 key=value 형식).
 
-    Handles JSON escape sequences for special characters properly.
+    특수 문자에 대한 JSON 이스케이프 시퀀스를 올바르게 처리합니다.
     """
 
     file_extensions = (".lang",)
@@ -46,7 +46,7 @@ class LangParser(BaseParser):
         return mapping
 
     async def dump(self, data: Mapping[str, str]) -> None:
-        """Write mapping back to *.lang* format, sorted by key with proper escaping."""
+        """매핑을 키로 정렬하고 적절한 이스케이프 처리를 하여 *.lang* 형식으로 다시 씁니다."""
         lines = []
         for key, value in sorted(data.items()):
             # JSON 이스케이프 처리를 통해 특수 문자 처리

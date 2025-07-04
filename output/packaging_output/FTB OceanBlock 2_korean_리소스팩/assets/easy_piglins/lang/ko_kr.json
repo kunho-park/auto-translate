@@ -1,7 +1,0 @@
-{
-    "block.easy_piglins.barterer": "물물교환",
-    "itemGroup.easy_piglins": "쉬운 피글린",
-    "gui.easy_piglins.input_items": "아이템 입력",
-    "gui.easy_piglins.output_items": "아이템 출력",
-    "message.easy_piglins.cant_pick_up": "공격적이거나 바쁜 피글린은 줍을 수 없습니다."
-}

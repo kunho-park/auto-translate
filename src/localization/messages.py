@@ -1,8 +1,9 @@
-"""Application-wide message catalogue for localization.
+"""
+애플리케이션 전체의 지역화를 위한 메시지 카탈로그입니다.
 
-All user-facing strings (logs, GUI labels, etc.) are defined here with
-stable keys so that they can be translated or substituted at runtime.
-Use `get_message(key, **kwargs)` to retrieve formatted text.
+모든 사용자 대상 문자열(로그, GUI 레이블 등)은
+런타임에 번역하거나 대체할 수 있도록 안정적인 키로 여기에 정의됩니다.
+형식화된 텍스트를 검색하려면 `get_message(key, **kwargs)`를 사용하세요.
 """
 
 from __future__ import annotations
@@ -10,7 +11,7 @@ from __future__ import annotations
 from typing import Any, Dict
 
 # ---------------------------------------------------------------------------
-# 1. Message catalogues per language
+# 1. 언어별 메시지 카탈로그
 # ---------------------------------------------------------------------------
 
 _CATALOGS: Dict[str, Dict[str, str]] = {
@@ -124,9 +125,9 @@ Text to analyze:
         "gui.language.english": "English",
         "gui.language.korean": "한국어",
     },
-    # Korean catalog
+    # 한국어 카탈로그
     "ko": {
-        # Token optimizer warnings
+        # 토큰 최적화기 경고
         "translator.oversized_warning": "⚠️  단일 텍스트가 {tokens} 토큰으로 제한({limit})을 초과했습니다.",
         "translator.oversized_preview": "   미리보기: {preview}…",
         "translator.oversized_as_is": "   텍스트를 그대로 전송합니다. LLM이 처리할 수 있는지 확인하세요.",
@@ -237,39 +238,32 @@ Text to analyze:
     },
 }
 
-# Currently selected language (defaults to English).
+# 현재 선택된 언어 (기본값: 영어).
 _LANG: str = "en"
 
 
 # ---------------------------------------------------------------------------
-# 2. API helpers
+# 2. API 헬퍼
 # ---------------------------------------------------------------------------
 
 
 def set_language(lang: str) -> None:  # noqa: D401
-    """Set global language for localization (e.g., "en", "ko")."""
+    """지역화를 위한 전역 언어를 설정합니다 (예: "en", "ko")."""
     global _LANG
     if lang in _CATALOGS:
         _LANG = lang
     else:
-        raise ValueError(f"Unsupported language: {lang}")
+        _LANG = "en"
 
 
 def get_message(key: str, *args: Any, **kwargs: Any) -> str:  # noqa: D401
-    """Return localized *key* formatted with *kwargs*.
-
-    Resolution order:
-    1. Current language catalogue
-    2. English fallback
-    3. The key itself
-    """
-    # 1. current language
-    template = _CATALOGS.get(_LANG, {}).get(key)
-    # 2. English fallback
-    if template is None:
-        template = _CATALOGS["en"].get(key, key)
-
+    """지정된 키에 대한 지역화된 메시지를 반환합니다."""
+    # args는 이전 버전과의 호환성을 위해 유지됩니다.
+    # 하지만 kwargs를 사용하는 것이 좋습니다.
+    catalog = _CATALOGS.get(_LANG, _CATALOGS["en"])
+    template = catalog.get(key, f"<{key}>")
     try:
         return template.format(*args, **kwargs)
-    except Exception:  # pragma: no cover – safeguard
+    except (KeyError, IndexError):
+        # 포맷팅 실패 시 템플릿을 그대로 반환
         return template

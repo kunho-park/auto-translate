@@ -6,11 +6,16 @@ dist/
 wheels/
 *.egg-info
 
+# Output
+output/
+
+
+# Environment
+.env
+.environments/
+
 # Virtual environments
 .venv
 
 old/
-.environments/
-.env
-output/
 .pytest_cache/

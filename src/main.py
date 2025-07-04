@@ -10,13 +10,13 @@ import sys
 
 import flet as ft
 
-# Add project root to path
+# 프로젝트 루트를 Python 경로에 추가
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 from src.gui import ModpackBrowser, TranslationPage
 
-# Setup logging
+# 로깅 설정
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -28,7 +28,7 @@ class MainApp:
 
     def __init__(self, page: ft.Page):
         self.page = page
-        self.current_view = "browser"  # "browser" or "translation"
+        self.current_view = "browser"
 
         # GUI 컴포넌트들
         self.browser = ModpackBrowser(page)
@@ -71,6 +71,6 @@ async def main(page: ft.Page):
     await app.browser.load_modpacks()
 
 
-# Flet 권장사항에 따른 앱 실행
+# Flet 권장사항에 따라 앱 실행
 if __name__ == "__main__":
     ft.app(target=main, assets_dir="assets")

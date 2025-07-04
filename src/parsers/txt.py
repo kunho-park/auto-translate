@@ -8,10 +8,9 @@ from .base import BaseParser
 
 
 class TextParser(BaseParser):
-    """Parse .txt files by splitting into chunks to handle large files efficiently.
+    """효율적인 대용량 파일 처리를 위해 .txt 파일을 청크 단위로 나누어 파싱합니다.
 
-    Splits content into chunks of maximum 2000 characters per line breaks
-    to make translation more manageable.
+    번역을 더 쉽게 관리할 수 있도록 내용을 줄바꿈 기준으로 최대 2000자 청크로 분할합니다.
     """
 
     file_extensions = (".txt",)
@@ -49,7 +48,7 @@ class TextParser(BaseParser):
         return result
 
     async def dump(self, data: Mapping[str, str]) -> None:
-        """Write chunks back to .txt format in proper order."""
+        """청크들을 올바른 순서로 .txt 형식으로 다시 씁니다."""
         # chunk_0, chunk_1 같은 키를 순서대로 정렬
         sorted_keys = sorted(
             data.keys(),

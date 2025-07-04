@@ -4,7 +4,7 @@ import json
 def create_vanilla_glossary_prompt(
     batch_data: dict, target_language: str, is_retry: bool = False
 ) -> str:
-    """Generate the prompt for building a vanilla Minecraft glossary batch."""
+    """바닐라 마인크래프트 용어집 배치를 만들기 위한 프롬프트를 생성합니다."""
     retry_instruction = ""
     if is_retry:
         retry_instruction = """

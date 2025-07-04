@@ -1,9 +1,0 @@
-{
-    "block.blockrunner.speedMultiplier": "속도 배율: %s",
-    "tag.block.blockrunner.quick_blocks": "빠른 블록",
-    "tag.block.blockrunner.slightly_quick_blocks": "약간 빠른 블록",
-    "tag.block.blockrunner.slightly_slow_blocks": "약간 느린 블록",
-    "tag.block.blockrunner.slow_blocks": "느린 블록",
-    "tag.block.blockrunner.very_quick_blocks": "매우 빠른 블록",
-    "tag.block.blockrunner.very_slow_blocks": "매우 느린 블록"
-}

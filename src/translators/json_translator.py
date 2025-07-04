@@ -1,16 +1,14 @@
-"""JSON Translator module migrated from translator.py for importable usage.
+"""가져와서 사용할 수 있도록 translator.py에서 마이그레이션된 JSON 번역기 모듈입니다.
 
-This module provides the `JSONTranslator` class and supporting utilities
-for translating arbitrary JSON structures using Google Gemini via
-LangGraph.  The original standalone script has been refactored into this
-module so it can be imported as
+이 모듈은 LangGraph를 통해 Google Gemini를 사용하여 임의의 JSON 구조를
+번역하기 위한 `JSONTranslator` 클래스와 지원 유틸리티를 제공합니다.
+기존의 독립 실행형 스크립트는 이 모듈로 리팩터링되어 다음과 같이 가져올 수 있습니다.
 
     from translators import JSONTranslator
 
-The interactive example and CLI logic that existed at the bottom of the
-original file have been removed to keep the module self-contained.  A
-convenience `run_example()` coroutine is provided instead if you would
-like to experiment programmatically.
+원본 파일 하단에 있던 대화형 예제 및 CLI 로직은 모듈을 독립적으로
+유지하기 위해 제거되었습니다. 대신 프로그래밍 방식으로 실험하고 싶다면
+편의를 위해 `run_example()` 코루틴이 제공됩니다.
 """
 
 from __future__ import annotations

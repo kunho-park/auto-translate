@@ -1,9 +1,9 @@
 """
-LLM Prompt Templates (XML-structured)
-These functions return fully formatted prompts for translation workflows.
+LLM 프롬프트 템플릿 (XML 구조)
+이 함수들은 번역 워크플로우를 위한 완전한 형식의 프롬프트를 반환합니다.
 """
 
-# XML-structured prompt templates
+# XML 구조의 프롬프트 템플릿
 TRANSLATION_PROMPT_TEMPLATE = """<instructions>
 당신은 전문 번역가입니다. 주어진 텍스트를 {language}로 번역해주세요.
 번역이 완료된 각 항목에 대해 'TranslatedItem' 도구를 호출하여 결과를 기록해주세요.
@@ -229,7 +229,7 @@ FINAL_FALLBACK_PROMPT_TEMPLATE = """<instructions>
 
 
 def translation_prompt(language: str, glossary: str, chunk: str) -> str:
-    """Return a formatted translation prompt."""
+    """형식화된 번역 프롬프트를 반환합니다."""
     return TRANSLATION_PROMPT_TEMPLATE.format(
         language=language,
         glossary=glossary,
@@ -238,7 +238,7 @@ def translation_prompt(language: str, glossary: str, chunk: str) -> str:
 
 
 def retry_translation_prompt(language: str, glossary: str, chunk: str) -> str:
-    """Return a formatted retry translation prompt."""
+    """형식화된 재시도 번역 프롬프트를 반환합니다."""
     return RETRY_TRANSLATION_PROMPT_TEMPLATE.format(
         language=language,
         glossary=glossary,
@@ -247,27 +247,23 @@ def retry_translation_prompt(language: str, glossary: str, chunk: str) -> str:
 
 
 def contextual_terms_prompt(language: str, chunk: str, glossary: str) -> str:
-    """Return a formatted contextual terms extraction prompt."""
+    """형식화된 문맥 기반 용어 추출 프롬프트를 반환합니다."""
     return CONTEXTUAL_TERMS_PROMPT_TEMPLATE.format(
-        language=language,
-        chunk=chunk,
-        glossary=glossary,
+        language=language, chunk=chunk, glossary=glossary
     )
 
 
 def retry_contextual_terms_prompt(language: str, chunk: str, glossary: str) -> str:
-    """Return a formatted retry contextual terms extraction prompt."""
+    """형식화된 문맥 기반 용어 추출 재시도 프롬프트를 반환합니다."""
     return RETRY_CONTEXTUAL_TERMS_PROMPT_TEMPLATE.format(
-        language=language,
-        chunk=chunk,
-        glossary=glossary,
+        language=language, chunk=chunk, glossary=glossary
     )
 
 
 def final_fallback_prompt(
     language: str, text_id: str, original_text: str, placeholders: str
 ) -> str:
-    """Return a formatted final fallback translation prompt."""
+    """형식화된 최종 재시도 프롬프트를 반환합니다."""
     return FINAL_FALLBACK_PROMPT_TEMPLATE.format(
         language=language,
         text_id=text_id,
