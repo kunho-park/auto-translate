@@ -1,0 +1,19 @@
+{
+    "block.cloudglass.black_cloud_glass": "검은색 구름 유리",
+    "block.cloudglass.blue_cloud_glass": "파란색 구름 유리",
+    "block.cloudglass.brown_cloud_glass": "갈색 구름 유리",
+    "block.cloudglass.cyan_cloud_glass": "청록색 구름 유리",
+    "block.cloudglass.gray_cloud_glass": "회색 구름 유리",
+    "block.cloudglass.green_cloud_glass": "초록색 구름 유리",
+    "block.cloudglass.light_blue_cloud_glass": "하늘색 구름 유리",
+    "block.cloudglass.light_gray_cloud_glass": "회백색 구름 유리",
+    "block.cloudglass.lime_cloud_glass": "연두색 구름 유리",
+    "block.cloudglass.magenta_cloud_glass": "자홍색 구름 유리",
+    "block.cloudglass.orange_cloud_glass": "주황색 구름 유리",
+    "block.cloudglass.pink_cloud_glass": "분홍색 구름 유리",
+    "block.cloudglass.purple_cloud_glass": "보라색 구름 유리",
+    "block.cloudglass.red_cloud_glass": "빨간색 구름 유리",
+    "block.cloudglass.white_cloud_glass": "하얀색 구름 유리",
+    "block.cloudglass.yellow_cloud_glass": "노란색 구름 유리",
+    "itemGroup.cloudglass.tab": "구름 유리"
+}

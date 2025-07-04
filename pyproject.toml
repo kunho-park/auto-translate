@@ -1,0 +1,47 @@
+[project]
+name = "auto-translate"
+version = "0.1.0"
+description = "모드팩 자동 번역 애플리케이션"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "Auto Translate Developer", email = "dev@example.com" }
+]
+dependencies = [
+    "flet>=0.28.3",
+    "aiohttp>=3.9.0",
+    "qasync>=0.26.0",
+    "langchain>=0.1.0",
+    "openai>=1.9.0",
+    "langchain-openai>=0.0.6",
+    "google-generativeai>=0.4.0",
+    "langchain-community>=0.3.26",
+    "langchain-google-genai>=0.0.5",
+    "python-dotenv>=1.0.1",
+    "grpcio>=1.73.1",
+    "langgraph>=0.5.0",
+    "ftb-snbt-lib>=0.4.0",
+    "aiofiles>=24.1.0",
+    "ollama>=0.5.1",
+    "langchain-anthropic>=0.3.16",
+    "langchain-ollama>=0.3.3",
+    "vertexai>=1.71.1",
+]
+
+[tool.flet]
+org = "com.autotranslate"
+product = "AutoTranslate"
+company = "Auto Translate"
+copyright = "Copyright (C) 2025 by Auto Translate"
+
+[tool.flet.app]
+path = "src"
+
+[project.scripts]
+auto-translate = "main:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[dependency-groups]
+dev = ["pytest>=8.4.1", "pytest-asyncio>=1.0.0"]

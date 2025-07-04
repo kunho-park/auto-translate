@@ -1,0 +1,20 @@
+{
+    "ccl.commands.count.fail": "개체 수를 찾을 수 없습니다.",
+    "ccl.commands.count.total": "%s개의 개체 수를 찾았습니다.",
+    "ccl.commands.gc.after": "이후:",
+    "ccl.commands.gc.before": "이전:",
+    "ccl.commands.gc.performing": "GC 수행 중..",
+    "ccl.commands.killall.fail": "개체 수를 찾을 수 없습니다.",
+    "ccl.commands.killall.fail.player": "이 명령으로 플레이어를 죽일 수 없습니다.",
+    "ccl.commands.killall.success": "%s개의 개체 수를 사살했습니다.",
+    "ccl.commands.killall.success.line": "%s 사살됨",
+    "ccl.energy_bar.capacity": "용량:",
+    "ccl.energy_bar.energy_storage": "에너지 저장소",
+    "ccl.energy_bar.rf": "RF",
+    "ccl.energy_bar.stored": "저장됨:",
+    "ccl.fluid_tank.capacity": "용량:",
+    "ccl.fluid_tank.contains": "포함:",
+    "ccl.fluid_tank.fluid_storage": "액체 저장소",
+    "ccl.fluid_tank.mb": "mB",
+    "ccl.fluid_tank.stored": "저장됨:"
+}

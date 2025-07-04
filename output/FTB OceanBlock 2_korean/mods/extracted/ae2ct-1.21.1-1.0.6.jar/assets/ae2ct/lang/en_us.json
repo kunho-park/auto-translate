@@ -1,0 +1,19 @@
+{
+    "gui.ae2ct.CraftingTreeTitle": "제작 트리",
+    "gui.ae2ct.ShowTree": "제작 트리 보기",
+    "gui.ae2ct.OutputAmount": "제작: %s",
+    "gui.ae2ct.InputAmount": "필요: %s",
+    "gui.ae2ct.MiddenAmount": "사용: %s",
+    "gui.ae2ct.Info": "정보:",
+    "gui.ae2ct.CraftingAmount": "제작: %s",
+    "gui.ae2ct.MissingAmount": "누락됨: %s",
+    "gui.ae2ct.StoredAmount": "저장됨: %s",
+    "gui.ae2ct.Screenshot": "스크린샷",
+    "gui.ae2ct.CraftingTreeSettingTitle": "설정",
+    "gui.ae2ct.Setting": "설정",
+    "gui.ae2ct.UseCompactTreeCheckbox": "간단한 제작 트리 사용 (베타)",
+    "gui.ae2ct.ScreenShotShowCountCheckbox": "스크린샷 표시 개수",
+    "ae2ct.screenshot.noready": "스크린샷 아직 준비되지 않았습니다. 나중에 다시 시도하십시오",
+    "ae2ct.screenshot.exception": "스크린샷 실패, 이유: %s",
+    "ae2ct.openscreen.plannull": "제작 확인 계산이 완료되기를 기다리는 중"
+}

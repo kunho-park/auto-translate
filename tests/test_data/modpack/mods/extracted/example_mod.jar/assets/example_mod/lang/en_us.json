@@ -1,0 +1,19 @@
+{
+    "item.example_mod.magic_sword": "Magic Sword",
+    "item.example_mod.healing_potion": "Healing Potion",
+    "item.example_mod.fire_crystal": "Fire Crystal",
+    "block.example_mod.magic_altar": "Magic Altar",
+    "block.example_mod.enchanted_stone": "Enchanted Stone",
+    "gui.example_mod.magic_crafting": "Magic Crafting",
+    "gui.example_mod.inventory": "Inventory",
+    "tooltip.example_mod.magic_sword": "A powerful sword imbued with magic",
+    "tooltip.example_mod.healing_potion": "Restores health when consumed",
+    "tooltip.example_mod.fire_crystal": "Contains the essence of fire",
+    "advancement.example_mod.first_magic": "First Magic",
+    "advancement.example_mod.first_magic.desc": "Craft your first magic item",
+    "category.example_mod.magic_items": "Magic Items",
+    "entity.example_mod.magic_guardian": "Magic Guardian",
+    "spell.example_mod.fireball": "Fireball",
+    "spell.example_mod.heal": "Heal",
+    "effect.example_mod.magic_shield": "Magic Shield"
+}

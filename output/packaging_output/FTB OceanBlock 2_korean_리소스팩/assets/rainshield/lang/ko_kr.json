@@ -1,0 +1,4 @@
+{
+    "block.rainshield.rain_shield": "비 방패",
+    "rainshield.networking.sync_shields.failed": "비 방패 데이터 동기화에 실패했습니다: %s"
+}

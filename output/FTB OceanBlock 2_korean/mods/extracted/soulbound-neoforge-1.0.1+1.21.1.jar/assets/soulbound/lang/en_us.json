@@ -1,0 +1,8 @@
+{
+    "enchantment.soulbound.soulbound": "영혼 결속",
+    "enchantment.soulbound.soulbound.desc": "이 아이템은 죽을 때 자동으로 유지되고 무작위로 손상됩니다.",
+    "soulbound.configuration.allowBreakItem": "아이템 파괴 허용",
+    "soulbound.configuration.maxDamagePercent": "최대 데미지 백분율",
+    "soulbound.configuration.section.soulbound.common.toml.title": "영혼 결속",
+    "soulbound.configuration.title": "영혼 결속"
+}

@@ -1,0 +1,13 @@
+{
+    "akashictome.sudo_name": "어카쉭 톰 (%s)",
+    "akashictome.click_morph": "Shift-우클릭하여 변경",
+    "item.akashictome.tome": "어카쉭 톰",
+    "akashictome.misc.shift_for_info": "§7 §bSHIFT§7를 길게 눌러 자세한 정보 보기",
+    "akashictome.configuration.Allow all items to be added": "모든 아이템 추가 허용",
+    "akashictome.configuration.Whitelisted Items": "화이트리스트 아이템",
+    "akashictome.configuration.Blacklisted Mods": "블랙리스트 모드",
+    "akashictome.configuration.Mod Aliases": "모드 별칭",
+    "akashictome.configuration.Hide Book Render": "책 렌더링 숨기기",
+    "akashictome.configuration.Whitelisted Names": "화이트리스트 이름",
+    "akashictome.configuration.Blacklisted Items": "블랙리스트 아이템"
+}

@@ -1,0 +1,7 @@
+{
+    "block.craftingstation.crafting_station": "제작소",
+    "block.craftingstation.crafting_station_slab": "제작소 반 블록",
+    "title.crafting_station": "제작소",
+    "text.crafting_station.error": "잘못된 레시피 %s을(를) 찾았습니다. 자세한 내용은 로그를 참조하세요.",
+    "text.crafting_station.clear": "조합 그리드 초기화"
+}

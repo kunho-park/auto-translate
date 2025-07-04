@@ -1,0 +1,14 @@
+{
+    "item.mob_bottle.tooltip": "포함: %s",
+    "item.mob_bottle.tooltip_empty": "유리병을 들고 수축된 개체를 우클릭하여 포획하세요",
+    "item.mob_bottle.tooltip_with_name": "포함: %s (%s)",
+    "item.shrink.shrink_bottle": "유리병",
+    "item.shrink.shrinking_device": "개인 수축 장치",
+    "itemGroup.shrink": "수축",
+    "key.shrink.category": "수축",
+    "key.shrink.shrink": "수축 전환",
+    "shrink.deny_shrink": "거부 태그로 인해 개체 수축이 차단됨",
+    "shrink.message.already_shrunk": "이미 수축된 상태에서는 열 수 없습니다",
+    "shrink.message.missing": "수축 특성 누락",
+    "shrink.message.power": "전력 부족"
+}

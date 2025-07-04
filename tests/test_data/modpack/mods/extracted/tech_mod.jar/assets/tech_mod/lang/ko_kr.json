@@ -1,0 +1,16 @@
+{
+    "item.tech_mod.copper_wire": "구리선",
+    "item.tech_mod.steel_plate": "강철판",
+    "item.tech_mod.circuit_board": "회로 기판",
+    "block.tech_mod.generator": "발전기",
+    "block.tech_mod.machine_frame": "기계 프레임",
+    "block.tech_mod.solar_panel": "태양광 패널",
+    "gui.tech_mod.energy_storage": "에너지 저장소",
+    "gui.tech_mod.machine_config": "기계 설정",
+    "tooltip.tech_mod.generator": "연료로 전력을 생성합니다",
+    "tooltip.tech_mod.solar_panel": "태양광으로 전력을 생성합니다",
+    "energy.tech_mod.unit": "FE",
+    "recipe.tech_mod.smelting": "제련 레시피",
+    "advancement.tech_mod.first_power": "첫 번째 전력",
+    "advancement.tech_mod.first_power.desc": "첫 번째 에너지를 생성하세요"
+}

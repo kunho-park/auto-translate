@@ -1,0 +1,19 @@
+{
+    "item.example_mod.magic_sword": "마법 검",
+    "item.example_mod.healing_potion": "치유 물약",
+    "item.example_mod.fire_crystal": "화염 수정",
+    "block.example_mod.magic_altar": "마법 제단",
+    "block.example_mod.enchanted_stone": "마법부여된 돌",
+    "gui.example_mod.magic_crafting": "마법 제작",
+    "gui.example_mod.inventory": "인벤토리",
+    "tooltip.example_mod.magic_sword": "마법이 깃든 강력한 검",
+    "tooltip.example_mod.healing_potion": "섭취 시 체력을 회복시킵니다",
+    "tooltip.example_mod.fire_crystal": "화염의 정수가 담겨있습니다",
+    "advancement.example_mod.first_magic": "첫 번째 마법",
+    "advancement.example_mod.first_magic.desc": "첫 번째 마법 아이템을 제작하세요",
+    "category.example_mod.magic_items": "마법 아이템",
+    "entity.example_mod.magic_guardian": "마법 수호자",
+    "spell.example_mod.fireball": "파이어볼",
+    "spell.example_mod.heal": "치유",
+    "effect.example_mod.magic_shield": "마법 방패"
+}

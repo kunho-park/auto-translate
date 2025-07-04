@@ -1,0 +1,10 @@
+{
+    "block.weathergate.snow_catcher": "눈 포획기",
+    "block.weathergate.sun_in_a_box": "상자 속의 태양",
+    "block.weathergate.terrain_controller": "Teriann 컨트롤러",
+    "block.weathergate.terrain_controller.no_data": "데이터를 찾을 수 없습니다! 블록을 교체하고 다시 시도하십시오!",
+    "weathergate.sun_in_a_box.tooltip": "태양 빛 값을 항상 정오로 만듭니다 (클라이언트 전용)",
+    "weathergate.type.foliage": "나뭇잎",
+    "weathergate.type.grass": "잔디",
+    "weathergate.type.water": "물"
+}

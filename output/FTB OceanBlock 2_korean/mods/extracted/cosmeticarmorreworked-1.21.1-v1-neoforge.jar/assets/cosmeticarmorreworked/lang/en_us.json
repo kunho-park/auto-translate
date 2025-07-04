@@ -1,0 +1,7 @@
+{
+    "cos.key.opencosarmorinventory": "코스메틱 아머 인벤토리 열기",
+    "cos.gui.buttoncos": "코스메틱 아머",
+    "cos.gui.buttonnormal": "보통",
+    "cos.command.clearcosarmor.success.single": "플레이어 %s의 코스메틱 아머 인벤토리에서 %s 아이템을 제거했습니다.",
+    "cos.command.clearcosarmor.success.multiple": "%s 플레이어의 코스메틱 아머 인벤토리에서 %s 아이템을 제거했습니다."
+}

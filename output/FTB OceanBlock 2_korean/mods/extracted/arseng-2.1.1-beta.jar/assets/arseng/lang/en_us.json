@@ -1,0 +1,19 @@
+{
+    "block.arseng.me_source_jar": "ME 마나 단지",
+    "block.arseng.source_acceptor": "ME 마나 변환기",
+    "item.arseng.cable_source_acceptor": "ME 마나 변환기",
+    "item.arseng.portable_source_cell_16k": "16k 휴대용 마나 셀",
+    "item.arseng.portable_source_cell_1k": "1k 휴대용 마나 셀",
+    "item.arseng.portable_source_cell_256k": "256k 휴대용 마나 셀",
+    "item.arseng.portable_source_cell_4k": "4k 휴대용 마나 셀",
+    "item.arseng.portable_source_cell_64k": "64k 휴대용 마나 셀",
+    "item.arseng.source_cell_housing": "ME 마나 셀 하우징",
+    "item.arseng.source_p2p_tunnel": "ME 마나 P2P 터널",
+    "item.arseng.source_storage_cell_16k": "16k ME 마나 저장 셀",
+    "item.arseng.source_storage_cell_1k": "1k ME 마나 저장 셀",
+    "item.arseng.source_storage_cell_256k": "256k ME 마나 저장 셀",
+    "item.arseng.source_storage_cell_4k": "4k ME 마나 저장 셀",
+    "item.arseng.source_storage_cell_64k": "64k ME 마나 저장 셀",
+    "item.arseng.spell_p2p_tunnel": "ME 마법 P2P 터널",
+    "itemGroup.arseng": "아르스 에네르지스티크"
+}

@@ -1,0 +1,14 @@
+{
+    "_comment": "GUI",
+    "gui.integratedterminalscompat.terminal_storage.craftinggrid.jeisync": "JEI 검색 동기화",
+    "gui.integratedterminalscompat.terminal_storage.craftinggrid.jeisync.info": "검색 상자를 JEI와 동기화합니다.",
+    "gui.integratedterminalscompat.terminal_storage.craftinggrid.emisync": "EMI 검색 동기화",
+    "gui.integratedterminalscompat.terminal_storage.craftinggrid.emisync.info": "검색 상자를 EMI와 동기화합니다.",
+    "gui.integratedterminalscompat.terminal_storage.craftinggrid.reisync": "REI 검색 동기화",
+    "gui.integratedterminalscompat.terminal_storage.craftinggrid.reisync.info": "검색 상자를 REI와 동기화합니다.",
+    "gui.integratedterminalscompat.terminal_storage.jei.transfer.craftable": "자동 제작 가능 아이템",
+    "gui.integratedterminalscompat.terminal_storage.jei.transfer.craftable_partial": "부분적으로 자동 제작 가능 아이템",
+    "gui.integratedterminalscompat.terminal_storage.jei.transfer.missing": "누락된 아이템",
+    "gui.integratedterminalscompat.terminal_storage.jei.transfer.craft.info": "Ctrl+클릭하여 자동 제작 트리거",
+    "gui.integratedterminalscompat.terminal_storage.jei.transfer.craft.info_cmd": "Cmd+클릭하여 자동 제작 트리거"
+}

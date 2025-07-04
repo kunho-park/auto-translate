@@ -1,0 +1,14 @@
+{
+    "entity.justaraftmod.raft": "뗏목",
+    "item.justaraftmod.acacia_raft": "아카시아나무 원목 뗏목",
+    "item.justaraftmod.bamboo_raft": "대나무 뗏목",
+    "item.justaraftmod.birch_raft": "자작나무 원목 뗏목",
+    "item.justaraftmod.cherry_raft": "벚나무 원목 뗏목",
+    "item.justaraftmod.dark_oak_raft": "짙은 참나무 원목 뗏목",
+    "item.justaraftmod.jungle_raft": "정글나무 원목 뗏목",
+    "item.justaraftmod.mangrove_raft": "맹그로브 뗏목",
+    "item.justaraftmod.oak_raft": "참나무 원목 뗏목",
+    "item.justaraftmod.spruce_raft": "가문비나무 원목 뗏목",
+    "itemGroup.justaraftmod.raft": "저스트 어 뗏목 모드",
+    "justaraftmod.config.title": "저스트 어나더 뗏목 설정"
+}

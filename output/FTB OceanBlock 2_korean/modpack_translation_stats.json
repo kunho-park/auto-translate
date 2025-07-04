@@ -1,0 +1,12 @@
+{
+  "total_entries": 56223,
+  "modpack_path": "C:\\Users\\user\\curseforge\\minecraft\\Instances\\FTB OceanBlock 2",
+  "source_language": "en_us",
+  "target_language": "한국어",
+  "file_type_distribution": {
+    "ftbquests_lang": 4914,
+    "generic_json": 51260,
+    "kubejs_client": 49
+  },
+  "filter_usage": {}
+}

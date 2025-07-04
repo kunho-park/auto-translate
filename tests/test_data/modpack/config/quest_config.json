@@ -1,0 +1,49 @@
+{
+    "quest_system": {
+        "enabled": true,
+        "default_reward": "Experience Points",
+        "welcome_message": "Welcome to the adventure!",
+        "quests": [
+            {
+                "id": "first_steps",
+                "title": "First Steps",
+                "description": "Complete your first quest to begin your journey",
+                "objectives": [
+                    "Craft a wooden pickaxe",
+                    "Mine 10 stone blocks",
+                    "Build a simple shelter"
+                ],
+                "rewards": {
+                    "items": [
+                        "iron_ingot",
+                        "bread"
+                    ],
+                    "experience": 100,
+                    "message": "Congratulations on completing your first quest!"
+                }
+            },
+            {
+                "id": "mining_expert",
+                "title": "Mining Expert",
+                "description": "Become skilled at mining various ores",
+                "objectives": [
+                    "Mine iron ore",
+                    "Mine coal ore",
+                    "Find diamond ore"
+                ],
+                "rewards": {
+                    "items": [
+                        "diamond_pickaxe"
+                    ],
+                    "experience": 500,
+                    "message": "You are now a mining expert!"
+                }
+            }
+        ]
+    },
+    "notifications": {
+        "quest_completed": "Quest Completed!",
+        "objective_complete": "Objective Complete",
+        "new_quest_available": "New Quest Available"
+    }
+}
