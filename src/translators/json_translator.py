@@ -323,23 +323,20 @@ class PlaceholderManager:
 
         return text
 
-    @staticmethod
+    @classmethod
     def restore_placeholders_in_json(
-        json_obj: Any, placeholders: Dict[str, str]
+        cls, json_obj: Any, placeholders: Dict[str, str]
     ) -> Any:
         """JSON 객체 레벨에서 안전하게 placeholder를 복원합니다."""
         if isinstance(json_obj, dict):
             return {
-                k: PlaceholderManager.restore_placeholders_in_json(v, placeholders)
+                k: cls.restore_placeholders_in_json(v, placeholders)
                 for k, v in json_obj.items()
             }
-        elif isinstance(json_obj, list):
-            return [
-                PlaceholderManager.restore_placeholders_in_json(i, placeholders)
-                for i in json_obj
-            ]
+        elif isinstance(json_obj, (list, tuple)):
+            return [cls.restore_placeholders_in_json(i, placeholders) for i in json_obj]
         elif isinstance(json_obj, str):
-            return PlaceholderManager.restore_placeholders(json_obj, placeholders)
+            return cls.restore_placeholders(json_obj, placeholders)
         else:
             return json_obj
 
