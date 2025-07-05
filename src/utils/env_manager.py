@@ -196,7 +196,6 @@ class EnvManager:
 
     def get_config_summary(self) -> Dict:
         """설정 요약 정보"""
-        api_keys = self.get_all_api_keys()
 
         summary = {
             "env_file_exists": self.env_file_path.exists(),

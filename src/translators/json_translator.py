@@ -743,6 +743,7 @@ def restore_placeholders_node(state: TranslatorState) -> TranslatorState:  # noq
         # 복원된 JSON 객체를 문자열로 변환
         state["final_json"] = json.dumps(restored_json, ensure_ascii=False, indent=2)
         logger.info("플레이스홀더 복원 완료.")
+        logger.info(_m("translator.placeholders_restore_finish"))
         return state
     except Exception as exc:
         state["error"] = f"Placeholder 복원 오류: {exc}"
@@ -820,6 +821,7 @@ async def validation_and_retry_node(state: TranslatorState) -> TranslatorState: 
 
         if not to_retry:
             logger.info("모든 항목이 성공적으로 번역되었습니다.")
+            logger.info(_m("translator.items_translated_ok"))
             return state
 
         # 재시도 이유별 통계 계산
@@ -1031,6 +1033,13 @@ async def _translate_single_item_worker(
             else "없음"
         )
 
+        # 단일 항목에 대한 글로시리 추출 및 포맷팅
+        all_glossary_terms = state.get("important_terms", [])
+        relevant_glossary = _filter_relevant_glossary_terms(
+            [{"original": original_text}], all_glossary_terms
+        )
+        glossary_str = TokenOptimizer.format_glossary_for_llm(relevant_glossary)
+
         # 재시도 루프
         last_error = None
         for attempt in range(max_retries + 1):
@@ -1042,6 +1051,7 @@ async def _translate_single_item_worker(
                 text_id=tid,
                 original_text=original_text,
                 placeholders=placeholders_str,
+                glossary=glossary_str,
             )
 
             try:
@@ -1100,6 +1110,7 @@ async def final_fallback_translation_node(state: TranslatorState) -> TranslatorS
     """최종적으로 누락된 항목들을 하나씩 다시 번역 요청합니다."""
     try:
         logger.info("최종 번역 단계 시작: 누락된 항목을 개별적으로 번역합니다.")
+        logger.info(_m("translator.final_translation_start"))
 
         id_map = state["id_to_text_map"]
         translation_map = state["translation_map"]
@@ -1136,6 +1147,7 @@ async def final_fallback_translation_node(state: TranslatorState) -> TranslatorS
 
         if not untranslated_items:
             logger.info("누락된 항목이 없습니다. 최종 번역 단계를 건너뜁니다.")
+            logger.info(_m("translator.final_translation_skip_no_missing"))
             return state
 
         logger.info(
@@ -1204,6 +1216,7 @@ async def final_fallback_translation_node(state: TranslatorState) -> TranslatorS
 def rebuild_json_node(state: TranslatorState) -> TranslatorState:  # noqa: D401
     try:
         logger.info("결과 JSON 재구성 시작...")
+        logger.info(_m("translator.rebuild_json_start"))
         id_map = state["translation_map"]
 
         def replace(obj: Any) -> Any:
@@ -1217,6 +1230,7 @@ def rebuild_json_node(state: TranslatorState) -> TranslatorState:  # noqa: D401
 
         state["translated_json"] = replace(state["processed_json"])
         logger.info("결과 JSON 재구성 완료.")
+        logger.info(_m("translator.rebuild_json_finish"))
         return state
     except Exception as exc:
         state["error"] = f"JSON 재구성 오류: {exc}"
@@ -1290,6 +1304,7 @@ def should_retry(state: TranslatorState) -> str:  # noqa: D401
             logger.warning(f"플레이스홀더 누락 항목: {len(placeholder_failed_items)}개")
         # 번역되지 않은 항목이 있어도 완료로 처리 (무한 루프 방지)
         logger.info("개별 항목 재번역을 위한 최종 단계로 넘어갑니다.")
+        logger.info(_m("translator.individual_retranslation_stage"))
         return "final_fallback"
     else:
         logger.info(_m("translator.translation_ok"))
@@ -1312,6 +1327,7 @@ async def load_vanilla_glossary_node(state: TranslatorState) -> TranslatorState:
         if Path(preset_path).exists():
             vanilla_path = preset_path
             logger.info("한국어 타겟 언어 감지, 미리 준비된 바닐라 사전 사용")
+            logger.info(_m("translator.use_vanilla_glossary"))
 
     try:
         # 바닐라 glossary builder를 동적으로 임포트 (순환 임포트 방지)
@@ -1386,6 +1402,7 @@ def save_glossary_node(state: TranslatorState) -> TranslatorState:
     if path and glossary:
         try:
             logger.info("용어집 저장 시작...")
+            logger.info(_m("translator.glossary_save_start"))
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(
                     [term.dict() for term in glossary], f, ensure_ascii=False, indent=2
@@ -1402,6 +1419,7 @@ def create_primary_glossary_node(state: TranslatorState) -> TranslatorState:
     if not existing_translations:
         logger.info("기존 번역 데이터가 없어 1차 사전 구축을 건너뜁니다.")
         state["primary_glossary"] = []
+        logger.info(_m("translator.primary_glossary_skip"))
         return state
 
     logger.info(f"기존 번역 데이터 {len(existing_translations)}개로 1차 사전 구축 시작")
@@ -1495,9 +1513,11 @@ async def quality_review_node(state: TranslatorState) -> TranslatorState:
         # 품질 검토가 비활성화된 경우 건너뛰기
         if not state.get("enable_quality_review", True):
             logger.info("품질 검토가 비활성화되어 건너뜁니다.")
+            logger.info(_m("translator.quality_review_disabled"))
             return state
 
         logger.info("번역 품질 검토 시작...")
+        logger.info(_m("translator.quality_review_start"))
 
         id_map = state["id_to_text_map"]
         translation_map = state["translation_map"]
@@ -1505,6 +1525,7 @@ async def quality_review_node(state: TranslatorState) -> TranslatorState:
 
         if not llm or not id_map or not translation_map:
             logger.info("품질 검토를 건너뜁니다 (필수 데이터 없음)")
+            logger.info(_m("translator.quality_review_skip_missing_data"))
             return state
 
         # 검토할 항목들 준비 (번역된 것만)
@@ -1531,6 +1552,7 @@ async def quality_review_node(state: TranslatorState) -> TranslatorState:
 
         if not review_items:
             logger.info("검토할 번역 항목이 없습니다.")
+            logger.info(_m("translator.quality_review_no_items"))
             return state
 
         logger.info(f"품질 검토 대상: {len(review_items)}개 항목")
@@ -1616,6 +1638,7 @@ async def quality_review_node(state: TranslatorState) -> TranslatorState:
                         logger.warning(f"    제안: {issue.suggested_fix}")
         else:
             logger.info("✅ 품질 검토 결과: 심각한 문제 없음")
+            logger.info(_m("translator.quality_review_no_critical"))
 
         # 전체 품질 점수 계산은 개별 QualityIssue 방식에서는 생략
         # 대신 심각도별 통계를 통해 전체 품질 상태를 파악
@@ -1782,6 +1805,7 @@ def should_retranslate_based_on_quality(state: TranslatorState) -> str:
             return "complete"
     else:
         logger.info("품질 검토 결과 문제 없음, 완료로 진행")
+        logger.info(_m("translator.quality_review_ok_complete"))
         return "complete"
 
 
@@ -1836,6 +1860,7 @@ async def quality_based_retranslation_node(state: TranslatorState) -> Translator
 
         if not items_to_retranslate:
             logger.info("재번역할 항목이 없습니다.")
+            logger.info(_m("translator.no_items_for_retranslation"))
             return state
 
         logger.info(

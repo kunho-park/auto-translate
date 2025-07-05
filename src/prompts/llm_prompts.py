@@ -211,6 +211,10 @@ FINAL_FALLBACK_PROMPT_TEMPLATE = """<instructions>
 {placeholders}
 </required_placeholders>
 
+<glossary>
+{glossary}
+</glossary>
+
 <rules>
 <critical>
 - 이것은 최종 재시도입니다. 모든 규칙을 엄격하게 준수하세요.
@@ -406,7 +410,11 @@ def retry_contextual_terms_prompt(language: str, chunk: str, glossary: str) -> s
 
 
 def final_fallback_prompt(
-    language: str, text_id: str, original_text: str, placeholders: str
+    language: str,
+    text_id: str,
+    original_text: str,
+    placeholders: str,
+    glossary: str,
 ) -> str:
     """형식화된 최종 재시도 프롬프트를 반환합니다."""
     return FINAL_FALLBACK_PROMPT_TEMPLATE.format(
@@ -414,6 +422,7 @@ def final_fallback_prompt(
         text_id=text_id,
         original_text=original_text,
         placeholders=placeholders,
+        glossary=glossary,
     )
 
 
