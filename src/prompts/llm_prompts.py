@@ -227,6 +227,151 @@ FINAL_FALLBACK_PROMPT_TEMPLATE = """<instructions>
 </rules>
 """
 
+QUALITY_REVIEW_PROMPT_TEMPLATE = """<instructions>
+당신은 번역 품질 검토 전문가입니다. 다음 번역들을 검토하여 품질 문제를 찾아주세요.
+문제를 발견할 때마다 즉시 'QualityIssue' 도구를 호출하여 개별 문제를 기록해주세요.
+</instructions>
+
+<input>
+{review_text}
+</input>
+
+<review_criteria>
+번역 품질 검토 기준:
+1. 원문의 의미가 정확히 전달되었는지
+2. 번역이 자연스럽고 읽기 쉬운지  
+3. 플레이스홀더([P###], [NEWLINE] 등)가 보존되었는지
+4. 용어나 표현이 일관성 있게 번역되었는지
+5. 오타나 문법 오류가 없는지
+6. 번역이 {target_language}의 자연스러운 표현인지
+</review_criteria>
+
+<rules>
+<required>
+- 각 [T아이디] 항목을 개별적으로 검토하세요
+- 문제를 발견할 때마다 즉시 'QualityIssue' 도구를 호출하세요
+- 각 문제에 대해 text_id, issue_type, severity, description을 명확히 기록하세요
+- 심각도는 low, medium, high 중 하나로 분류하세요
+- 가능하면 수정 제안(suggested_fix)도 제공하세요
+- 검토를 완료한 후 발견된 모든 문제에 대해 'QualityIssue' 도구를 호출했는지 확인하세요
+</required>
+
+<issue_types>
+주요 문제 유형:
+- 오역: 원문의 의미가 잘못 번역됨
+- 누락: 원문의 일부가 번역에서 빠짐
+- 부자연스러움: 번역이 어색하거나 자연스럽지 않음
+- 플레이스홀더 문제: [P###], [NEWLINE] 등이 누락되거나 변경됨
+- 일관성 문제: 같은 용어가 다르게 번역됨
+- 문법 오류: 맞춤법이나 문법상 오류
+- 미번역: 원문이 그대로 유지됨
+</issue_types>
+
+<severity_guidelines>
+심각도 분류 기준:
+- high: 의미 왜곡, 플레이스홀더 누락, 완전한 오역
+- medium: 어색한 표현, 일관성 문제, 부분적 오역
+- low: 사소한 문법 오류, 더 나은 표현 제안
+</severity_guidelines>
+
+<workflow>
+검토 진행 방식:
+1. 각 번역 항목을 순서대로 검토
+2. 문제 발견 시 즉시 'QualityIssue' 도구 호출
+3. 모든 항목 검토 완료 후 누락된 문제가 없는지 재확인
+4. 문제가 없는 항목이라도 검토했다는 의미로 간단한 확인 메시지 제공
+</workflow>
+
+<mandatory_completion>
+- 모든 번역 항목을 빠짐없이 검토해야 합니다
+- 발견된 모든 문제에 대해 반드시 'QualityIssue' 도구를 호출해야 합니다
+- 문제가 없더라도 검토 과정을 완료해야 합니다
+- 검토 작업을 중단하거나 일부를 건너뛰는 것은 금지됩니다
+</mandatory_completion>
+
+<examples>
+좋은 QualityIssue 호출 예시:
+- text_id: "T001"
+- issue_type: "플레이스홀더 문제"
+- severity: "high"
+- description: "[P001] 플레이스홀더가 번역문에서 누락됨"
+- suggested_fix: "번역문에 [P001] 플레이스홀더를 원래 위치에 추가"
+</examples>
+</rules>"""
+
+QUALITY_RETRANSLATION_PROMPT_TEMPLATE = """<instructions>
+당신은 전문 번역가입니다. 다음 텍스트들은 품질 검토에서 문제가 발견되어 재번역이 필요합니다.
+각 항목의 문제점을 해결하여 고품질 번역을 제공해주세요.
+번역이 완료된 각 항목에 대해 'TranslatedItem' 도구를 호출하여 결과를 기록해주세요.
+</instructions>
+
+<target_language>
+{target_language}
+</target_language>
+
+<glossary>
+{glossary}
+</glossary>
+
+<retry_info>
+{retry_info}
+</retry_info>
+
+<input>
+{formatted_items}
+</input>
+
+<rules>
+<critical>
+- 이것은 품질 문제 해결을 위한 재번역입니다
+- 각 항목에 명시된 문제점을 반드시 해결해야 합니다
+- 플레이스홀더([P###], [NEWLINE] 등)를 정확히 보존해야 합니다
+- 발견된 문제의 수정 제안이 있다면 참고하여 번역하세요
+</critical>
+
+<required>
+- id는 절대 변경하지 마세요
+- 모든 항목을 반드시 {target_language}로 완전히 번역해야 합니다
+- 품질 문제를 해결하면서도 원문의 의미를 정확히 전달해야 합니다
+- 번역할 때 괄호 안에 영어 원문이나 설명을 추가하지 마세요
+- 재번역하는 모든 항목에 대해 반드시 'TranslatedItem' 도구를 호출해야 합니다
+</required>
+
+<glossary_usage>
+- 용어집에서 "(Context: ...)" 부분은 참고용 정보일 뿐이며, 실제 번역에는 포함하지 마세요
+- Context는 용어의 의미를 이해하는 데만 활용하고, 번역 결과에는 절대 포함하지 마세요
+</glossary_usage>
+
+<critical_placeholders>
+- [PXXX] 또는 [NEWLINE] 형식의 플레이스홀더는 절대로 삭제하거나 변경하지 마세요
+- 이러한 플레이스홀더들은 번역 후 원본 내용으로 복원되는 중요한 마커입니다
+- 플레이스홀더는 번역문에서 정확히 같은 위치에 그대로 유지되어야 합니다
+- 플레이스홀더를 번역하거나 다른 텍스트로 대체하는 것은 절대 금지됩니다
+</critical_placeholders>
+
+<quality_improvement>
+- 원문의 의미를 정확히 전달하면서도 자연스러운 번역을 제공하세요
+- 일관성 있는 용어 사용을 위해 용어집을 적극 활용하세요
+- 문법과 맞춤법을 정확히 지켜주세요
+- {target_language}의 자연스러운 표현을 사용하세요
+</quality_improvement>
+
+<mandatory_completion>
+- 재번역하는 모든 항목을 빠짐없이 번역하고 'TranslatedItem' 도구를 호출해야 합니다
+- 문제가 있었던 항목이라도 반드시 번역을 시도하고 결과를 제출해야 합니다
+- 재번역 작업을 중단하거나 일부를 건너뛰는 것은 금지됩니다
+</mandatory_completion>
+
+<forbidden>
+- 영어 원문을 그대로 복사하거나 유지하는 것은 절대 금지됩니다
+- 빈 번역이나 원문 그대로 두는 것은 허용되지 않습니다
+- 번역된 텍스트에 괄호를 사용해서 영어 원문이나 설명을 추가하는 것은 금지됩니다
+- [PXXX] 또는 [NEWLINE] 형식의 플레이스홀더를 삭제하거나 변경하는 것은 절대 금지됩니다
+- 일부 항목을 누락하거나 'TranslatedItem' 도구 호출을 생략하는 것은 절대 금지됩니다
+- 용어집의 "(Context: ...)" 부분을 번역 결과에 포함하는 것은 절대 금지됩니다
+</forbidden>
+</rules>"""
+
 
 def translation_prompt(language: str, glossary: str, chunk: str) -> str:
     """형식화된 번역 프롬프트를 반환합니다."""
@@ -269,4 +414,24 @@ def final_fallback_prompt(
         text_id=text_id,
         original_text=original_text,
         placeholders=placeholders,
+    )
+
+
+def quality_review_prompt(target_language: str, review_text: str) -> str:
+    """형식화된 품질 검토 프롬프트를 반환합니다."""
+    return QUALITY_REVIEW_PROMPT_TEMPLATE.format(
+        target_language=target_language,
+        review_text=review_text,
+    )
+
+
+def quality_retranslation_prompt(
+    target_language: str, glossary: str, retry_info: str, formatted_items: str
+) -> str:
+    """형식화된 품질 기반 재번역 프롬프트를 반환합니다."""
+    return QUALITY_RETRANSLATION_PROMPT_TEMPLATE.format(
+        target_language=target_language,
+        glossary=glossary,
+        retry_info=retry_info,
+        formatted_items=formatted_items,
     )

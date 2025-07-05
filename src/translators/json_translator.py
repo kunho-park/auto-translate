@@ -31,6 +31,7 @@ from src.localization import get_message as _m
 from src.prompts.llm_prompts import (
     contextual_terms_prompt,
     final_fallback_prompt,
+    quality_retranslation_prompt,
     retry_contextual_terms_prompt,
     retry_translation_prompt,
     translation_prompt,
@@ -47,6 +48,8 @@ __all__ = [
     "Glossary",
     "TranslationPair",
     "TranslationResult",
+    "QualityIssue",
+    "QualityReview",
     "JSONTranslator",
     "run_example",
 ]
@@ -99,6 +102,12 @@ class TranslatorState(TypedDict):
 
     # 최종 재시도 횟수
     final_fallback_max_retries: int
+
+    # 품질 검토 관련 (추가)
+    enable_quality_review: bool  # 품질 검토 사용 여부
+    quality_issues: List[Any]  # 품질 검토 결과
+    quality_retry_count: int  # 품질 기반 재번역 횟수
+    max_quality_retries: int  # 품질 기반 재번역 최대 횟수
 
 
 class TranslatedItem(BaseModel):
@@ -153,6 +162,28 @@ class TranslationResult(BaseModel):
     """Structured output container returned from the LLM."""
 
     translations: List[TranslatedItem] = Field(description="List of translations")
+
+
+class QualityIssue(BaseModel):
+    """번역 품질 문제를 나타내는 모델"""
+
+    text_id: str = Field(description="문제가 있는 텍스트의 ID")
+    issue_type: str = Field(
+        description="문제 유형 (예: 오역, 누락, 부자연스러움, 플레이스홀더 문제)"
+    )
+    severity: str = Field(description="심각도 (low, medium, high)")
+    description: str = Field(description="문제에 대한 설명")
+    suggested_fix: Optional[str] = Field(description="수정 제안 (선택사항)")
+
+
+class QualityReview(BaseModel):
+    """번역 품질 검토 결과"""
+
+    issues: List[QualityIssue] = Field(description="발견된 품질 문제들")
+    overall_quality: str = Field(
+        description="전체적인 품질 평가 (excellent, good, fair, poor)"
+    )
+    summary: str = Field(description="검토 요약")
 
 
 ###############################################################################
@@ -323,20 +354,48 @@ class PlaceholderManager:
 
         return text
 
-    @classmethod
+    @staticmethod
+    def _restore_placeholders_in_string(
+        text: str, sorted_placeholders: List[tuple[str, str]], newline_value: str | None
+    ) -> str:
+        """Helper to restore placeholders in a single string using a pre-sorted list."""
+        if not isinstance(text, str):
+            return text
+
+        if newline_value and "[NEWLINE]" in text:
+            text = text.replace("[NEWLINE]", newline_value)
+
+        # Then iterate through the pre-sorted list
+        for pid, original in sorted_placeholders:
+            if pid in text:
+                text = text.replace(pid, original)
+        return text
+
+    @staticmethod
     def restore_placeholders_in_json(
-        cls, json_obj: Any, placeholders: Dict[str, str]
+        json_obj: Any,
+        sorted_placeholders: List[tuple[str, str]],
+        newline_value: str | None,
     ) -> Any:
-        """JSON 객체 레벨에서 안전하게 placeholder를 복원합니다."""
+        """JSON 객체 레벨에서 안전하게 placeholder를 복원합니다. (최적화된 버전)"""
         if isinstance(json_obj, dict):
             return {
-                k: cls.restore_placeholders_in_json(v, placeholders)
+                k: PlaceholderManager.restore_placeholders_in_json(
+                    v, sorted_placeholders, newline_value
+                )
                 for k, v in json_obj.items()
             }
         elif isinstance(json_obj, (list, tuple)):
-            return [cls.restore_placeholders_in_json(i, placeholders) for i in json_obj]
+            return [
+                PlaceholderManager.restore_placeholders_in_json(
+                    i, sorted_placeholders, newline_value
+                )
+                for i in json_obj
+            ]
         elif isinstance(json_obj, str):
-            return cls.restore_placeholders(json_obj, placeholders)
+            return PlaceholderManager._restore_placeholders_in_string(
+                json_obj, sorted_placeholders, newline_value
+            )
         else:
             return json_obj
 
@@ -1252,9 +1311,20 @@ async def _translate_chunk_worker_with_progress(
 def restore_placeholders_node(state: TranslatorState) -> TranslatorState:  # noqa: D401
     try:
         logger.info("플레이스홀더 복원 시작...")
+
+        placeholders = state["placeholders"]
+        newline_value = placeholders.get("[NEWLINE]")
+
+        # Sort placeholders ONCE, excluding newline
+        sorted_placeholders = sorted(
+            (item for item in placeholders.items() if item[0] != "[NEWLINE]"),
+            key=lambda item: (int(item[0][2:-1]) if item[0].startswith("[P") else -1),
+            reverse=True,
+        )
+
         # JSON 객체 레벨에서 안전하게 placeholder 복원
         restored_json = PlaceholderManager.restore_placeholders_in_json(
-            state["translated_json"], state["placeholders"]
+            state["translated_json"], sorted_placeholders, newline_value
         )
 
         # 복원된 JSON 객체를 문자열로 변환
@@ -1593,9 +1663,9 @@ async def _translate_single_item_worker(
                                 )
                 else:
                     last_error = "응답 없음"
-                    logger.warning(
-                        f"⚠️ 최종 번역 재시도({attempt + 1}) 실패 (응답 없음): {tid}"
-                    )
+                    # logger.warning(
+                    #     f"⚠️ 최종 번역 재시도({attempt + 1}) 실패 (응답 없음): {tid}"
+                    # )
 
             except Exception as e:
                 last_error = str(e)
@@ -2006,6 +2076,594 @@ def create_primary_glossary_node(state: TranslatorState) -> TranslatorState:
     return state
 
 
+async def quality_review_node(state: TranslatorState) -> TranslatorState:
+    """번역 품질을 검토하는 노드"""
+    try:
+        # 품질 검토가 비활성화된 경우 건너뛰기
+        if not state.get("enable_quality_review", True):
+            logger.info("품질 검토가 비활성화되어 건너뜁니다.")
+            return state
+
+        logger.info("번역 품질 검토 시작...")
+
+        id_map = state["id_to_text_map"]
+        translation_map = state["translation_map"]
+        llm = state.get("llm_client")
+
+        if not llm or not id_map or not translation_map:
+            logger.info("품질 검토를 건너뜁니다 (필수 데이터 없음)")
+            return state
+
+        # 검토할 항목들 준비 (번역된 것만)
+        placeholder_only_pattern = r"^\[(P\d{3,}|NEWLINE)\]$"
+        review_items = []
+        for tid, original_text in id_map.items():
+            translated_text = translation_map.get(tid, "")
+            if not translated_text.strip():
+                continue
+
+            # 원문과 번역이 모두 내부 플레이스홀더만으로 이루어진 경우 품질 검토 건너뜀
+            if re.match(placeholder_only_pattern, original_text.strip()) and re.match(
+                placeholder_only_pattern, translated_text.strip()
+            ):
+                continue
+
+            review_items.append(
+                {
+                    "id": tid,
+                    "original": original_text,
+                    "translated": translated_text,
+                }
+            )
+
+        if not review_items:
+            logger.info("검토할 번역 항목이 없습니다.")
+            return state
+
+        logger.info(f"품질 검토 대상: {len(review_items)}개 항목")
+
+        # 진행률 콜백 호출
+        progress_callback = state.get("progress_callback")
+        if progress_callback:
+            progress_callback(
+                "🔍 번역 품질 검토 중",
+                0,
+                len(review_items),
+                f"총 {len(review_items)}개 항목 품질 검토 시작",
+            )
+
+        # 2000글자 청크로 나누기
+        chunks = _create_quality_review_chunks(review_items, max_chars=4000)
+        logger.info(f"품질 검토를 위해 {len(chunks)}개 청크로 분할")
+
+        # 동시 요청 제한
+        sem = asyncio.Semaphore(state["max_concurrent_requests"])
+        delay_mgr = RequestDelayManager(state["delay_between_requests_ms"])
+
+        # 각 청크별로 품질 검토 실행
+        tasks = []
+        for chunk_idx, chunk in enumerate(chunks):
+            tasks.append(
+                _review_chunk_worker(
+                    chunk=chunk,
+                    target_language=state["target_language"],
+                    llm=llm,
+                    semaphore=sem,
+                    delay_manager=delay_mgr,
+                    chunk_idx=chunk_idx,
+                    total_chunks=len(chunks),
+                    progress_callback=progress_callback,
+                )
+            )
+
+        review_results = await asyncio.gather(*tasks)
+
+        # 결과 집계 - 각 청크에서 개별 QualityIssue들을 수집
+        all_issues = []
+
+        for review_result in review_results:
+            if review_result:  # review_result는 List[QualityIssue]
+                all_issues.extend(review_result)
+
+        # 품질 검토 결과 로깅
+        if all_issues:
+            logger.warning(f"🔍 품질 검토 결과: {len(all_issues)}개 문제 발견")
+
+            # 심각도별 분류
+            severity_counts = {}
+            issue_type_counts = {}
+
+            for issue in all_issues:
+                severity_counts[issue.severity] = (
+                    severity_counts.get(issue.severity, 0) + 1
+                )
+                issue_type_counts[issue.issue_type] = (
+                    issue_type_counts.get(issue.issue_type, 0) + 1
+                )
+
+            logger.warning("심각도별 분류:")
+            for severity, count in severity_counts.items():
+                logger.warning(f"  - {severity}: {count}개")
+
+            logger.warning("문제 유형별 분류:")
+            for issue_type, count in issue_type_counts.items():
+                logger.warning(f"  - {issue_type}: {count}개")
+
+            # 심각한 문제들 상세 로깅
+            high_severity_issues = [
+                issue for issue in all_issues if issue.severity == "high"
+            ]
+            if high_severity_issues:
+                logger.warning(f"🚨 심각한 문제 {len(high_severity_issues)}개:")
+                for issue in high_severity_issues[:5]:  # 최대 5개만 표시
+                    logger.warning(
+                        f"  - [{issue.text_id}] {issue.issue_type}: {issue.description}"
+                    )
+                    if issue.suggested_fix:
+                        logger.warning(f"    제안: {issue.suggested_fix}")
+        else:
+            logger.info("✅ 품질 검토 결과: 심각한 문제 없음")
+
+        # 전체 품질 점수 계산은 개별 QualityIssue 방식에서는 생략
+        # 대신 심각도별 통계를 통해 전체 품질 상태를 파악
+
+        # 진행률 콜백 호출 (완료)
+        if progress_callback:
+            summary = f"품질 검토 완료 - 문제 {len(all_issues)}개 발견"
+            progress_callback(
+                "🔍 번역 품질 검토 완료", len(chunks), len(chunks), summary
+            )
+
+        # 상태에 검토 결과 저장 (선택사항)
+        state["quality_issues"] = all_issues
+
+        return state
+
+    except Exception as exc:
+        logger.error(f"품질 검토 중 오류: {exc}")
+        logger.error(traceback.format_exc())
+        # 품질 검토 실패는 전체 프로세스를 중단하지 않음
+        return state
+
+
+def _create_quality_review_chunks(
+    review_items: List[Dict], max_chars: int = 2000
+) -> List[List[Dict]]:
+    """품질 검토를 위해 항목들을 청크로 나눕니다."""
+    chunks = []
+    current_chunk = []
+    current_chars = 0
+
+    for item in review_items:
+        # 항목의 예상 문자 수 계산 (ID + 원본 + 번역 + 포맷팅)
+        item_chars = (
+            len(item["id"]) + len(item["original"]) + len(item["translated"]) + 50
+        )
+
+        # 단일 항목이 max_chars를 초과하는 경우 별도 청크로 처리
+        if item_chars > max_chars:
+            if current_chunk:
+                chunks.append(current_chunk)
+                current_chunk = []
+                current_chars = 0
+            chunks.append([item])
+        # 현재 청크에 추가했을 때 제한을 초과하는 경우
+        elif current_chars + item_chars > max_chars:
+            if current_chunk:
+                chunks.append(current_chunk)
+            current_chunk = [item]
+            current_chars = item_chars
+        # 현재 청크에 추가
+        else:
+            current_chunk.append(item)
+            current_chars += item_chars
+
+    # 마지막 청크 추가
+    if current_chunk:
+        chunks.append(current_chunk)
+
+    return chunks
+
+
+async def _review_chunk_worker(
+    *,
+    chunk: List[Dict],
+    target_language: str,
+    llm: Any,
+    semaphore: asyncio.Semaphore,
+    delay_manager: RequestDelayManager,
+    chunk_idx: int,
+    total_chunks: int,
+    progress_callback: Optional[callable] = None,
+) -> List[QualityIssue]:
+    """청크별 품질 검토를 수행하는 워커 - 개별 QualityIssue들을 반환"""
+    async with semaphore:
+        await delay_manager.wait()
+
+        # 진행률 콜백 호출
+        if progress_callback:
+            progress_callback(
+                "🔍 번역 품질 검토 중",
+                chunk_idx,
+                total_chunks,
+                f"청크 {chunk_idx + 1}/{total_chunks} 검토 중 ({len(chunk)}개 항목)",
+            )
+
+        try:
+            # 검토용 텍스트 포맷팅
+            review_text = _format_chunk_for_quality_review(chunk)
+
+            # 품질 검토 프롬프트 생성
+            from src.prompts.llm_prompts import quality_review_prompt
+
+            prompt = quality_review_prompt(target_language, review_text)
+
+            # LLM 호출 - QualityIssue 도구 바인딩
+            llm_with_tools = llm.bind_tools([QualityIssue])
+            response = await llm_with_tools.ainvoke(prompt)
+
+            # 응답 파싱 - 개별 QualityIssue들 수집
+            quality_issues = []
+            if response.tool_calls:
+                for tool_call in response.tool_calls:
+                    if tool_call["name"] == "QualityIssue":
+                        try:
+                            issue = QualityIssue(**tool_call["args"])
+                            quality_issues.append(issue)
+                            logger.debug(
+                                f"품질 문제 발견: [{issue.text_id}] {issue.issue_type} ({issue.severity})"
+                            )
+                        except Exception as e:
+                            logger.warning(
+                                f"QualityIssue 파싱 오류: {e}, args: {tool_call['args']}"
+                            )
+
+            logger.debug(
+                f"청크 {chunk_idx + 1} 품질 검토 완료: {len(quality_issues)}개 문제 발견"
+            )
+            return quality_issues
+
+        except Exception as exc:
+            logger.error(f"청크 {chunk_idx + 1} 품질 검토 실패: {exc}")
+            return []
+
+
+def _format_chunk_for_quality_review(chunk: List[Dict]) -> str:
+    """품질 검토용 청크 포맷팅"""
+    lines = []
+
+    for item in chunk:
+        text_id = item["id"]
+        original = item["original"]
+        translated = item["translated"]
+
+        lines.append(f"[{text_id}]")
+        lines.append(f"원본: {original}")
+        lines.append(f"번역: {translated}")
+        lines.append("")  # 빈 줄 추가
+
+    return "\n".join(lines)
+
+
+def should_retranslate_based_on_quality(state: TranslatorState) -> str:
+    """품질 검토 결과에 따라 재번역 여부를 결정합니다."""
+    if state.get("error"):
+        return "end"
+
+    quality_issues = state.get("quality_issues", [])
+
+    # 모든 품질 문제를 재번역 대상으로 고려
+    if quality_issues:
+        quality_retry_count = state.get("quality_retry_count", 0)
+        max_quality_retries = state.get("max_quality_retries", 2)
+
+        if quality_retry_count < max_quality_retries:
+            logger.info(
+                f"품질 검토 결과 {len(quality_issues)}개 문제 발견, 재번역 진행 ({quality_retry_count + 1}/{max_quality_retries})"
+            )
+            return "quality_retranslate"
+        else:
+            logger.warning(
+                f"품질 기반 재번역 최대 횟수 ({max_quality_retries}) 도달, 완료로 진행"
+            )
+            return "complete"
+    else:
+        logger.info("품질 검토 결과 문제 없음, 완료로 진행")
+        return "complete"
+
+
+async def quality_based_retranslation_node(state: TranslatorState) -> TranslatorState:
+    """품질 검토 결과를 바탕으로 문제가 있는 항목들을 다시 번역합니다."""
+    try:
+        quality_issues = state.get("quality_issues", [])
+        id_map = state["id_to_text_map"]
+        translation_map = state["translation_map"]
+        llm = state.get("llm_client")
+
+        # 재번역 카운터 증가
+        quality_retry_count = state.get("quality_retry_count", 0) + 1
+        state["quality_retry_count"] = quality_retry_count
+
+        logger.info(f"품질 기반 재번역 시작 ({quality_retry_count}차 시도)")
+
+        # 모든 품질 문제가 있는 항목들 추출
+        all_issues = quality_issues
+
+        # 재번역할 항목들 준비
+        items_to_retranslate = []
+        for issue in all_issues:
+            text_id = issue.text_id
+            if text_id in id_map:
+                original_text = id_map[text_id]
+                current_translation = translation_map.get(text_id, "")
+
+                items_to_retranslate.append(
+                    {
+                        "id": text_id,
+                        "original": original_text,
+                        "current_translation": current_translation,
+                        "issue": issue,
+                    }
+                )
+
+        # 중복 제거 (같은 ID가 여러 문제로 중복될 수 있음)
+        unique_items = {}
+        for item in items_to_retranslate:
+            text_id = item["id"]
+            if text_id not in unique_items:
+                unique_items[text_id] = item
+            else:
+                # 기존 항목에 추가 이슈 정보 병합
+                if "issues" not in unique_items[text_id]:
+                    unique_items[text_id]["issues"] = [unique_items[text_id]["issue"]]
+                    del unique_items[text_id]["issue"]
+                unique_items[text_id]["issues"].append(item["issue"])
+
+        items_to_retranslate = list(unique_items.values())
+
+        if not items_to_retranslate:
+            logger.info("재번역할 항목이 없습니다.")
+            return state
+
+        logger.info(
+            f"품질 문제로 {len(items_to_retranslate)}개 항목 재번역 진행 (전체 문제 {len(all_issues)}개)"
+        )
+
+        # 진행률 콜백 호출
+        progress_callback = state.get("progress_callback")
+        if progress_callback:
+            progress_callback(
+                "🔄 품질 기반 재번역 중",
+                0,
+                len(items_to_retranslate),
+                f"품질 문제 {len(items_to_retranslate)}개 항목 재번역 시작",
+            )
+
+        # 청크로 나누기
+        chunks = TokenOptimizer.create_text_chunks(
+            items_to_retranslate, state["max_tokens_per_chunk"]
+        )
+
+        # 동시 요청 제한
+        sem = asyncio.Semaphore(state["max_concurrent_requests"])
+        delay_mgr = RequestDelayManager(state["delay_between_requests_ms"])
+
+        # 재번역 실행
+        tasks = []
+        for chunk_idx, chunk in enumerate(chunks):
+            tasks.append(
+                _quality_retranslate_chunk_worker(
+                    chunk=chunk,
+                    state=state,
+                    llm=llm,
+                    target_language=state["target_language"],
+                    delay_manager=delay_mgr,
+                    semaphore=sem,
+                    chunk_idx=chunk_idx,
+                    total_chunks=len(chunks),
+                    progress_callback=progress_callback,
+                    max_retries=3,  # 품질 기반 재번역에서는 더 많은 재시도
+                )
+            )
+
+        results = await asyncio.gather(*tasks)
+
+        # 결과 업데이트
+        success_count = 0
+        failed_count = 0
+
+        for chunk_results in results:
+            for item in chunk_results:
+                text_id = item.id
+                new_translation = item.translated.strip()
+                original_text = id_map.get(text_id, "")
+
+                # 플레이스홀더 검증
+                if PlaceholderManager.validate_placeholder_preservation(
+                    original_text, new_translation
+                ):
+                    translation_map[text_id] = new_translation
+                    success_count += 1
+                    logger.debug(
+                        f"품질 재번역 성공: {text_id} -> {new_translation[:50]}..."
+                    )
+                else:
+                    failed_count += 1
+                    missing_placeholders = PlaceholderManager.get_missing_placeholders(
+                        original_text, new_translation
+                    )
+                    logger.warning(
+                        f"품질 재번역 후에도 플레이스홀더 누락: {text_id} (누락: {missing_placeholders})"
+                    )
+
+        # 진행률 콜백 호출 (완료)
+        if progress_callback:
+            progress_callback(
+                "🔄 품질 기반 재번역 완료",
+                len(chunks),
+                len(chunks),
+                f"성공: {success_count}개, 실패: {failed_count}개",
+            )
+
+        logger.info(
+            f"품질 기반 재번역 완료: 성공 {success_count}개, 실패 {failed_count}개"
+        )
+
+        # 재번역을 한 번 수행했으므로 이후 품질 검토는 생략하도록 플래그 비활성화
+        # (무한 루프 및 불필요한 추가 품질 검토 방지)
+        state["enable_quality_review"] = False
+
+        return state
+
+    except Exception as exc:
+        logger.error(f"품질 기반 재번역 중 오류: {exc}")
+        logger.error(traceback.format_exc())
+        return state
+
+
+async def _quality_retranslate_chunk_worker(
+    *,
+    chunk: List[Dict],
+    state: TranslatorState,
+    llm: Any,
+    target_language: str,
+    delay_manager: RequestDelayManager,
+    semaphore: asyncio.Semaphore,
+    chunk_idx: int,
+    total_chunks: int,
+    progress_callback: Optional[callable] = None,
+    max_retries: int = 3,
+) -> List[TranslatedItem]:
+    """품질 기반 재번역을 위한 청크 워커"""
+    async with semaphore:
+        await delay_manager.wait()
+
+        # 진행률 콜백 호출
+        if progress_callback:
+            progress_callback(
+                "🔄 품질 기반 재번역 중",
+                chunk_idx,
+                total_chunks,
+                f"청크 {chunk_idx + 1}/{total_chunks} 재번역 중 ({len(chunk)}개 항목)",
+            )
+
+        # 글로시리에서 관련 용어 필터링
+        all_glossary_terms = state.get("important_terms", [])
+        relevant_glossary = _filter_relevant_glossary_terms(chunk, all_glossary_terms)
+
+        # 재번역 시도
+        for attempt in range(max_retries + 1):
+            try:
+                # 프롬프트 생성 (품질 문제를 고려한 상세한 프롬프트)
+                glossary_text = TokenOptimizer.format_glossary_for_llm(
+                    relevant_glossary
+                )
+                retry_info = (
+                    f"⚠️ 재시도 {attempt}회 - 이전 번역에서 문제가 있었습니다. 특히 다음 사항들을 주의깊게 확인해주세요: 1. 플레이스홀더([P###], [NEWLINE] 등)를 정확히 보존 2. 원문의 의미를 정확히 전달 3. 자연스럽고 일관된 번역"
+                    if attempt > 0
+                    else "품질 문제 해결을 위한 재번역"
+                )
+                formatted_items = _format_items_for_quality_retranslation(chunk)
+
+                prompt = quality_retranslation_prompt(
+                    target_language, glossary_text, retry_info, formatted_items
+                )
+
+                # LLM 호출
+                llm_with_tools = llm.bind_tools([TranslatedItem])
+                response = await llm_with_tools.ainvoke(prompt)
+
+                # 응답 파싱
+                translations = []
+                if response.tool_calls:
+                    for tool_call in response.tool_calls:
+                        if tool_call["name"] == "TranslatedItem":
+                            try:
+                                item = TranslatedItem(**tool_call["args"])
+                                translations.append(item)
+                            except Exception as e:
+                                logger.warning(f"TranslatedItem 파싱 오류: {e}")
+
+                # 플레이스홀더 검증
+                valid_translations = []
+                for translation in translations:
+                    original_text = next(
+                        (
+                            item["original"]
+                            for item in chunk
+                            if item["id"] == translation.id
+                        ),
+                        "",
+                    )
+
+                    if PlaceholderManager.validate_placeholder_preservation(
+                        original_text, translation.translated
+                    ):
+                        valid_translations.append(translation)
+                    else:
+                        logger.debug(f"플레이스홀더 검증 실패: {translation.id}")
+
+                # 모든 번역이 유효하면 성공
+                if len(valid_translations) == len(chunk):
+                    if attempt > 0:
+                        logger.info(
+                            f"품질 재번역 청크 {chunk_idx + 1} 성공 (재시도 {attempt}회)"
+                        )
+                    return valid_translations
+                else:
+                    logger.warning(
+                        f"품질 재번역 청크 {chunk_idx + 1} 시도 {attempt + 1}: 유효한 번역 {len(valid_translations)}/{len(chunk)}"
+                    )
+
+                    # 마지막 시도가 아니면 계속 진행
+                    if attempt < max_retries:
+                        await asyncio.sleep(min(2.0, (attempt + 1) * 0.5))
+                        continue
+                    else:
+                        # 마지막 시도에서는 유효한 번역이라도 반환
+                        return valid_translations
+
+            except Exception as exc:
+                logger.error(
+                    f"품질 재번역 청크 {chunk_idx + 1} 시도 {attempt + 1} 실패: {exc}"
+                )
+                if attempt < max_retries:
+                    await asyncio.sleep(min(2.0, (attempt + 1) * 0.5))
+                else:
+                    return []
+
+        return []
+
+
+def _format_items_for_quality_retranslation(chunk: List[Dict]) -> str:
+    """품질 기반 재번역을 위한 프롬프트 생성에 필요한 포맷팅"""
+    lines = []
+    for i, item in enumerate(chunk, 1):
+        text_id = item["id"]
+        original = item["original"]
+        current_translation = item.get("current_translation", "")
+
+        # 품질 문제 정보 추가
+        issues = item.get("issues", [item.get("issue")] if item.get("issue") else [])
+
+        lines.append(f"{i}. [{text_id}]")
+        lines.append(f"   원본: {original}")
+        if current_translation:
+            lines.append(f"   이전 번역: {current_translation}")
+
+        if issues:
+            lines.append("   발견된 문제:")
+            for issue in issues:
+                if issue:
+                    lines.append(f"   - {issue.issue_type}: {issue.description}")
+                    if issue.suggested_fix:
+                        lines.append(f"     제안: {issue.suggested_fix}")
+
+        lines.append("")
+
+    return "\n".join(lines)
+
+
 ###############################################################################
 # 4. Main translator class                                                    #
 ###############################################################################
@@ -2027,7 +2685,9 @@ class JSONTranslator:
         wf.add_node("smart_translate", smart_translate_node)
         wf.add_node("validation_and_retry", validation_and_retry_node)
         wf.add_node("rebuild_json", rebuild_json_node)
-        wf.add_node("restore_placeholders", restore_placeholders_node)
+        wf.add_node("햣 ", restore_placeholders_node)
+        wf.add_node("quality_review", quality_review_node)
+        wf.add_node("quality_based_retranslation", quality_based_retranslation_node)
         wf.add_node(
             "extract_terms_from_json_chunks", extract_terms_from_json_chunks_node
         )
@@ -2083,7 +2743,21 @@ class JSONTranslator:
         # Success path
         wf.add_edge("final_fallback_translation", "rebuild_json")
         wf.add_edge("rebuild_json", "restore_placeholders")
-        wf.add_edge("restore_placeholders", "final_check")
+        wf.add_edge("restore_placeholders", "quality_review")
+
+        # Quality review based retranslation
+        wf.add_conditional_edges(
+            "quality_review",
+            should_retranslate_based_on_quality,
+            {
+                "quality_retranslate": "quality_based_retranslation",
+                "complete": "final_check",
+                "end": "final_check",
+            },
+        )
+
+        # After quality-based retranslation, rebuild and go back to quality review
+        wf.add_edge("quality_based_retranslation", "rebuild_json")
 
         # Final check to decide on saving
         wf.add_conditional_edges(
@@ -2092,6 +2766,14 @@ class JSONTranslator:
             {"save_glossary": "save_glossary", "end": END},
         )
         wf.add_edge("save_glossary", END)
+
+        # 품질 검토를 재번역 전 한 번만 수행하도록 조건부 분기
+        wf.add_conditional_edges(
+            "restore_placeholders",
+            should_run_quality_review,
+            {"review": "quality_review", "skip": "final_check"},
+        )
+
         return wf.compile()
 
     async def translate(
@@ -2112,6 +2794,8 @@ class JSONTranslator:
         llm_model: str = "gemini-1.5-flash",
         temperature: float = 0.1,
         final_fallback_max_retries: int = 2,
+        enable_quality_review: bool = True,
+        max_quality_retries: int = 1,
     ) -> str:
         if isinstance(json_input, dict):
             json_dict = json_input
@@ -2164,9 +2848,13 @@ class JSONTranslator:
             vanilla_glossary=[],
             llm_client=llm_client,
             final_fallback_max_retries=final_fallback_max_retries,
+            enable_quality_review=enable_quality_review,
+            quality_issues=[],
+            quality_retry_count=0,
+            max_quality_retries=max_quality_retries,
         )
 
-        result = await self._workflow.ainvoke(initial_state)
+        result = await self._workflow.ainvoke(initial_state, {"recursion_limit": 50})
         if result.get("error"):
             raise RuntimeError(result["error"])
         return result["final_json"]
@@ -2199,3 +2887,17 @@ async def run_example() -> None:  # pragma: no cover – utility function
 
 if __name__ == "__main__":  # pragma: no cover
     asyncio.run(run_example())
+
+
+def should_run_quality_review(state: TranslatorState) -> str:
+    """품질 검토를 수행할지 결정한다.
+
+    - 재번역 전(quality_retry_count == 0) 에만 품질 검토 실행
+    - 재번역 후에는 바로 완료 단계로 이동하여 불필요한 두 번째 검토를 건너뛴다
+    """
+    if (
+        state.get("enable_quality_review", True)
+        and state.get("quality_retry_count", 0) == 0
+    ):
+        return "review"
+    return "skip"
