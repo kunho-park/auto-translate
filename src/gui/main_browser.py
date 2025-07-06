@@ -6,10 +6,11 @@ import json
 import logging
 import os
 import webbrowser
+from pathlib import Path
 
 import flet as ft
 
-from ..localization.messages import get_message, set_language
+from ..localization.messages import get_message, set_language, tr
 from .components import create_modpack_card
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,11 @@ class ModpackBrowser:
 
         # 번역 페이지 콜백
         self.on_translation_start = None
+
+        # 수동 폴더 선택용 파일 피커
+        self.folder_picker = ft.FilePicker(on_result=self.on_folder_selected)
+        # FilePicker 는 overlay 에 추가해야 동작함
+        self.page.overlay.append(self.folder_picker)
 
         # 페이지 설정
         self.setup_page()
@@ -105,6 +111,17 @@ class ModpackBrowser:
                         ft.Container(expand=True),  # 스페이서
                         self.search_field,
                         ft.Container(width=15),  # 간격
+                        ft.IconButton(
+                            icon=ft.Icons.FOLDER_OPEN,
+                            tooltip=tr("gui.button.select_folder", "모드팩 폴더 선택"),
+                            on_click=lambda e: self.folder_picker.get_directory_path(
+                                dialog_title=tr(
+                                    "gui.dialog.select_modpack_directory",
+                                    "모드팩 경로 선택",
+                                )
+                            ),
+                        ),
+                        ft.Container(width=15),
                         self.language_dropdown,
                         ft.Container(width=15),  # 간격
                         self.theme_button,
@@ -154,7 +171,10 @@ class ModpackBrowser:
             logger.warning(f"Directory not found: {curseforge_path}")
             return (
                 False,
-                "모드팩 디렉토리를 찾을 수 없습니다.\nCurseForge 설치 경로를 확인해주세요.",
+                tr(
+                    "gui.error.modpack_dir_not_found",
+                    "모드팩 디렉토리를 찾을 수 없습니다.\nCurseForge 설치 경로를 확인해주세요.",
+                ),
             )
 
         modpacks_loaded = 0
@@ -177,7 +197,10 @@ class ModpackBrowser:
         if modpacks_loaded == 0:
             return (
                 False,
-                "모드팩을 찾을 수 없습니다.\nCurseForge 설치 경로를 확인해주세요.",
+                tr(
+                    "gui.error.no_modpacks_found",
+                    "모드팩을 찾을 수 없습니다.\nCurseForge 설치 경로를 확인해주세요.",
+                ),
             )
 
         return True, ""
@@ -566,3 +589,24 @@ class ModpackBrowser:
     def set_translation_callback(self, callback):
         """번역 시작 콜백 설정"""
         self.on_translation_start = callback
+
+    # ---------------------------------------------------------------------
+    # Folder picker callback
+    # ---------------------------------------------------------------------
+
+    def on_folder_selected(self, e: ft.FilePickerResultEvent):
+        """사용자가 폴더를 선택하면 번역 페이지로 이동"""
+        if e.path:
+            selected_path = e.path
+            modpack_info = {
+                "name": Path(selected_path).name,
+                "author": "Unknown",
+                "version": "",
+                "modpack_version": "",
+                "path": selected_path,
+                "thumbnail_url": "",
+            }
+
+            if self.on_translation_start:
+                # 비동기 콜백 실행
+                self.page.run_task(self.on_translation_start, modpack_info)

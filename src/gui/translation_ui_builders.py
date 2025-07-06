@@ -2,10 +2,13 @@
 번역 페이지 UI 컴포넌트 빌더들
 """
 
+import json
+from pathlib import Path
 from typing import Callable, Dict
 
 import flet as ft
 
+from src.localization import tr
 from src.translators.llm_manager import LLMManager
 from src.utils.env_manager import EnvManager
 
@@ -25,24 +28,29 @@ class TranslationUIBuilders:
         self.current_provider = None
         self.current_model = None
 
+        # 용어집 경로
+        self.glossary_path = Path("./glossary.json")
+
     def build_header(self, modpack_info: Dict, on_back_callback: Callable):
         """헤더 구성"""
         return ft.Row(
             [
                 ft.IconButton(
                     icon=ft.Icons.ARROW_BACK,
-                    tooltip="모드팩 브라우저로 돌아가기",
+                    tooltip=tr(
+                        "gui.tooltip.back_browser", "모드팩 브라우저로 돌아가기"
+                    ),
                     on_click=on_back_callback,
                 ),
                 ft.Text(
-                    f"번역 진행 - {modpack_info.get('name', 'Unknown')}",
+                    f"{tr('gui.header.translation_progress', '번역 진행')} - {modpack_info.get('name', 'Unknown')}",
                     size=24,
                     weight=ft.FontWeight.BOLD,
                     expand=True,
                 ),
                 ft.Container(
                     content=ft.Text(
-                        f"경로: {modpack_info.get('path', 'Unknown')}",
+                        f"{tr('gui.label.path', '경로')}: {modpack_info.get('path', 'Unknown')}",
                         size=12,
                         color=ft.Colors.GREY_600,
                     ),
@@ -63,7 +71,7 @@ class TranslationUIBuilders:
             )
 
         provider_dropdown = ft.Dropdown(
-            label="LLM 제공업체",
+            label=tr("gui.label.llm_provider", "LLM 제공업체"),
             options=provider_options,
             value=settings.get("llm_provider", "gemini"),
             on_change=lambda e: self._on_provider_change(e, update_setting_callback),
@@ -72,7 +80,7 @@ class TranslationUIBuilders:
 
         # 모델 선택 드롭다운 (처음에는 비어있음)
         model_dropdown = ft.Dropdown(
-            label="번역 모델",
+            label=tr("gui.label.llm_model", "번역 모델"),
             options=[],
             value=settings.get("llm_model", ""),
             on_change=lambda e: update_setting_callback("llm_model", e.control.value),
@@ -81,7 +89,7 @@ class TranslationUIBuilders:
 
         # API 키 입력 필드
         api_key_field = ft.TextField(
-            label="API 키",
+            label=tr("gui.label.api_key", "API 키"),
             password=True,
             can_reveal_password=True,
             value=self._get_current_api_key(settings.get("llm_provider", "gemini")),
@@ -93,7 +101,7 @@ class TranslationUIBuilders:
 
         # 모델 새로고침 버튼
         refresh_models_button = ft.ElevatedButton(
-            text="모델 목록 새로고침",
+            text=tr("gui.button.refresh_models", "모델 목록 새로고침"),
             icon=ft.Icons.REFRESH,
             on_click=lambda e: self._refresh_models(
                 provider_dropdown.value, model_dropdown
@@ -187,21 +195,21 @@ class TranslationUIBuilders:
         checkboxes = ft.Column(
             [
                 ft.Checkbox(
-                    label="용어집 사용",
+                    label=tr("gui.checkbox.use_glossary", "용어집 사용"),
                     value=settings["use_glossary"],
                     on_change=lambda e: update_setting_callback(
                         "use_glossary", e.control.value
                     ),
                 ),
                 ft.Checkbox(
-                    label="원본 파일 백업",
+                    label=tr("gui.checkbox.create_backup", "원본 파일 백업"),
                     value=settings["create_backup"],
                     on_change=lambda e: update_setting_callback(
                         "create_backup", e.control.value
                     ),
                 ),
                 ft.Checkbox(
-                    label="패키징 활성화",
+                    label=tr("gui.checkbox.enable_packaging", "패키징 활성화"),
                     value=settings["enable_packaging"],
                     on_change=lambda e: update_setting_callback(
                         "enable_packaging", e.control.value
@@ -211,31 +219,91 @@ class TranslationUIBuilders:
             spacing=8,
         )
 
+        # ------------------------------------------------------------------
+        # Glossary info
+        # ------------------------------------------------------------------
+        glossary_count = self._get_glossary_word_count()
+        glossary_count_text = ft.Text(
+            f"{tr('gui.glossary.count', '단어 수')}: {glossary_count}", size=12
+        )
+        glossary_reset_button = ft.TextButton(
+            tr("gui.button.reset_glossary", "사전 초기화"),
+            icon=ft.Icons.DELETE_FOREVER,
+            on_click=lambda e: self._reset_glossary(glossary_count_text),
+        )
+
+        glossary_row = ft.Row(
+            [
+                glossary_count_text,
+                glossary_reset_button,
+            ]
+        )
+
+        # ------------------------------------------------------------------
+        # Recommendations message
+        # ------------------------------------------------------------------
+        recommendation_text = ft.Text(
+            tr(
+                "gui.message.recommended_settings",
+                "추천 설정 → Temperature 0.1~0.3, 동시 요청 3~5, 최대 토큰 2000~3000",
+            ),
+            size=11,
+            color=ft.Colors.GREY_600,
+        )
+
         settings_content = ft.Column(
             [
-                ft.Text("번역 설정", size=18, weight=ft.FontWeight.BOLD),
-                ft.Container(height=10),
-                create_setting_row("제공업체", provider_dropdown),
-                create_setting_row("모델", model_dropdown),
-                create_setting_row("API 키", api_key_field),
-                create_setting_row("모델 새로고침", refresh_models_button),
-                ft.Container(height=10),
-                self._create_slider_row(
-                    "창의성 (Temperature)", temperature_slider, temperature_text
-                ),
-                self._create_slider_row(
-                    "청크당 최대 토큰", max_tokens_slider, max_tokens_text
-                ),
-                self._create_slider_row(
-                    "동시 요청 수", concurrent_requests_slider, concurrent_text
-                ),
-                self._create_slider_row("요청 간 지연", delay_slider, delay_text),
-                self._create_slider_row(
-                    "최대 재시도 횟수", max_retries_slider, retries_text
+                ft.Text(
+                    tr("gui.text.translation_settings", "번역 설정"),
+                    size=18,
+                    weight=ft.FontWeight.BOLD,
                 ),
                 ft.Container(height=10),
-                ft.Text("추가 옵션", size=16, weight=ft.FontWeight.BOLD),
+                create_setting_row(
+                    tr("gui.label.provider", "제공업체"), provider_dropdown
+                ),
+                create_setting_row(tr("gui.label.model", "모델"), model_dropdown),
+                create_setting_row(tr("gui.label.api_key", "API 키"), api_key_field),
+                create_setting_row(
+                    tr("gui.button.refresh_models", "모델 새로고침"),
+                    refresh_models_button,
+                ),
+                ft.Container(height=10),
+                self._create_slider_row(
+                    tr("gui.slider.temperature", "창의성 (Temperature)"),
+                    temperature_slider,
+                    temperature_text,
+                ),
+                self._create_slider_row(
+                    tr("gui.slider.max_tokens", "청크당 최대 토큰"),
+                    max_tokens_slider,
+                    max_tokens_text,
+                ),
+                self._create_slider_row(
+                    tr("gui.slider.concurrent_requests", "동시 요청 수"),
+                    concurrent_requests_slider,
+                    concurrent_text,
+                ),
+                self._create_slider_row(
+                    tr("gui.slider.delay_between_requests", "요청 간 지연"),
+                    delay_slider,
+                    delay_text,
+                ),
+                self._create_slider_row(
+                    tr("gui.slider.max_retries", "최대 재시도 횟수"),
+                    max_retries_slider,
+                    retries_text,
+                ),
+                ft.Container(height=10),
+                ft.Text(
+                    tr("gui.text.additional_options", "추가 옵션"),
+                    size=16,
+                    weight=ft.FontWeight.BOLD,
+                ),
                 checkboxes,
+                ft.Divider(),
+                glossary_row,
+                recommendation_text,
             ],
             spacing=12,
             scroll=ft.ScrollMode.AUTO,
@@ -689,3 +757,40 @@ class TranslationUIBuilders:
         value_text.value = f"{value}"
         value_text.update()
         update_setting_callback("max_retries", value)
+
+    def _get_glossary_word_count(self) -> int:
+        """현재 glossary.json 단어 수를 반환"""
+        try:
+            if self.glossary_path.exists():
+                with open(self.glossary_path, "r", encoding="utf-8") as fp:
+                    data = json.load(fp)
+                    if isinstance(data, dict):
+                        return len(data)
+                    if isinstance(data, list):
+                        return len(data)
+        except Exception:
+            pass
+        return 0
+
+    def _reset_glossary(self, count_text: ft.Text):
+        """용어집 초기화 (파일 삭제/비우기)"""
+        try:
+            if self.glossary_path.exists():
+                self.glossary_path.write_text("{}", encoding="utf-8")
+            # UI 업데이트
+            count_text.value = f"{tr('gui.glossary.count', '단어 수')}: 0"
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(
+                    tr("gui.message.glossary_cleared", "용어집이 초기화되었습니다.")
+                ),
+                bgcolor=ft.colors.GREEN,
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+        except Exception as err:
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(str(err)),
+                bgcolor=ft.colors.ERROR,
+            )
+            self.page.snack_bar.open = True
+            self.page.update()

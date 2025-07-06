@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 # ---------------------------------------------------------------------------
 # 1. 언어별 메시지 카탈로그
@@ -141,6 +141,33 @@ Text to analyze:
         "translator.quality_review_no_critical": "✅ Quality review results: no critical issues.",
         "translator.quality_review_ok_complete": "Quality review found no issues, proceeding to completion.",
         "translator.no_items_for_retranslation": "No items to retranslate.",
+        # Newly added GUI keys
+        "gui.tooltip.back_browser": "Back to Modpack Browser",
+        "gui.header.translation_progress": "Translation Progress",
+        "gui.label.llm_provider": "LLM Provider",
+        "gui.label.llm_model": "LLM Model",
+        "gui.label.api_key": "API Key",
+        "gui.label.provider": "Provider",
+        "gui.label.model": "Model",
+        "gui.button.refresh_models": "Refresh Model List",
+        "gui.checkbox.use_glossary": "Use Glossary",
+        "gui.checkbox.create_backup": "Backup Original Files",
+        "gui.checkbox.enable_packaging": "Enable Packaging",
+        "gui.text.translation_settings": "Translation Settings",
+        "gui.text.additional_options": "Additional Options",
+        "gui.slider.temperature": "Creativity (Temperature)",
+        "gui.slider.max_tokens": "Max Tokens per Chunk",
+        "gui.slider.concurrent_requests": "Concurrent Requests",
+        "gui.slider.delay_between_requests": "Delay Between Requests",
+        "gui.slider.max_retries": "Max Retries",
+        "gui.button.select_folder": "Select Folder",
+        "gui.dialog.select_modpack_directory": "Select Modpack Directory",
+        "gui.glossary.count": "Words",
+        "gui.button.reset_glossary": "Reset Glossary",
+        "gui.message.glossary_cleared": "Glossary cleared.",
+        "gui.message.recommended_settings": "Recommended → Temperature 0.1-0.3, concurrency 3-5, tokens 2000-3000",
+        "gui.error.modpack_dir_not_found": "Modpack directory not found. Please check CurseForge installation path.",
+        "gui.error.no_modpacks_found": "No modpacks found. Please verify the CurseForge installation path.",
     },
     # 한국어 카탈로그
     "ko": {
@@ -269,6 +296,33 @@ Text to analyze:
         "translator.quality_review_no_critical": "✅ 품질 검토 결과: 심각한 문제 없음",
         "translator.quality_review_ok_complete": "품질 검토 결과 문제 없음, 완료로 진행",
         "translator.no_items_for_retranslation": "재번역할 항목이 없습니다.",
+        # Newly added GUI keys
+        "gui.tooltip.back_browser": "모드팩 브라우저로 돌아가기",
+        "gui.header.translation_progress": "번역 진행",
+        "gui.label.llm_provider": "LLM 제공업체",
+        "gui.label.llm_model": "LLM 모델",
+        "gui.label.api_key": "API 키",
+        "gui.label.provider": "제공업체",
+        "gui.label.model": "모델",
+        "gui.button.refresh_models": "모델 목록 새로고침",
+        "gui.checkbox.use_glossary": "용어집 사용",
+        "gui.checkbox.create_backup": "원본 파일 백업",
+        "gui.checkbox.enable_packaging": "패키징 활성화",
+        "gui.text.translation_settings": "번역 설정",
+        "gui.text.additional_options": "추가 옵션",
+        "gui.slider.temperature": "창의성 (Temperature)",
+        "gui.slider.max_tokens": "청크당 최대 토큰",
+        "gui.slider.concurrent_requests": "동시 요청 수",
+        "gui.slider.delay_between_requests": "요청 간 지연",
+        "gui.slider.max_retries": "최대 재시도 횟수",
+        "gui.button.select_folder": "폴더 선택",
+        "gui.dialog.select_modpack_directory": "모드팩 경로 선택",
+        "gui.glossary.count": "단어 수",
+        "gui.button.reset_glossary": "사전 초기화",
+        "gui.message.glossary_cleared": "용어집이 초기화되었습니다.",
+        "gui.message.recommended_settings": "추천 설정 → Temperature 0.1~0.3, 동시 요청 30~50, 최대 토큰 2000",
+        "gui.error.modpack_dir_not_found": "모드팩 디렉토리를 찾을 수 없습니다. CurseForge 설치 경로를 확인해주세요.",
+        "gui.error.no_modpacks_found": "모드팩을 찾을 수 없습니다. CurseForge 설치 경로를 확인해주세요.",
     },
 }
 
@@ -301,3 +355,25 @@ def get_message(key: str, *args: Any, **kwargs: Any) -> str:  # noqa: D401
     except (KeyError, IndexError):
         # 포맷팅 실패 시 템플릿을 그대로 반환
         return template
+
+
+# ---------------------------------------------------------------------------
+# 3. Convenience wrapper with fallback
+# ---------------------------------------------------------------------------
+
+
+def tr(key: str, default: Optional[str] = None, *args: Any, **kwargs: Any) -> str:  # noqa: D401
+    catalog = _CATALOGS.get(_LANG, _CATALOGS["en"])
+    template = catalog.get(key)
+
+    if template is None:
+        # Key not found → use fallback or key
+        template = default if default is not None else key
+
+    try:
+        return template.format(*args, **kwargs)
+    except (KeyError, IndexError):
+        return template
+
+
+__all__ = ["get_message", "set_language", "tr"]
