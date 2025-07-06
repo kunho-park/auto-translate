@@ -36,6 +36,9 @@ class TranslationController:
             "use_glossary": True,
             "create_backup": True,
             "enable_packaging": True,
+            "enable_quality_review": True,
+            "final_fallback_max_retries": 2,
+            "max_quality_retries": 1,
         }
 
         # 콜백들
@@ -215,6 +218,9 @@ class TranslationController:
             llm_provider=self.settings["llm_provider"],
             llm_model=self.settings["llm_model"],
             temperature=self.settings["temperature"],
+            enable_quality_review=self.settings["enable_quality_review"],
+            final_fallback_max_retries=self.settings["final_fallback_max_retries"],
+            max_quality_retries=self.settings["max_quality_retries"],
         )
 
     def stop_translation(self):

@@ -136,6 +136,14 @@ class TranslationUIBuilders:
             f"{settings['max_retries']}", size=12, color=ft.Colors.BLUE
         )
 
+        final_fallback_text = ft.Text(
+            f"{settings['final_fallback_max_retries']}", size=12, color=ft.Colors.BLUE
+        )
+
+        quality_retries_text = ft.Text(
+            f"{settings['max_quality_retries']}", size=12, color=ft.Colors.BLUE
+        )
+
         temperature_slider = ft.Slider(
             min=0.0,
             max=1.0,
@@ -191,6 +199,34 @@ class TranslationUIBuilders:
             expand=True,
         )
 
+        final_fallback_slider = ft.Slider(
+            min=0,
+            max=10,
+            value=settings["final_fallback_max_retries"],
+            divisions=10,
+            on_change=lambda e: (
+                update_setting_callback(
+                    "final_fallback_max_retries", int(e.control.value)
+                ),
+                setattr(final_fallback_text, "value", f"{int(e.control.value)}"),
+                self.page.update(),
+            ),
+            expand=True,
+        )
+
+        quality_retries_slider = ft.Slider(
+            min=0,
+            max=10,
+            value=settings["max_quality_retries"],
+            divisions=10,
+            on_change=lambda e: (
+                update_setting_callback("max_quality_retries", int(e.control.value)),
+                setattr(quality_retries_text, "value", f"{int(e.control.value)}"),
+                self.page.update(),
+            ),
+            expand=True,
+        )
+
         # 체크박스들
         checkboxes = ft.Column(
             [
@@ -213,6 +249,13 @@ class TranslationUIBuilders:
                     value=settings["enable_packaging"],
                     on_change=lambda e: update_setting_callback(
                         "enable_packaging", e.control.value
+                    ),
+                ),
+                ft.Checkbox(
+                    label=tr("gui.checkbox.enable_quality_review", "품질 검토 활성화"),
+                    value=settings["enable_quality_review"],
+                    on_change=lambda e: update_setting_callback(
+                        "enable_quality_review", e.control.value
                     ),
                 ),
             ],
@@ -293,6 +336,16 @@ class TranslationUIBuilders:
                     tr("gui.slider.max_retries", "최대 재시도 횟수"),
                     max_retries_slider,
                     retries_text,
+                ),
+                self._create_slider_row(
+                    tr("gui.slider.final_fallback_max_retries", "최종 대체 재시도"),
+                    final_fallback_slider,
+                    final_fallback_text,
+                ),
+                self._create_slider_row(
+                    tr("gui.slider.max_quality_retries", "품질 검토 재시도"),
+                    quality_retries_slider,
+                    quality_retries_text,
                 ),
                 ft.Container(height=10),
                 ft.Text(

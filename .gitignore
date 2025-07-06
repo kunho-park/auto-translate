@@ -22,3 +22,5 @@ old/
 
 # Node.js
 node_modules/
+
+glossary.json

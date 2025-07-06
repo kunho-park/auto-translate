@@ -351,6 +351,9 @@ class ModpackTranslator:
         llm_provider: str = "gemini",
         llm_model: str = "gemini-1.5-flash",
         temperature: float = 0.1,
+        enable_quality_review: bool = True,
+        final_fallback_max_retries: int = 2,
+        max_quality_retries: int = 1,
     ) -> Dict[str, str]:
         """통합된 번역 데이터를 번역"""
         logger.info("통합 번역 데이터 번역 시작")
@@ -382,6 +385,9 @@ class ModpackTranslator:
             llm_provider=llm_provider,
             llm_model=llm_model,
             temperature=temperature,
+            enable_quality_review=enable_quality_review,
+            final_fallback_max_retries=final_fallback_max_retries,
+            max_quality_retries=max_quality_retries,
         )
 
         # 결과가 문자열인 경우 JSON으로 파싱
@@ -779,6 +785,9 @@ class ModpackTranslator:
         llm_provider: str = "gemini",
         llm_model: str = "gemini-1.5-flash",
         temperature: float = 0.1,
+        enable_quality_review: bool = True,
+        final_fallback_max_retries: int = 2,
+        max_quality_retries: int = 1,
     ) -> Dict[str, str]:
         """전체 번역 과정 실행 (최적화된 병렬 처리)"""
         try:
@@ -807,6 +816,9 @@ class ModpackTranslator:
                 llm_provider=llm_provider,
                 llm_model=llm_model,
                 temperature=temperature,
+                enable_quality_review=enable_quality_review,
+                final_fallback_max_retries=final_fallback_max_retries,
+                max_quality_retries=max_quality_retries,
             )
 
             # 3. 결과 저장 (병렬 처리)
