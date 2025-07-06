@@ -1,69 +1,40 @@
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Auto-Translate Docs",
-  description: "Official documentation for the Auto-Translate project.",
+  // 사이트 기본 정보
+  lang: 'ko-KR',
+  title: '모드팩 자동 번역 프로젝트 문서',
+  description: 'Auto-Translate Modpack Browser 사용자 및 개발자 문서',
 
-  themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/HOW_TO_USE' },
-      { text: 'Examples', link: '/markdown-examples' }
-    ],
-
-    sidebar: [
-      {
-        text: 'Guide',
-        items: [
-          { text: 'How to Use', link: '/HOW_TO_USE' },
-        ]
-      },
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'API Examples', link: '/api-examples' }
-        ]
-      }
-    ],
-
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/kunho-park/auto-translate' }
-    ]
-  },
-
+  // 다국어 설정
   locales: {
     root: {
+      label: '한국어',
+      lang: 'ko'
+    },
+    en: {
       label: 'English',
       lang: 'en',
       link: '/en/'
-    },
-    ko: {
-      label: '한국어',
-      lang: 'ko',
-      link: '/ko/',
+    }
+  },
 
-      themeConfig: {
-        nav: [
-          { text: '홈', link: '/ko/' },
-          { text: '가이드', link: '/ko/guide' }
-        ],
-        sidebar: [
-          {
-            text: '사용자 가이드',
-            items: [
-              { text: '상세 이용 가이드', link: '/ko/guide' }
-            ]
-          }
-        ],
-        docFooter: {
-          prev: '이전 페이지',
-          next: '다음 페이지'
-        },
-        outlineTitle: '현재 페이지'
-      }
+  themeConfig: {
+    nav: [
+      { text: '가이드', link: '/guide' },
+      { text: 'English', link: '/en/' }
+    ],
+    sidebar: {
+      '/': [
+        { text: '소개', link: '/' },
+        { text: '설치', link: '/guide#설치' },
+        { text: '번역 방법', link: '/guide#번역-방법' },
+        { text: '모델 선택', link: '/guide#모델-선택' },
+        { text: '적용 방법', link: '/guide#적용-방법' }
+      ],
+      '/en/': [
+        { text: 'Introduction', link: '/en/' }
+      ]
     }
   }
-})
+}) 
