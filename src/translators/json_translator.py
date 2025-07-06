@@ -1952,6 +1952,53 @@ async def quality_based_retranslation_node(state: TranslatorState) -> Translator
         # (무한 루프 및 불필요한 추가 품질 검토 방지)
         state["enable_quality_review"] = False
 
+        # JSON 재구성 및 플레이스홀더 복원
+        try:
+            # JSON 재구성
+            logger.info("품질 재번역 후 JSON 재구성 시작...")
+            id_map = state["translation_map"]
+
+            def replace(obj: Any) -> Any:
+                if isinstance(obj, dict):
+                    return {k: replace(v) for k, v in obj.items()}
+                if isinstance(obj, list):
+                    return [replace(i) for i in obj]
+                if isinstance(obj, str) and obj in id_map:
+                    return id_map[obj]
+                return obj
+
+            state["translated_json"] = replace(state["processed_json"])
+            logger.info("품질 재번역 후 JSON 재구성 완료.")
+
+            # 플레이스홀더 복원
+            logger.info("품질 재번역 후 플레이스홀더 복원 시작...")
+            placeholders = state["placeholders"]
+            newline_value = placeholders.get("[NEWLINE]")
+
+            # Sort placeholders ONCE, excluding newline
+            sorted_placeholders = sorted(
+                (item for item in placeholders.items() if item[0] != "[NEWLINE]"),
+                key=lambda item: (
+                    int(item[0][2:-1]) if item[0].startswith("[P") else -1
+                ),
+                reverse=True,
+            )
+
+            # JSON 객체 레벨에서 안전하게 placeholder 복원
+            restored_json = PlaceholderManager.restore_placeholders_in_json(
+                state["translated_json"], sorted_placeholders, newline_value
+            )
+
+            # 복원된 JSON 객체를 문자열로 변환
+            state["final_json"] = json.dumps(
+                restored_json, ensure_ascii=False, indent=2
+            )
+            logger.info("품질 재번역 후 플레이스홀더 복원 완료.")
+
+        except Exception as exc:
+            logger.error(f"품질 재번역 후 JSON 처리 중 오류: {exc}")
+            state["error"] = f"품질 재번역 후 JSON 처리 중 오류: {exc}"
+
         return state
 
     except Exception as exc:
@@ -2182,7 +2229,13 @@ class JSONTranslator:
         # Success path
         wf.add_edge("final_fallback_translation", "rebuild_json")
         wf.add_edge("rebuild_json", "restore_placeholders")
-        wf.add_edge("restore_placeholders", "quality_review")
+
+        # 품질 검토를 재번역 전 한 번만 수행하도록 조건부 분기
+        wf.add_conditional_edges(
+            "restore_placeholders",
+            should_run_quality_review,
+            {"review": "quality_review", "skip": "final_check"},
+        )
 
         # Quality review based retranslation
         wf.add_conditional_edges(
@@ -2195,8 +2248,8 @@ class JSONTranslator:
             },
         )
 
-        # After quality-based retranslation, rebuild and go back to quality review
-        wf.add_edge("quality_based_retranslation", "rebuild_json")
+        # After quality-based retranslation, go directly to final check
+        wf.add_edge("quality_based_retranslation", "final_check")
 
         # Final check to decide on saving
         wf.add_conditional_edges(
@@ -2205,13 +2258,6 @@ class JSONTranslator:
             {"save_glossary": "save_glossary", "end": END},
         )
         wf.add_edge("save_glossary", END)
-
-        # 품질 검토를 재번역 전 한 번만 수행하도록 조건부 분기
-        wf.add_conditional_edges(
-            "restore_placeholders",
-            should_run_quality_review,
-            {"review": "quality_review", "skip": "final_check"},
-        )
 
         return wf.compile()
 
