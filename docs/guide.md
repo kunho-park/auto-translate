@@ -4,35 +4,34 @@
 
 ### 쉽고 빠른 설치 (easy_install)
 
-Windows 사용자는 레포지토리에 포함된 `easy_install` 스크립트를 통해 종속성 설치부터 실행까지 한 번에 진행할 수 있습니다.
+Windows 사용자는 **easy_install 전용 패키지**(`auto-translate-easy-install.zip`)만 받아서 압축을 풀고 `run.bat` 을 실행하면 모든 과정이 자동으로 진행됩니다.
 
-```bat
-:: 1. 저장소 클론 또는 ZIP 다운로드 후 압축 해제
+```text
+1. (선택) uv 패키지 매니저 설치
+   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 
-:: 2. 설치 스크립트 실행
-cd easy_install
-installer.bat
+2. 패키지 다운로드
+   https://github.com/kunho-park/auto-translate/releases/download/easy-install/auto-translate-easy-install.zip
+
+3. 압축 해제 후 폴더 진입
+   auto-translate-easy-install\easy_install
+
+4. 실행
+   run.bat
 ```
 
-`installer.bat` 스크립트는 다음 순서로 작업을 수행합니다.
+`run.bat` 스크립트는 다음 작업을 순서대로 수행합니다.
 
-1. `uv` 패키지 매니저 설치 여부 확인설치되어 있지 않다면 안내 메시지가 출력됩니다.
-2. `app` 디렉터리(프로젝트 루트)로 이동
-3. `uv sync` 를 통해 Python 의존성 설치 및 가상 환경 생성
-4. 완료 메시지 출력
+1. 최신 코드를 GitHub에서 가져와 업데이트(`update.bat` 호출)  
+2. 필요 시 종속성 설치(`uv sync`) 및 가상 환경 생성  
+3. `run_flet_gui.py` 실행으로 프로그램 시작  
+4. 프로그램 종료 후 가상 환경 비활성화
 
-> `uv` 는 `pip` 대비 빠른 설치 속도를 제공하는 패키지 매니저입니다. 설치가 필요한 경우 스크립트 메시지를 참고해 PowerShell 명령어로 설치하세요.
+> **TIP** `run.bat` 만 실행하면 `installer.bat` 가 자동으로 호출되므로 별도 실행이 필요하지 않습니다.
 
 ### 실행
 
-설치가 끝나면 `easy_install/run.bat` 을 실행하여 프로그램을 구동합니다.
-
-```bat
-cd easy_install
-run.bat
-```
-
-`run.bat` 은 `update.bat` 으로 코드 최신화 후, 가상 환경을 활성화하고 `run_flet_gui.py` 를 실행합니다.
+설치 과정에서 이미 `run.bat` 이 실행되어 프로그램이 시작됩니다. 다음에 다시 실행하고 싶다면 동일하게 `easy_install` 폴더에서 `run.bat` 을 더블클릭하세요.
 
 ## 번역 방법
 
