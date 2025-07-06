@@ -157,12 +157,6 @@ async def parse_and_extract_node(state: TranslatorState) -> TranslatorState:  # 
 
         logger.info(_m("translator.found_items", count=len(id_to_text)))
 
-        # LangGraph의 LastValue 채널 제약을 피하기 위해 이후 단계에서는
-        # `parsed_json` 키를 더 이상 전달하지 않습니다.
-        # (여러 노드가 동일한 키를 갱신하며 발생하는 InvalidUpdateError 방지)
-        if "parsed_json" in state:
-            del state["parsed_json"]
-
         return state
     except Exception as exc:
         state["error"] = f"전처리 오류: {exc}"

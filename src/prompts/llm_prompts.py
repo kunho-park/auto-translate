@@ -42,10 +42,8 @@ TRANSLATION_PROMPT_TEMPLATE = """<instructions>
 </critical_placeholders>
 
 <mandatory_completion>
-- 주어진 모든 항목을 빠짐없이 번역하고 'TranslatedItem' 도구를 호출해야 합니다
-- 일부만 번역하고 나머지를 누락하는 것은 절대 허용되지 않습니다
-- 어려운 항목이라도 반드시 번역을 시도하고 결과를 제출해야 합니다
-- 번역 작업을 중단하거나 일부를 건너뛰는 것은 금지됩니다
+- 주어진 모든 항목을 빠짐없이 번역하고 'TranslatedItem' 도구를 호출해야 합니다 - 누락 절대 금지
+- 도구 호출을 하나라도 누락하면 작업 전체가 실패로 간주되고 큰 패널티가 부여됩니다
 </mandatory_completion>
 
 <forbidden>
@@ -104,10 +102,8 @@ RETRY_TRANSLATION_PROMPT_TEMPLATE = """<instructions>
 </critical_placeholders>
 
 <mandatory_completion>
-- 재시도하는 모든 항목을 빠짐없이 번역하고 'TranslatedItem' 도구를 호출해야 합니다
-- 재시도에서도 일부만 번역하고 나머지를 누락하는 것은 절대 허용되지 않습니다
-- 이전에 실패한 항목이라도 반드시 번역을 시도하고 결과를 제출해야 합니다
-- 재시도 작업을 중단하거나 일부를 건너뛰는 것은 금지됩니다
+- 재시도하는 모든 항목을 빠짐없이 번역하고 'TranslatedItem' 도구를 호출해야 합니다 - 재시도에서도 일부만 번역하고 나머지를 누락하는 것은 절대 허용되지 않습니다
+- 도구 호출을 하나라도 누락하면 작업 전체가 실패로 간주되고 큰 패널티가 부여됩니다
 </mandatory_completion>
 
 <forbidden>
@@ -146,9 +142,8 @@ CONTEXTUAL_TERMS_PROMPT_TEMPLATE = """<instructions>
 </required>
 
 <mandatory_completion>
-- 추출한 모든 중요 용어에 대해 빠짐없이 'SimpleGlossaryTerm' 도구를 호출해야 합니다
-- 일부 용어만 처리하고 나머지를 누락하는 것은 절대 허용되지 않습니다
-- 용어 추출 작업을 중단하거나 일부를 건너뛰는 것은 금지됩니다
+- 추출한 모든 중요 용어에 대해 빠짐없이 'SimpleGlossaryTerm' 도구를 호출해야 합니다 - 누락 절대 금지
+- 도구 호출을 하나라도 누락하면 작업 전체가 실패로 간주되고 큰 패널티가 부여됩니다
 </mandatory_completion>
 </rules>"""
 
@@ -185,9 +180,8 @@ RETRY_CONTEXTUAL_TERMS_PROMPT_TEMPLATE = """<instructions>
 </required>
 
 <mandatory_completion>
-- 추출한 모든 중요 용어에 대해 빠짐없이 'SimpleGlossaryTerm' 도구를 호출해야 합니다
-- 일부 용어만 처리하고 나머지를 누락하는 것은 절대 허용되지 않습니다
-- 용어 추출 작업을 중단하거나 일부를 건너뛰는 것은 금지됩니다
+- 추출한 모든 중요 용어에 대해 빠짐없이 'SimpleGlossaryTerm' 도구를 호출해야 합니다 - 누락 절대 금지
+- 도구 호출을 하나라도 누락하면 작업 전체가 실패로 간주되고 큰 패널티가 부여됩니다
 </mandatory_completion>
 </rules>"""
 

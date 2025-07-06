@@ -836,14 +836,14 @@ class TranslationUIBuilders:
                 content=ft.Text(
                     tr("gui.message.glossary_cleared", "용어집이 초기화되었습니다.")
                 ),
-                bgcolor=ft.colors.GREEN,
+                bgcolor=ft.Colors.GREEN,
             )
             self.page.snack_bar.open = True
             self.page.update()
         except Exception as err:
             self.page.snack_bar = ft.SnackBar(
                 content=ft.Text(str(err)),
-                bgcolor=ft.colors.ERROR,
+                bgcolor=ft.Colors.ERROR,
             )
             self.page.snack_bar.open = True
             self.page.update()
