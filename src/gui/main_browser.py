@@ -581,7 +581,7 @@ class ModpackBrowser:
         """Show error message in a snackbar."""
         self.page.snack_bar = ft.SnackBar(
             content=ft.Text(message),
-            bgcolor=ft.colors.ERROR,
+            bgcolor=ft.Colors.RED,
         )
         self.page.snack_bar.open = True
         self.page.update()

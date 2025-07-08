@@ -61,6 +61,10 @@ class TranslatorState(TypedDict):
     quality_issues: List[Any]  # 품질 검토 결과
     quality_retry_count: int  # 품질 기반 재번역 횟수
     max_quality_retries: int  # 품질 기반 재번역 최대 횟수
+    
+    # 다중 API 키 지원 관련 필드
+    use_multi_api_keys: bool  # 다중 API 키 사용 여부
+    multi_llm_manager: Optional[Any]  # MultiLLMManager 인스턴스
 
 
 class TranslatedItem(BaseModel):

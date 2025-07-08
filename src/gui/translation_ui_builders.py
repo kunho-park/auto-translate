@@ -13,6 +13,7 @@ from src.translators.llm_manager import LLMManager
 from src.utils.env_manager import EnvManager
 
 from .components import create_setting_row
+from .multi_api_keys_dialog import MultiAPIKeysDialog
 
 
 class TranslationUIBuilders:
@@ -30,6 +31,12 @@ class TranslationUIBuilders:
 
         # 용어집 경로
         self.glossary_path = Path("./glossary.json")
+
+        # Initialize MultiAPIKeysDialog and attach to page
+        self.multi_api_keys_manager = MultiAPIKeysDialog(self.page)
+        # Create dialog and assign to page.dialog (initially closed)
+        self.multi_api_keys_dialog = self.multi_api_keys_manager.create_dialog()
+        self.page.dialog = self.multi_api_keys_dialog
 
     def build_header(self, modpack_info: Dict, on_back_callback: Callable):
         """헤더 구성"""
@@ -62,62 +69,16 @@ class TranslationUIBuilders:
     def build_settings_panel(self, settings: Dict, update_setting_callback: Callable):
         """설정 패널 구성"""
 
-        # 제공업체 선택 드롭다운
-        provider_options = []
-        for provider_id in self.llm_manager.get_available_providers():
-            provider_info = self.llm_manager.get_provider_info(provider_id)
-            provider_options.append(
-                ft.dropdown.Option(provider_id, provider_info.get("name", provider_id))
-            )
-
-        provider_dropdown = ft.Dropdown(
-            label=tr("gui.label.llm_provider", "LLM 제공업체"),
-            options=provider_options,
-            value=settings.get("llm_provider", "gemini"),
-            on_change=lambda e: self._on_provider_change(e, update_setting_callback),
+        # 다중 API 키 관리 버튼
+        multi_api_keys_button = ft.ElevatedButton(
+            text=tr("gui.button.multi_api_keys", "다중 API 키 관리"),
+            icon=ft.Icons.KEY,
+            on_click=self._open_multi_api_keys_dialog,
             expand=True,
         )
 
-        # 모델 선택 드롭다운 (처음에는 비어있음)
-        model_dropdown = ft.Dropdown(
-            label=tr("gui.label.llm_model", "번역 모델"),
-            options=[],
-            value=settings.get("llm_model", ""),
-            on_change=lambda e: update_setting_callback("llm_model", e.control.value),
-            expand=True,
-        )
-
-        # API 키 입력 필드
-        api_key_field = ft.TextField(
-            label=tr("gui.label.api_key", "API 키"),
-            password=True,
-            can_reveal_password=True,
-            value=self._get_current_api_key(settings.get("llm_provider", "gemini")),
-            on_change=lambda e: self._on_api_key_change(
-                e, settings.get("llm_provider", "gemini")
-            ),
-            expand=True,
-        )
-
-        # 모델 새로고침 버튼
-        refresh_models_button = ft.ElevatedButton(
-            text=tr("gui.button.refresh_models", "모델 목록 새로고침"),
-            icon=ft.Icons.REFRESH,
-            on_click=lambda e: self._refresh_models(
-                provider_dropdown.value, model_dropdown
-            ),
-            expand=True,
-        )
-
-        # 초기 모델 로드
-        self.page.run_task(
-            self._load_initial_models, provider_dropdown.value, model_dropdown
-        )
-
-        # 상태 저장 (나중에 참조용)
-        self.provider_dropdown = provider_dropdown
-        self.model_dropdown = model_dropdown
-        self.api_key_field = api_key_field
+        # 상태 저장 (다중 API 키 매니저만 사용)
+        self.multi_api_keys_button = multi_api_keys_button
 
         # 슬라이더 값 표시를 위한 Text 위젯들
         temperature_text = ft.Text(
@@ -303,13 +264,8 @@ class TranslationUIBuilders:
                 ),
                 ft.Container(height=10),
                 create_setting_row(
-                    tr("gui.label.provider", "제공업체"), provider_dropdown
-                ),
-                create_setting_row(tr("gui.label.model", "모델"), model_dropdown),
-                create_setting_row(tr("gui.label.api_key", "API 키"), api_key_field),
-                create_setting_row(
-                    tr("gui.button.refresh_models", "모델 새로고침"),
-                    refresh_models_button,
+                    tr("gui.button.multi_api_keys", "다중 API 키 관리"),
+                    multi_api_keys_button,
                 ),
                 ft.Container(height=10),
                 self._create_slider_row(
@@ -847,3 +803,8 @@ class TranslationUIBuilders:
             )
             self.page.snack_bar.open = True
             self.page.update()
+
+    def _open_multi_api_keys_dialog(self, e):
+        """다중 API 키 관리 다이얼로그 열기"""
+        # Open the alert dialog using Flet page.open() per docs
+        self.page.open(self.multi_api_keys_dialog)

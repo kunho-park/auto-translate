@@ -14,7 +14,25 @@ __all__ = [
     "RequestDelayManager",
     "PlaceholderManager",
     "TokenOptimizer",
+    "is_korean_text",
 ]
+
+
+def is_korean_text(text: str) -> bool:
+    """텍스트가 한글인지 확인하는 함수"""
+    if not text or not isinstance(text, str):
+        return False
+
+    # 한글 문자 범위: 가-힣 (완성형 한글)
+    korean_char_count = sum(1 for char in text if "가" <= char <= "힣")
+
+    # 전체 문자 중 한글 문자 비율이 30% 이상이면 한글 텍스트로 판단
+    total_chars = len([char for char in text if char.isalpha()])
+    if total_chars == 0:
+        return False
+
+    korean_ratio = korean_char_count / total_chars
+    return korean_ratio >= 0.3
 
 
 class RequestDelayManager:
@@ -42,7 +60,9 @@ class PlaceholderManager:
         r"([a-zA-Z_0-9]+[:.]([0-9a-zA-Z_]+([./][0-9a-zA-Z_]+)*)))"
     )
     JS_TEMPLATE_LITERAL_PATTERN = r"\$\{[^}]+\}"
-    SQUARE_BRACKET_TAG_PATTERN = r"\[[A-Za-z0-9_]+\]"
+    SQUARE_BRACKET_TAG_PATTERN = (
+        r"\[[a-zA-Z_0-9]+[:][a-zA-Z_0-9/.]+\]"  # [minecraft:stone] 형태만 매칭
+    )
     LEGACY_MINECRAFT_PATTERN = r"%[a-zA-Z_][a-zA-Z0-9_]*%"  # %username% 등
     NEWLINE_PATTERN = r"\\n|\\r\\n|\\r"  # \n, \r\n, \r 개행 문자들
 
@@ -332,6 +352,45 @@ class TokenOptimizer:
             text_id = f"T{TokenOptimizer._id_counter:03d}"
             id_map[text_id] = json_obj
             return text_id
+        return json_obj
+
+    @staticmethod
+    def replace_text_with_ids_selective(
+        json_obj: Any, id_map: Dict[str, str], existing_translations: Dict[str, str]
+    ) -> Any:
+        """기존 번역이 있는 항목은 번역으로 직접 대체하고, 없는 항목만 ID로 처리"""
+        if isinstance(json_obj, dict):
+            return {
+                k: TokenOptimizer.replace_text_with_ids_selective(
+                    v, id_map, existing_translations
+                )
+                for k, v in json_obj.items()
+            }
+        if isinstance(json_obj, list):
+            return [
+                TokenOptimizer.replace_text_with_ids_selective(
+                    i, id_map, existing_translations
+                )
+                for i in json_obj
+            ]
+        if isinstance(json_obj, str) and json_obj.strip():
+            text = json_obj.strip()
+
+            # 이미 한글로 번역된 텍스트인지 확인
+            if is_korean_text(text):
+                # 이미 한글 텍스트면 그대로 반환 (번역 불필요)
+                return json_obj
+
+            # 이미 번역된 항목이 있는지 체크
+            if text in existing_translations:
+                # 이미 번역된 텍스트가 있으면 해당 번역을 직접 반환
+                return existing_translations[text]
+            else:
+                # 번역이 없으면 ID로 처리 (번역 대상)
+                TokenOptimizer._id_counter += 1
+                text_id = f"T{TokenOptimizer._id_counter:03d}"
+                id_map[text_id] = json_obj
+                return text_id
         return json_obj
 
     @staticmethod

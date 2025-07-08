@@ -21,6 +21,7 @@ from src.prompts.llm_prompts import (
     translation_prompt,
 )
 from src.translators.llm_manager import LLMManager
+from src.translators.multi_llm_manager import MultiLLMManager
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +59,12 @@ from .models import (
     TranslationResult,
     TranslatorState,
 )
-from .utils import PlaceholderManager, RequestDelayManager, TokenOptimizer
+from .utils import (
+    PlaceholderManager,
+    RequestDelayManager,
+    TokenOptimizer,
+    is_korean_text,
+)
 
 ###############################################################################
 # 2. Utility helpers                                                          #
@@ -147,15 +153,31 @@ async def parse_and_extract_node(state: TranslatorState) -> TranslatorState:  # 
         )
         state["placeholders"] = placeholders
 
+        # 이미 번역된 항목들을 제외하는 로직 추가
+        existing_translations = state.get("existing_translations", {})
+
+        # 전체 텍스트 항목 수를 먼저 계산
+        original_text_count = len(
+            TokenOptimizer.optimize_json_for_translation(json_with_placeholders)
+        )
+
         id_to_text: Dict[str, str] = {}
-        json_with_ids = TokenOptimizer.replace_text_with_ids(
-            json_with_placeholders, id_to_text
+        json_with_ids = TokenOptimizer.replace_text_with_ids_selective(
+            json_with_placeholders, id_to_text, existing_translations
         )
 
         state["id_to_text_map"] = id_to_text
         state["processed_json"] = json_with_ids
 
         logger.info(_m("translator.found_items", count=len(id_to_text)))
+
+        # 이미 번역된 항목 개수 로깅
+        if existing_translations:
+            already_translated_count = original_text_count - len(id_to_text)
+            if already_translated_count > 0:
+                logger.info(
+                    f"이미 번역된 항목 {already_translated_count}개를 건너뛰었습니다."
+                )
 
         return state
     except Exception as exc:
@@ -320,6 +342,7 @@ async def extract_terms_from_json_chunks_node(
                         merged_glossary.values()
                     ),  # 1차 사전을 LLM에 제공
                     llm_client=state.get("llm_client"),  # LLM 클라이언트 전달
+                    state=state,  # 다중 API 키 지원을 위한 상태 전달
                 )
             )
 
@@ -391,6 +414,7 @@ async def _extract_terms_from_chunk_worker_with_progress(
     max_retries: int = 3,
     existing_glossary: List[GlossaryEntry] = None,
     llm_client: Any = None,
+    state: TranslatorState = None,
 ) -> Glossary:
     """Worker to extract glossary terms from a single JSON chunk with progress reporting and retry logic."""
 
@@ -443,7 +467,26 @@ async def _extract_terms_from_chunk_worker_with_progress(
                     logger.error("LLM 클라이언트가 설정되지 않았습니다")
                     return Glossary(terms=[])
 
-                llm = llm_client
+                # 다중 API 키 사용 시 새로운 클라이언트 가져오기
+                current_llm = llm_client
+                if (
+                    state
+                    and state.get("use_multi_api_keys")
+                    and state.get("multi_llm_manager")
+                ):
+                    multi_manager = state["multi_llm_manager"]
+                    fresh_client = await multi_manager.get_client()
+                    if fresh_client:
+                        current_llm = fresh_client
+                        logger.debug(
+                            f"용어 추출 청크 {chunk_idx + 1}: 다중 API 키에서 새 클라이언트 사용"
+                        )
+                    else:
+                        logger.warning(
+                            f"용어 추출 청크 {chunk_idx + 1}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
+                        )
+
+                llm = current_llm
                 if attempt > 0:
                     logger.info(
                         f"🔄 청크 {chunk_idx + 1} 용어 추출 재시도 {attempt}/{max_retries} (temperature={temperature})"
@@ -516,6 +559,14 @@ async def _extract_terms_from_chunk_worker_with_progress(
                 logger.warning(
                     f"⚠️ 청크 {chunk_idx + 1} 용어 추출 실패 (시도 {attempt + 1}/{max_retries + 1}): {exc}"
                 )
+
+                # 다중 API 키 사용 시 해당 키의 실패를 기록
+                if (
+                    state
+                    and state.get("use_multi_api_keys")
+                    and state.get("multi_llm_manager")
+                ):
+                    logger.debug(f"용어 추출 청크 {chunk_idx + 1}: API 키 실패 기록됨")
 
                 # 마지막 시도가 아니면 잠시 대기
                 if attempt < max_retries:
@@ -690,8 +741,23 @@ async def _translate_chunk_worker_with_progress(
             )
 
         try:
+            # 다중 API 키 사용 시 새로운 클라이언트 가져오기
+            current_llm = llm
+            if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
+                multi_manager = state["multi_llm_manager"]
+                fresh_client = await multi_manager.get_client()
+                if fresh_client:
+                    current_llm = fresh_client
+                    logger.debug(
+                        f"청크 {chunk_num}: 다중 API 키에서 새 클라이언트 사용"
+                    )
+                else:
+                    logger.warning(
+                        f"청크 {chunk_num}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
+                    )
+
             # TranslatedItem을 도구로 바인딩하여 LLM 호출
-            llm_with_tools = llm.bind_tools([TranslatedItem])
+            llm_with_tools = current_llm.bind_tools([TranslatedItem])
             response = await llm_with_tools.ainvoke(prompt)
 
             # LLM의 도구 호출에서 TranslatedItem 추출
@@ -719,6 +785,12 @@ async def _translate_chunk_worker_with_progress(
             return translations
         except Exception as exc:
             logger.error(f"청크 {chunk_num} 번역 실패: {exc}")
+
+            # 다중 API 키 사용 시 해당 키의 실패를 기록
+            if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
+                # 실패한 키 정보는 MultiLLMManager에서 자동으로 처리됨
+                logger.debug(f"청크 {chunk_num}: API 키 실패 기록됨")
+
             return []
 
 
@@ -1056,9 +1128,24 @@ async def _translate_single_item_worker(
             )
 
             try:
+                # 다중 API 키 사용 시 새로운 클라이언트 가져오기
+                current_llm = llm
+                if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
+                    multi_manager = state["multi_llm_manager"]
+                    fresh_client = await multi_manager.get_client()
+                    if fresh_client:
+                        current_llm = fresh_client
+                        logger.debug(
+                            f"최종 번역 {tid}: 다중 API 키에서 새 클라이언트 사용"
+                        )
+                    else:
+                        logger.warning(
+                            f"최종 번역 {tid}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
+                        )
+
                 # 재시도 시 temperature를 약간 높여 다른 결과 유도
                 temperature = min(1.0, attempt * 0.2)
-                configured_llm = llm.with_config(
+                configured_llm = current_llm.with_config(
                     configurable={"temperature": temperature}
                 )
                 llm_with_tools = configured_llm.bind_tools([TranslatedItem])
@@ -1096,6 +1183,10 @@ async def _translate_single_item_worker(
                 logger.error(
                     f"🚨 최종 번역 재시도({attempt + 1}) API 호출 오류 (항목: {tid}): {e}"
                 )
+
+                # 다중 API 키 사용 시 해당 키의 실패를 기록
+                if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
+                    logger.debug(f"최종 번역 {tid}: API 키 실패 기록됨")
 
             # 재시도 전 잠시 대기
             if attempt < max_retries:
@@ -1225,8 +1316,17 @@ def rebuild_json_node(state: TranslatorState) -> TranslatorState:  # noqa: D401
                 return {k: replace(v) for k, v in obj.items()}
             if isinstance(obj, list):
                 return [replace(i) for i in obj]
-            if isinstance(obj, str) and obj in id_map:
-                return id_map[obj]
+            if isinstance(obj, str):
+                # T001, T002 같은 ID가 translation_map에 있는지 확인
+                if obj in id_map:
+                    return id_map[obj]
+                # ID 패턴이지만 번역이 없는 경우 경고
+                elif re.match(r"^T\d{3,}$", obj):
+                    logger.warning(f"번역되지 않은 ID 발견: {obj}")
+                    # 원본 텍스트로 복원 시도
+                    original_text = state["id_to_text_map"].get(obj, obj)
+                    logger.warning(f"원본 텍스트로 복원: {obj} -> {original_text}")
+                    return original_text
             return obj
 
         state["translated_json"] = replace(state["processed_json"])
@@ -1437,43 +1537,53 @@ def create_primary_glossary_node(state: TranslatorState) -> TranslatorState:
 
     primary_terms = []
     processed_count = 0
+    korean_translated_count = 0
+    valid_term_count = 0
 
     # 기존 번역 데이터를 GlossaryEntry로 변환
     for source_text, target_text in existing_translations.items():
         try:
-            # 간단한 용어 추출 (단어 단위)
-            words = source_text.split()
-            if len(words) <= 3:  # 3단어 이하의 짧은 표현만 용어로 간주
-                # 이미 존재하는 용어인지 확인
-                existing_term = None
-                for term in primary_terms:
-                    if term.original.lower() == source_text.lower():
-                        existing_term = term
-                        break
+            # 타겟 텍스트가 한글인지 확인
+            if is_korean_text(target_text):
+                korean_translated_count += 1
 
-                if existing_term:
-                    # 기존 용어에 새로운 의미 추가 (중복 방지)
-                    new_meaning = TermMeaning(
-                        translation=target_text, context="기존 번역"
-                    )
+                # 간단한 용어 추출 (단어 단위)
+                words = source_text.split()
+                if len(words) <= 3:  # 3단어 이하의 짧은 표현만 용어로 간주
+                    valid_term_count += 1
 
-                    # 중복 체크 (번역만 비교)
-                    translation_exists = any(
-                        m.translation.lower().strip() == target_text.lower().strip()
-                        for m in existing_term.meanings
-                    )
+                    # 이미 존재하는 용어인지 확인
+                    existing_term = None
+                    for term in primary_terms:
+                        if term.original.lower() == source_text.lower():
+                            existing_term = term
+                            break
 
-                    if not translation_exists:
-                        existing_term.meanings.append(new_meaning)
-                else:
-                    # 새로운 용어 추가
-                    new_term = GlossaryEntry(
-                        original=source_text,
-                        meanings=[
-                            TermMeaning(translation=target_text, context="기존 번역")
-                        ],
-                    )
-                    primary_terms.append(new_term)
+                    if existing_term:
+                        # 기존 용어에 새로운 의미 추가 (중복 방지)
+                        new_meaning = TermMeaning(
+                            translation=target_text, context="기존 번역"
+                        )
+
+                        # 중복 체크 (번역만 비교)
+                        translation_exists = any(
+                            m.translation.lower().strip() == target_text.lower().strip()
+                            for m in existing_term.meanings
+                        )
+
+                        if not translation_exists:
+                            existing_term.meanings.append(new_meaning)
+                    else:
+                        # 새로운 용어 추가
+                        new_term = GlossaryEntry(
+                            original=source_text,
+                            meanings=[
+                                TermMeaning(
+                                    translation=target_text, context="기존 번역"
+                                )
+                            ],
+                        )
+                        primary_terms.append(new_term)
 
             processed_count += 1
 
@@ -1505,6 +1615,9 @@ def create_primary_glossary_node(state: TranslatorState) -> TranslatorState:
         )
 
     logger.info(f"1차 사전 구축 완료: {len(primary_terms)}개 용어 생성")
+    logger.info(
+        f"한글 번역 항목: {korean_translated_count}개, 유효 용어: {valid_term_count}개"
+    )
     return state
 
 
@@ -1584,6 +1697,7 @@ async def quality_review_node(state: TranslatorState) -> TranslatorState:
                     chunk=chunk,
                     target_language=state["target_language"],
                     llm=llm,
+                    state=state,
                     semaphore=sem,
                     delay_manager=delay_mgr,
                     chunk_idx=chunk_idx,
@@ -1707,6 +1821,7 @@ async def _review_chunk_worker(
     chunk: List[Dict],
     target_language: str,
     llm: Any,
+    state: TranslatorState,
     semaphore: asyncio.Semaphore,
     delay_manager: RequestDelayManager,
     chunk_idx: int,
@@ -1727,6 +1842,21 @@ async def _review_chunk_worker(
             )
 
         try:
+            # 다중 API 키 사용 시 새로운 클라이언트 가져오기
+            current_llm = llm
+            if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
+                multi_manager = state["multi_llm_manager"]
+                fresh_client = await multi_manager.get_client()
+                if fresh_client:
+                    current_llm = fresh_client
+                    logger.debug(
+                        f"품질 검토 청크 {chunk_idx + 1}: 다중 API 키에서 새 클라이언트 사용"
+                    )
+                else:
+                    logger.warning(
+                        f"품질 검토 청크 {chunk_idx + 1}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
+                    )
+
             # 검토용 텍스트 포맷팅
             review_text = _format_chunk_for_quality_review(chunk)
 
@@ -1736,7 +1866,7 @@ async def _review_chunk_worker(
             prompt = quality_review_prompt(target_language, review_text)
 
             # LLM 호출 - QualityIssue 도구 바인딩
-            llm_with_tools = llm.bind_tools([QualityIssue])
+            llm_with_tools = current_llm.bind_tools([QualityIssue])
             response = await llm_with_tools.ainvoke(prompt)
 
             # 응답 파싱 - 개별 QualityIssue들 수집
@@ -1762,6 +1892,11 @@ async def _review_chunk_worker(
 
         except Exception as exc:
             logger.error(f"청크 {chunk_idx + 1} 품질 검토 실패: {exc}")
+
+            # 다중 API 키 사용 시 해당 키의 실패를 기록
+            if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
+                logger.debug(f"품질 검토 청크 {chunk_idx + 1}: API 키 실패 기록됨")
+
             return []
 
 
@@ -2040,6 +2175,21 @@ async def _quality_retranslate_chunk_worker(
         # 재번역 시도
         for attempt in range(max_retries + 1):
             try:
+                # 다중 API 키 사용 시 새로운 클라이언트 가져오기
+                current_llm = llm
+                if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
+                    multi_manager = state["multi_llm_manager"]
+                    fresh_client = await multi_manager.get_client()
+                    if fresh_client:
+                        current_llm = fresh_client
+                        logger.debug(
+                            f"품질 재번역 청크 {chunk_idx + 1}: 다중 API 키에서 새 클라이언트 사용"
+                        )
+                    else:
+                        logger.warning(
+                            f"품질 재번역 청크 {chunk_idx + 1}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
+                        )
+
                 # 프롬프트 생성 (품질 문제를 고려한 상세한 프롬프트)
                 glossary_text = TokenOptimizer.format_glossary_for_llm(
                     relevant_glossary
@@ -2056,7 +2206,7 @@ async def _quality_retranslate_chunk_worker(
                 )
 
                 # LLM 호출
-                llm_with_tools = llm.bind_tools([TranslatedItem])
+                llm_with_tools = current_llm.bind_tools([TranslatedItem])
                 response = await llm_with_tools.ainvoke(prompt)
 
                 # 응답 파싱
@@ -2113,6 +2263,13 @@ async def _quality_retranslate_chunk_worker(
                 logger.error(
                     f"품질 재번역 청크 {chunk_idx + 1} 시도 {attempt + 1} 실패: {exc}"
                 )
+
+                # 다중 API 키 사용 시 해당 키의 실패를 기록
+                if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
+                    logger.debug(
+                        f"품질 재번역 청크 {chunk_idx + 1}: API 키 실패 기록됨"
+                    )
+
                 if attempt < max_retries:
                     await asyncio.sleep(min(2.0, (attempt + 1) * 0.5))
                 else:
@@ -2281,6 +2438,8 @@ class JSONTranslator:
         final_fallback_max_retries: int = 2,
         enable_quality_review: bool = True,
         max_quality_retries: int = 1,
+        use_multi_api_keys: bool = False,
+        multi_llm_manager: Optional[MultiLLMManager] = None,
     ) -> str:
         if isinstance(json_input, dict):
             json_dict = json_input
@@ -2302,10 +2461,19 @@ class JSONTranslator:
             )
         )
 
-        # LLM 클라이언트 생성
-        llm_client = await self.llm_manager.create_llm_client(
-            llm_provider, llm_model, temperature=temperature, max_tokens=100000
-        )
+        # 항상 다중 API 키 모드 사용
+        # multi_llm_manager가 전달되지 않았다면 새로 생성
+        multi_llm_manager = multi_llm_manager or MultiLLMManager()
+        active_keys = multi_llm_manager.get_active_keys()
+        if not active_keys:
+            raise RuntimeError(
+                "사용 가능한 API 키가 없습니다. 다중 API 키를 등록해주세요."
+            )
+        logger.info(f"다중 API 키 모드 활성화: {len(active_keys)}개 키 사용 가능")
+        # LLM 클라이언트 획득 (로테이션 적용)
+        llm_client = await multi_llm_manager.get_client()
+        if not llm_client:
+            raise RuntimeError("다중 API 키 클라이언트 생성에 실패했습니다.")
 
         initial_state: TranslatorState = TranslatorState(
             parsed_json=json_dict,
@@ -2337,6 +2505,9 @@ class JSONTranslator:
             quality_issues=[],
             quality_retry_count=0,
             max_quality_retries=max_quality_retries,
+            # 다중 API 키 관련 추가
+            use_multi_api_keys=use_multi_api_keys,
+            multi_llm_manager=multi_llm_manager,
         )
 
         result = await self._workflow.ainvoke(initial_state, {"recursion_limit": 50})
