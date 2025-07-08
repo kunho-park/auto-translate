@@ -215,12 +215,14 @@ FINAL_FALLBACK_PROMPT_TEMPLATE = """<instructions>
 - 번역 결과에는 반드시 <required_placeholders>에 명시된 모든 플레이스홀더가 포함되어야 합니다.
 - 플레이스홀더를 절대 번역하거나 변경하거나 생략해서는 안 됩니다.
 - 원본 텍스트의 플레이스홀더 순서와 구조를 최대한 유지해주세요.
+- 번역 결과에는 반드시 ID를 포함하지 마세요.
 </critical>
 
 <forbidden>
 - <required_placeholders>에 없는 플레이스홀더를 임의로 추가하지 마세요.
 - 번역문에 영어 원문을 괄호로 포함하지 마세요. (예: "마법사 (Wizard)" -> "마법사")
 - 빈 번역이나 원문과 동일한 번역은 허용되지 않습니다.
+- 번역 결과에는 반드시 ID를 포함하지 마세요.
 </forbidden>
 </rules>
 """

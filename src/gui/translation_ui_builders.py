@@ -403,6 +403,39 @@ class TranslationUIBuilders:
             status_info,
         )
 
+    def build_token_usage_panel(self):
+        """토큰 사용량 패널 구성"""
+        token_text = ft.Text(
+            "📊 토큰 사용량\n🔤 입력: 0\n✍️ 출력: 0\n📈 총합: 0\n🔄 호출: 0",
+            size=12,
+            color=ft.Colors.ON_SURFACE_VARIANT,
+        )
+
+        token_panel = ft.Container(
+            content=ft.Column(
+                [
+                    ft.Text(
+                        tr("gui.panel.token_usage", "토큰 사용량"),
+                        size=16,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.ON_SURFACE,
+                    ),
+                    ft.Divider(height=10),
+                    token_text,
+                ],
+                tight=True,
+                spacing=5,
+            ),
+            padding=ft.padding.all(10),
+            border_radius=5,
+            margin=ft.margin.only(bottom=10),
+        )
+
+        # 토큰 텍스트 컴포넌트를 패널에 저장해서 나중에 접근할 수 있도록 함
+        token_panel.token_text = token_text
+
+        return token_panel
+
     def build_log_panel(
         self, clear_logs_callback: Callable, save_logs_callback: Callable
     ):
@@ -505,54 +538,58 @@ class TranslationUIBuilders:
         return control_buttons, start_button, stop_button, status_text
 
     def build_main_layout(
-        self, header, settings_panel, progress_panel, log_panel, control_panel
+        self,
+        header,
+        settings_panel,
+        progress_panel,
+        token_usage_panel,
+        log_panel,
+        control_panel,
     ):
-        """메인 레이아웃 구성"""
-        # 메인 컨텐츠 (3열 레이아웃 - 1:2:1 비율)
-        content = ft.Row(
-            [
-                # 왼쪽: 설정 패널 (비율 1)
-                ft.Container(
-                    content=settings_panel,
-                    expand=1,
-                    padding=10,
-                ),
-                # 중간: 진행 상황 (비율 2)
-                ft.Container(
-                    content=progress_panel,
-                    expand=2,
-                    padding=10,
-                ),
-                # 오른쪽: 로그 (비율 1, 높이 제한)
-                ft.Container(
-                    content=log_panel,
-                    expand=1,
-                    padding=10,
-                ),
-            ],
-            expand=True,
-            spacing=10,
-        )
-
-        # 전체 레이아웃
-        main_layout = ft.Column(
-            [
-                header,
-                ft.Divider(),
-                ft.Container(
-                    content=content,
-                    expand=True,
-                ),
-                ft.Divider(),
-                control_panel,
-            ],
-            expand=True,
-            spacing=10,
-        )
-
+        """메인 레이아웃 구성 (1:2:1 비율: 설정 - 진행상황/토큰 - 로그)"""
         return ft.Container(
-            content=main_layout,
-            padding=20,
+            content=ft.Column(
+                [
+                    header,
+                    ft.Divider(),
+                    ft.Row(
+                        [
+                            # 왼쪽: 설정 패널 (비율 1)
+                            ft.Container(
+                                content=settings_panel,
+                                expand=1,
+                                padding=ft.padding.all(5),
+                            ),
+                            # 중앙: 진행상황 + 토큰 사용량 (비율 2)
+                            ft.Container(
+                                content=ft.Column(
+                                    [
+                                        progress_panel,
+                                        token_usage_panel,
+                                    ],
+                                    spacing=10,
+                                ),
+                                expand=2,
+                                padding=ft.padding.all(5),
+                            ),
+                            # 오른쪽: 로그 패널 (비율 1)
+                            ft.Container(
+                                content=log_panel,
+                                expand=1,
+                                padding=ft.padding.all(5),
+                            ),
+                        ],
+                        expand=True,
+                        alignment=ft.MainAxisAlignment.START,
+                        vertical_alignment=ft.CrossAxisAlignment.START,
+                    ),
+                    control_panel,
+                ],
+                expand=True,
+                spacing=10,
+                scroll=ft.ScrollMode.AUTO,
+            ),
+            padding=ft.padding.all(20),
             expand=True,
         )
 

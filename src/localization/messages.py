@@ -199,6 +199,12 @@ Text to analyze:
         "gui.error.key_already_exists": "Key name already exists.",
         "gui.text.multi_api_keys_help": "💡 Tip: Register multiple API keys to automatically switch to other keys when quota limits are reached.",
         "gui.checkbox.use_multi_api_keys": "Use Multi API Keys",
+        "gui.panel.progress": "Translation Progress",
+        "gui.panel.log": "Translation Log",
+        "gui.panel.token_usage": "Token Usage",
+        "gui.label.logs": "Logs",
+        "gui.label.settings": "Translation Settings",
+        "gui.label.provider": "LLM Provider",
     },
     # 한국어 카탈로그
     "ko": {
@@ -385,6 +391,12 @@ Text to analyze:
         "gui.error.key_already_exists": "이미 존재하는 키 이름입니다.",
         "gui.text.multi_api_keys_help": "💡 팁: 여러 API 키를 등록하면 할당량 제한 시 자동으로 다른 키로 전환됩니다.",
         "gui.checkbox.use_multi_api_keys": "다중 API 키 사용",
+        "gui.panel.progress": "번역 진행률",
+        "gui.panel.log": "번역 로그",
+        "gui.panel.token_usage": "토큰 사용량",
+        "gui.label.logs": "로그",
+        "gui.label.settings": "번역 설정",
+        "gui.label.provider": "LLM 제공업체",
     },
 }
 

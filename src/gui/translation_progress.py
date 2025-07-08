@@ -5,7 +5,7 @@
 import asyncio
 import time
 from datetime import datetime
-from typing import Callable
+from typing import Any, Callable, Dict, Optional
 
 import flet as ft
 
@@ -28,6 +28,14 @@ class TranslationProgressManager:
             "elapsed_time": "00:00:00",
         }
 
+        # 토큰 사용량 관련
+        self.token_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+            "call_count": 0,
+        }
+
         # 진행률 업데이트용
         self.last_progress_update = 0
         self.progress_update_interval = 10  # 10초마다 진행률 요약
@@ -37,15 +45,73 @@ class TranslationProgressManager:
         self.progress_text = None
         self.progress_detail = None
         self.status_info = None
+        self.token_usage_display = None  # 토큰 사용량 표시 컴포넌트
 
     def set_ui_components(
-        self, main_progress_bar, progress_text, progress_detail, status_info
+        self,
+        main_progress_bar,
+        progress_text,
+        progress_detail,
+        status_info,
+        token_usage_display=None,
     ):
         """UI 컴포넌트들 설정"""
         self.main_progress_bar = main_progress_bar
         self.progress_text = progress_text
         self.progress_detail = progress_detail
         self.status_info = status_info
+        self.token_usage_display = token_usage_display
+
+    def update_token_usage(self, token_usage: Optional[Dict[str, Any]]):
+        """토큰 사용량 업데이트"""
+        if token_usage:
+            self.token_usage = {
+                "prompt_tokens": token_usage.get("prompt_tokens", 0),
+                "completion_tokens": token_usage.get("completion_tokens", 0),
+                "total_tokens": token_usage.get("total_tokens", 0),
+                "call_count": token_usage.get("call_count", 0),
+            }
+            self.update_token_display()
+
+    def update_token_display(self):
+        """토큰 사용량 표시 업데이트"""
+        if self.token_usage_display:
+            try:
+                # 토큰 사용량 텍스트 생성
+                token_text = "📊 토큰 사용량\n"
+                token_text += f"🔤 입력: {self.token_usage['prompt_tokens']:,}\n"
+                token_text += f"✍️ 출력: {self.token_usage['completion_tokens']:,}\n"
+                token_text += f"📈 총합: {self.token_usage['total_tokens']:,}\n"
+                token_text += f"🔄 호출: {self.token_usage['call_count']}"
+
+                # 토큰 패널에 저장된 텍스트 컴포넌트 직접 업데이트
+                if hasattr(self.token_usage_display, "token_text"):
+                    self.token_usage_display.token_text.value = token_text
+                elif hasattr(self.token_usage_display, "value"):
+                    self.token_usage_display.value = token_text
+
+                # 토큰 정보가 있는 경우 로그에도 추가 (한 번만)
+                if (
+                    self.token_usage["total_tokens"] > 0
+                    and self.token_usage["call_count"] > 0
+                ):
+                    # 이전 토큰 수와 비교하여 변경된 경우에만 로그 출력
+                    previous_total = getattr(self, "_previous_token_total", 0)
+                    if self.token_usage["total_tokens"] != previous_total:
+                        # self.add_log_message(
+                        #     "INFO",
+                        #     f"토큰 사용량 업데이트 - 입력: {self.token_usage['prompt_tokens']:,}, "
+                        #     f"출력: {self.token_usage['completion_tokens']:,}, "
+                        #     f"총합: {self.token_usage['total_tokens']:,}",
+                        # )
+                        self._previous_token_total = self.token_usage["total_tokens"]
+
+                # UI 업데이트
+                self.page.update()
+            except Exception as e:
+                # 토큰 표시 업데이트 오류는 무시하되 디버깅을 위해 로그 출력
+                print(f"토큰 표시 업데이트 오류: {e}")
+                pass
 
     def start_translation(self):
         """번역 시작 시 상태 초기화"""
@@ -57,6 +123,15 @@ class TranslationProgressManager:
         self.translation_stats["total_files"] = 0
         self.translation_stats["translated_entries"] = 0
         self.translation_stats["total_entries"] = 0
+
+        # 토큰 사용량 초기화
+        self.token_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+            "call_count": 0,
+        }
+        self.update_token_display()
 
         self.add_log_message(
             "INFO", f"번역 시작 시간: {self.translation_stats['start_time']}"

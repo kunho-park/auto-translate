@@ -63,6 +63,7 @@ class TranslationPage:
             completion_callback=self.completion_dialog.show_completion_dialog,
             log_callback=self.logger.add_log_message,
             ui_update_callback=self._update_ui_state,
+            token_update_callback=self.progress_manager.update_token_usage,
         )
 
     def build_ui(self):
@@ -92,9 +93,16 @@ class TranslationPage:
             status_info,
         ) = self.ui_builders.build_progress_panel()
 
-        # 진행률 매니저에 UI 컴포넌트 연결
+        # 토큰 사용량 표시 패널 구성
+        token_usage_panel = self.ui_builders.build_token_usage_panel()
+
+        # 진행률 매니저에 UI 컴포넌트 연결 (토큰 사용량 표시 포함)
         self.progress_manager.set_ui_components(
-            main_progress_bar, progress_text, progress_detail, status_info
+            main_progress_bar,
+            progress_text,
+            progress_detail,
+            status_info,
+            token_usage_panel,
         )
 
         # 로그 패널 구성
@@ -119,9 +127,14 @@ class TranslationPage:
         self.stop_button = stop_button
         self.status_text = status_text
 
-        # 메인 레이아웃 구성
+        # 메인 레이아웃 구성 (토큰 사용량 패널 추가)
         main_layout = self.ui_builders.build_main_layout(
-            header, settings_panel, progress_container, log_panel, control_panel
+            header,
+            settings_panel,
+            progress_container,
+            token_usage_panel,
+            log_panel,
+            control_panel,
         )
 
         # 페이지에 추가

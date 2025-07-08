@@ -20,8 +20,8 @@ from src.prompts.llm_prompts import (
     retry_translation_prompt,
     translation_prompt,
 )
-from src.translators.llm_manager import LLMManager
 from src.translators.multi_llm_manager import MultiLLMManager
+from src.translators.token_counter import UniversalTokenCountingHandler
 
 logger = logging.getLogger(__name__)
 
@@ -477,6 +477,19 @@ async def _extract_terms_from_chunk_worker_with_progress(
                     multi_manager = state["multi_llm_manager"]
                     fresh_client = await multi_manager.get_client()
                     if fresh_client:
+                        # 토큰 카운터 콜백 추가
+                        try:
+                            token_counter = (
+                                state.get("token_counter") if state else None
+                            )
+                            if token_counter and hasattr(fresh_client, "callbacks"):
+                                if fresh_client.callbacks is None:
+                                    fresh_client.callbacks = []
+                                if token_counter not in fresh_client.callbacks:
+                                    fresh_client.callbacks.append(token_counter)
+                        except Exception:
+                            pass
+
                         current_llm = fresh_client
                         logger.debug(
                             f"용어 추출 청크 {chunk_idx + 1}: 다중 API 키에서 새 클라이언트 사용"
@@ -767,7 +780,13 @@ async def _translate_chunk_worker_with_progress(
                     if tool_call["name"] == "TranslatedItem":
                         try:
                             item = TranslatedItem(**tool_call["args"])
-                            translations.append(item)
+                            # ID 패턴(T###) 그대로 반환되는 경우 필터링
+                            if re.match(r"^T\d{3,}$", item.translated.strip()):
+                                logger.debug(
+                                    f"TranslatedItem returned ID unchanged for {item.id}, dropping."
+                                )
+                            else:
+                                translations.append(item)
                         except Exception as e:
                             logger.warning(
                                 f"TranslatedItem 파싱 중 오류: {e}, args: {tool_call['args']}"
@@ -859,7 +878,11 @@ async def validation_and_retry_node(state: TranslatorState) -> TranslatorState: 
             if not translated:
                 should_retry = True
                 retry_reason = "번역 누락"
-            # 2. 원본이 의미있는 텍스트인데 번역이 비어있거나 플레이스홀더인 경우
+            # 2. 번역 결과가 ID 패턴(T###)인 경우 (실제 번역이 아님)
+            elif re.match(r"^T\d{3,}$", translated):
+                should_retry = True
+                retry_reason = "ID 그대로 반환"
+            # 3. 원본이 의미있는 텍스트인데 번역이 비어있거나 플레이스홀더인 경우
             elif original:
                 if len(translated) == 0:
                     should_retry = True
@@ -1167,6 +1190,11 @@ async def _translate_single_item_worker(
                                     f"✅ 최종 번역 재시도 성공 (시도 {attempt + 1}): {tid} -> {item.translated[:50]}..."
                                 )
                                 return tid, item.translated
+                            elif re.match(r"^T\d{3,}$", item.translated):
+                                last_error = "ID 그대로 반환"
+                                logger.info(
+                                    f"⚠️ 최종 번역 재시도({attempt + 1}) 후에도 ID 그대로 반환: {tid} -> {item.translated}"
+                                )
                             else:
                                 last_error = "플레이스홀더 누락"
                                 logger.warning(
@@ -1366,9 +1394,14 @@ def should_retry(state: TranslatorState) -> str:  # noqa: D401
         # 1. 번역이 아예 없는 경우
         if not translated:
             needs_translation = True
-        # 2. 원본이 의미있는 텍스트인데 제대로 번역되지 않은 경우
+        # 2. 번역 결과가 ID 패턴(T###)인 경우 (실제 번역이 아님)
+        elif re.match(r"^T\d{3,}$", translated):
+            needs_translation = True
+        # 3. 원본이 의미있는 텍스트인데 제대로 번역되지 않은 경우
         elif original:
             if len(translated) == 0:
+                needs_translation = True
+            elif re.match(r"^T\d{3,}$", translated):
                 needs_translation = True
             elif not PlaceholderManager.validate_placeholder_preservation(
                 original, translated
@@ -2313,51 +2346,40 @@ def _format_items_for_quality_retranslation(chunk: List[Dict]) -> str:
 
 
 class JSONTranslator:
-    """High-level façade wrapping the LangGraph workflow."""
+    """JSON 번역기"""
 
     def __init__(self, *, glossary_path: Optional[str] = None) -> None:
-        self._workflow = self._create_workflow()
         self.glossary_path = glossary_path
-        self.llm_manager = LLMManager()
+        self.token_counter = UniversalTokenCountingHandler()
+        self._workflow = self._create_workflow()
 
     def _create_workflow(self) -> StateGraph:  # noqa: D401
+        """Create the translation workflow."""
         wf = StateGraph(TranslatorState)
+
+        # Add nodes
         wf.add_node("parse_and_extract", parse_and_extract_node)
-        wf.add_node("create_primary_glossary", create_primary_glossary_node)
         wf.add_node("load_vanilla_glossary", load_vanilla_glossary_node)
+        wf.add_node("load_glossary", load_glossary_node)
+        wf.add_node(
+            "extract_terms_from_json_chunks", extract_terms_from_json_chunks_node
+        )
         wf.add_node("smart_translate", smart_translate_node)
         wf.add_node("validation_and_retry", validation_and_retry_node)
+        wf.add_node("final_fallback_translation", final_fallback_translation_node)
         wf.add_node("rebuild_json", rebuild_json_node)
         wf.add_node("restore_placeholders", restore_placeholders_node)
         wf.add_node("quality_review", quality_review_node)
         wf.add_node("quality_based_retranslation", quality_based_retranslation_node)
-        wf.add_node(
-            "extract_terms_from_json_chunks", extract_terms_from_json_chunks_node
-        )
-        wf.add_node("load_glossary", load_glossary_node)
         wf.add_node("save_glossary", save_glossary_node)
-        wf.add_node("final_fallback_translation", final_fallback_translation_node)
-        wf.add_node("final_check", lambda s: s)  # Passthrough node
+        wf.add_node("final_check", lambda state: state)
 
+        # Set entry point
         wf.set_entry_point("parse_and_extract")
 
-        # Branch for glossary creation
-        wf.add_conditional_edges(
-            "parse_and_extract",
-            should_create_glossary,
-            {
-                "create_glossary": "create_primary_glossary",
-                "skip_glossary": "load_vanilla_glossary",  # 바닐라 사전 로드로 변경
-            },
-        )
-
-        # 1차 사전 구축 후 바닐라 사전 로드
-        wf.add_edge("create_primary_glossary", "load_vanilla_glossary")
-
-        # 바닐라 사전 로드 후 기존 사전 로드
+        # Define edges
+        wf.add_edge("parse_and_extract", "load_vanilla_glossary")
         wf.add_edge("load_vanilla_glossary", "load_glossary")
-
-        # Glossary path
         wf.add_edge("load_glossary", "extract_terms_from_json_chunks")
         wf.add_edge("extract_terms_from_json_chunks", "smart_translate")
 
@@ -2418,6 +2440,18 @@ class JSONTranslator:
 
         return wf.compile()
 
+    def get_token_summary(self) -> Dict[str, Any]:
+        """토큰 사용량 요약 반환"""
+        return self.token_counter.get_token_summary()
+
+    def get_formatted_token_summary(self) -> str:
+        """포맷된 토큰 사용량 요약 반환"""
+        return self.token_counter.get_formatted_summary()
+
+    def reset_token_counter(self):
+        """토큰 카운터 초기화"""
+        self.token_counter.reset_counts()
+
     async def translate(
         self,
         json_input: Any,
@@ -2440,11 +2474,17 @@ class JSONTranslator:
         max_quality_retries: int = 1,
         use_multi_api_keys: bool = False,
         multi_llm_manager: Optional[MultiLLMManager] = None,
-    ) -> str:
+        track_tokens: bool = True,
+    ) -> Dict[str, Any]:
+        """번역 실행 및 토큰 사용량 추적"""
         if isinstance(json_input, dict):
             json_dict = json_input
         else:
             json_dict = json.loads(str(json_input).strip())
+
+        # 토큰 카운터 초기화
+        if track_tokens:
+            self.reset_token_counter()
 
         logger.info(
             _m(
@@ -2470,10 +2510,21 @@ class JSONTranslator:
                 "사용 가능한 API 키가 없습니다. 다중 API 키를 등록해주세요."
             )
         logger.info(f"다중 API 키 모드 활성화: {len(active_keys)}개 키 사용 가능")
+
         # LLM 클라이언트 획득 (로테이션 적용)
         llm_client = await multi_llm_manager.get_client()
         if not llm_client:
             raise RuntimeError("다중 API 키 클라이언트 생성에 실패했습니다.")
+
+        # 토큰 카운터를 LLM 클라이언트에 추가
+        if track_tokens:
+            if hasattr(llm_client, "callbacks"):
+                if llm_client.callbacks is None:
+                    llm_client.callbacks = []
+                llm_client.callbacks.append(self.token_counter)
+            else:
+                # 새로운 LLM 클라이언트 생성 시 콜백 추가
+                logger.warning("LLM 클라이언트에 콜백을 추가할 수 없습니다.")
 
         initial_state: TranslatorState = TranslatorState(
             parsed_json=json_dict,
@@ -2508,12 +2559,19 @@ class JSONTranslator:
             # 다중 API 키 관련 추가
             use_multi_api_keys=use_multi_api_keys,
             multi_llm_manager=multi_llm_manager,
+            token_counter=self.token_counter,
         )
 
         result = await self._workflow.ainvoke(initial_state, {"recursion_limit": 50})
         if result.get("error"):
             raise RuntimeError(result["error"])
-        return result["final_json"]
+
+        # 토큰 사용량 로그 출력
+        if track_tokens:
+            token_summary = self.get_formatted_token_summary()
+            logger.info(f"번역 완료 - 토큰 사용량:\n{token_summary}")
+
+        return json.loads(result["final_json"])
 
 
 ###############################################################################

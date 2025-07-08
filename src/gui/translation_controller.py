@@ -46,6 +46,7 @@ class TranslationController:
         self.completion_callback = None
         self.log_callback = None
         self.ui_update_callback = None
+        self.token_update_callback = None  # 토큰 사용량 업데이트 콜백
 
     def set_modpack(self, modpack_info: Dict):
         """선택된 모드팩 설정"""
@@ -57,12 +58,14 @@ class TranslationController:
         completion_callback: Callable = None,
         log_callback: Callable = None,
         ui_update_callback: Callable = None,
+        token_update_callback: Callable = None,
     ):
         """콜백 함수들 설정"""
         self.progress_callback = progress_callback
         self.completion_callback = completion_callback
         self.log_callback = log_callback
         self.ui_update_callback = ui_update_callback
+        self.token_update_callback = token_update_callback
 
     def update_setting(self, key: str, value):
         """설정값 업데이트"""
@@ -154,6 +157,20 @@ class TranslationController:
             progress_callback=self.progress_callback,  # 진행률 콜백 전달
         )
 
+        # 토큰 실시간 업데이트 콜백 연결
+        try:
+            if (
+                self.token_update_callback
+                and hasattr(self.translator, "translator")
+                and hasattr(self.translator.translator, "token_counter")
+            ):
+                self.translator.translator.token_counter.update_callback = (
+                    self.token_update_callback
+                )
+        except Exception as cb_err:
+            if self.log_callback:
+                self.log_callback("WARNING", f"토큰 콜백 연결 실패: {cb_err}")
+
         if self.log_callback:
             self.log_callback("SUCCESS", "ModpackTranslator 초기화 완료")
 
@@ -180,6 +197,22 @@ class TranslationController:
 
             if self.log_callback:
                 self.log_callback("SUCCESS", f"번역 완료! {len(result)}개 항목 번역됨")
+
+            # 토큰 사용량 추출 및 UI 업데이트
+            if (
+                hasattr(self.translator, "json_translator")
+                and self.translator.json_translator
+            ):
+                token_usage = self.translator.json_translator.get_token_summary()
+                if self.token_update_callback:
+                    self.token_update_callback(token_usage)
+
+                # 토큰 사용량 로그 출력
+                if self.log_callback and token_usage:
+                    formatted_summary = (
+                        self.translator.json_translator.get_formatted_token_summary()
+                    )
+                    self.log_callback("INFO", f"토큰 사용량 요약:\n{formatted_summary}")
 
             if self.progress_callback:
                 self.progress_callback(
