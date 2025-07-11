@@ -2265,6 +2265,11 @@ async def _quality_retranslate_chunk_worker(
                         "",
                     )
 
+                    # ID 패턴(T###)이 그대로 반환된 경우 무시
+                    if re.match(r"^T\d{3,}$", translation.translated.strip()):
+                        logger.debug(f"ID 그대로 반환된 항목 무시: {translation.id}")
+                        continue
+
                     if PlaceholderManager.validate_placeholder_preservation(
                         original_text, translation.translated
                     ):
