@@ -855,9 +855,39 @@ def restore_placeholders_node(state: TranslatorState) -> TranslatorState:  # noq
         restored_json = PlaceholderManager.restore_placeholders_in_json(
             state["translated_json"], sorted_placeholders, newline_value
         )
+        id_map = state["id_to_text_map"]
+
+        def replace(obj: Any) -> Any:
+            if isinstance(obj, dict):
+                return {k: replace(v) for k, v in obj.items()}
+            if isinstance(obj, list):
+                return [replace(i) for i in obj]
+            if isinstance(obj, str):
+                # T001, T002 같은 ID가 translation_map에 있는지 확인
+                if obj in id_map:
+                    translated_text = id_map[obj]
+                    # 번역된 텍스트가 T-ID 패턴인지 다시 한번 확인
+                    if re.match(r"^T\d{3,}$", translated_text.strip()):
+                        logger.warning(
+                            f"번역 결과가 ID 패턴인 항목 발견: {obj} -> {translated_text}"
+                        )
+                        original_text = state["id_to_text_map"].get(obj, obj)
+                        logger.warning(f"원본 텍스트로 복원: {obj} -> {original_text}")
+                        return original_text
+                    return translated_text
+                # ID 패턴이지만 번역이 없는 경우 경고
+                elif re.match(r"^T\d{3,}$", obj):
+                    logger.warning(f"번역되지 않은 ID 발견: {obj}")
+                    # 원본 텍스트로 복원 시도
+                    original_text = state["id_to_text_map"].get(obj, obj)
+                    logger.warning(f"원본 텍스트로 복원: {obj} -> {original_text}")
+                    return original_text
+            return obj
 
         # 복원된 JSON 객체를 문자열로 변환
-        state["final_json"] = json.dumps(restored_json, ensure_ascii=False, indent=2)
+        state["final_json"] = json.dumps(
+            replace(restored_json), ensure_ascii=False, indent=2
+        )
         logger.info("플레이스홀더 복원 완료.")
         logger.info(_m("translator.placeholders_restore_finish"))
         return state
@@ -1192,7 +1222,7 @@ async def _translate_single_item_worker(
                         )
 
                 # 재시도 시 temperature를 약간 높여 다른 결과 유도
-                temperature = min(1.0, attempt * 0.2)
+                temperature = min(1.0, attempt * 0.1)
                 configured_llm = current_llm.with_config(
                     configurable={"temperature": temperature}
                 )
@@ -2283,6 +2313,12 @@ async def _quality_retranslate_chunk_worker(
                         if tool_call["name"] == "TranslatedItem":
                             try:
                                 item = TranslatedItem(**tool_call["args"])
+                                if re.match(r"^T\d{3,}$", item.translated.strip()):
+                                    logger.debug(
+                                        f"ID 그대로 반환된 항목 무시: {item.id}"
+                                    )
+                                    continue
+
                                 translations.append(item)
                             except Exception as e:
                                 logger.warning(f"TranslatedItem 파싱 오류: {e}")
@@ -2300,9 +2336,6 @@ async def _quality_retranslate_chunk_worker(
                     )
 
                     # ID 패턴(T###)이 그대로 반환된 경우 무시
-                    if re.match(r"^T\d{3,}$", translation.translated.strip()):
-                        logger.debug(f"ID 그대로 반환된 항목 무시: {translation.id}")
-                        continue
 
                     if PlaceholderManager.validate_placeholder_preservation(
                         original_text, translation.translated
