@@ -5,6 +5,7 @@ FTBQuests의 chapters, quests, tasks 등에서
 번역 대상 텍스트를 추출합니다.
 """
 
+import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, List
@@ -35,6 +36,8 @@ class FTBQuestsFilter(BaseFilter):
         "name",
         "quest_desc",
         "quest_subtitle",
+        "Lore",  # 아이템 Lore 처리
+        "Name",  # 아이템 Name 처리
     }
 
     def get_priority(self) -> int:
@@ -45,8 +48,44 @@ class FTBQuestsFilter(BaseFilter):
         """키가 번역 대상인지 확인 (화이트리스트 방식)"""
         # 경로를 분리해서 마지막 키만 확인
         key_parts = key.split(".")
-        last_key = key_parts[-1].replace("[", "").replace("]", "").split("[")[0]
+        last_key = key_parts[-1]
+
+        # 배열 인덱스 제거 (예: "description[0]" -> "description")
+        if "[" in last_key:
+            last_key = last_key.split("[")[0]
+
         return last_key in self.key_whitelist
+
+    def _is_json_text(self, text: str) -> bool:
+        """문자열이 JSON 형태의 텍스트인지 확인"""
+        try:
+            if text.startswith('{"') and text.endswith('"}'):
+                json.loads(text)
+                return True
+        except (json.JSONDecodeError, ValueError):
+            pass
+        return False
+
+    def _extract_json_text(self, json_string: str) -> str:
+        """JSON 문자열에서 'text' 필드 추출"""
+        try:
+            json_data = json.loads(json_string)
+            if isinstance(json_data, dict) and "text" in json_data:
+                return json_data["text"]
+        except (json.JSONDecodeError, ValueError):
+            pass
+        return ""
+
+    def _reconstruct_json_text(self, json_string: str, new_text: str) -> str:
+        """JSON 문자열의 'text' 필드를 새로운 텍스트로 교체"""
+        try:
+            json_data = json.loads(json_string)
+            if isinstance(json_data, dict) and "text" in json_data:
+                json_data["text"] = new_text
+                return json.dumps(json_data, ensure_ascii=False)
+        except (json.JSONDecodeError, ValueError):
+            pass
+        return json_string
 
     async def extract_translations(self, file_path: str) -> List[TranslationEntry]:
         """FTBQuests 파일에서 번역 대상 추출"""
@@ -91,19 +130,41 @@ class FTBQuestsFilter(BaseFilter):
             if isinstance(value, str):
                 # 문자열 값이고 번역 대상 키인 경우
                 if self.should_translate_key(full_key) and value.strip():
-                    entry = TranslationEntry(
-                        key=full_key,
-                        original_text=value,
-                        file_path=file_path,
-                        file_type=self.name,
-                        context={
-                            "file_type": "ftbquests",
-                            "category": self._get_category_from_path(file_path),
-                            "key_path": full_key,
-                        },
-                        priority=self._get_key_priority(key),
-                    )
-                    entries.append(entry)
+                    # JSON 형태의 텍스트인지 확인
+                    if self._is_json_text(value):
+                        # JSON에서 text 필드 추출
+                        json_text = self._extract_json_text(value)
+                        if json_text.strip():
+                            entry = TranslationEntry(
+                                key=full_key,
+                                original_text=json_text,
+                                file_path=file_path,
+                                file_type=self.name,
+                                context={
+                                    "file_type": "ftbquests",
+                                    "category": self._get_category_from_path(file_path),
+                                    "key_path": full_key,
+                                    "is_json": True,
+                                    "original_json": value,
+                                },
+                                priority=self._get_key_priority(key),
+                            )
+                            entries.append(entry)
+                    else:
+                        # 일반 텍스트
+                        entry = TranslationEntry(
+                            key=full_key,
+                            original_text=value,
+                            file_path=file_path,
+                            file_type=self.name,
+                            context={
+                                "file_type": "ftbquests",
+                                "category": self._get_category_from_path(file_path),
+                                "key_path": full_key,
+                            },
+                            priority=self._get_key_priority(key),
+                        )
+                        entries.append(entry)
 
             elif isinstance(value, dict):
                 # 중첩된 딕셔너리인 경우 재귀 처리
@@ -117,22 +178,51 @@ class FTBQuestsFilter(BaseFilter):
                             item, entries, file_path, f"{full_key}[{i}]"
                         )
                     elif isinstance(item, str) and self.should_translate_key(full_key):
-                        # 빈 문자열이 아닌 경우만 번역 대상으로 추가
-                        if item.strip():
-                            entry = TranslationEntry(
-                                key=f"{full_key}[{i}]",
-                                original_text=item,
-                                file_path=file_path,
-                                file_type=self.name,
-                                context={
-                                    "file_type": "ftbquests",
-                                    "category": self._get_category_from_path(file_path),
-                                    "key_path": full_key,
-                                    "list_index": i,
-                                },
-                                priority=self._get_key_priority(key),
-                            )
-                            entries.append(entry)
+                        # 빈 문자열("")도 번역 대상으로 포함 (리스트 구조 유지를 위해)
+                        # 단, 공백만 있는 문자열은 제외
+                        if item or item == "":
+                            # JSON 형태의 텍스트인지 확인
+                            if self._is_json_text(item):
+                                # JSON에서 text 필드 추출
+                                json_text = self._extract_json_text(item)
+                                if json_text.strip():
+                                    entry = TranslationEntry(
+                                        key=f"{full_key}[{i}]",
+                                        original_text=json_text,
+                                        file_path=file_path,
+                                        file_type=self.name,
+                                        context={
+                                            "file_type": "ftbquests",
+                                            "category": self._get_category_from_path(
+                                                file_path
+                                            ),
+                                            "key_path": full_key,
+                                            "list_index": i,
+                                            "is_json": True,
+                                            "original_json": item,
+                                        },
+                                        priority=self._get_key_priority(key),
+                                    )
+                                    entries.append(entry)
+                            else:
+                                # 일반 텍스트
+                                entry = TranslationEntry(
+                                    key=f"{full_key}[{i}]",
+                                    original_text=item,
+                                    file_path=file_path,
+                                    file_type=self.name,
+                                    context={
+                                        "file_type": "ftbquests",
+                                        "category": self._get_category_from_path(
+                                            file_path
+                                        ),
+                                        "key_path": full_key,
+                                        "list_index": i,
+                                        "is_empty_string": item == "",
+                                    },
+                                    priority=self._get_key_priority(key),
+                                )
+                                entries.append(entry)
 
     async def apply_translations(
         self, file_path: str, translations: Dict[str, str]
@@ -179,7 +269,16 @@ class FTBQuestsFilter(BaseFilter):
             if isinstance(value, str):
                 # 문자열 값인 경우
                 if full_key in translations:
-                    data[key] = translations[full_key]
+                    # JSON 형태의 텍스트인지 확인
+                    if self._is_json_text(value):
+                        # JSON 문자열의 text 필드를 번역으로 교체
+                        translated_json = self._reconstruct_json_text(
+                            value, translations[full_key]
+                        )
+                        data[key] = translated_json
+                    else:
+                        # 일반 텍스트
+                        data[key] = translations[full_key]
                     updated = True
 
             elif isinstance(value, dict):
@@ -199,7 +298,16 @@ class FTBQuestsFilter(BaseFilter):
                         # 리스트 항목의 번역 키 생성
                         list_item_key = f"{full_key}[{i}]"
                         if list_item_key in translations:
-                            data[key][i] = translations[list_item_key]
+                            # JSON 형태의 텍스트인지 확인
+                            if self._is_json_text(item):
+                                # JSON 문자열의 text 필드를 번역으로 교체
+                                translated_json = self._reconstruct_json_text(
+                                    item, translations[list_item_key]
+                                )
+                                data[key][i] = translated_json
+                            else:
+                                # 일반 텍스트 (빈 문자열("")도 번역 결과로 교체)
+                                data[key][i] = translations[list_item_key]
                             updated = True
 
         return updated
@@ -245,7 +353,7 @@ class FTBQuestsChapterFilter(FTBQuestsFilter):
         return super().can_handle_file(file_path)
 
     async def extract_translations(self, file_path: str) -> List[TranslationEntry]:
-        """챕터 파일에서 퀘스트 배열 특별 처리"""
+        """챕터 파일에서 모든 중첩 구조를 재귀적으로 처리"""
         try:
             parser_class = BaseParser.get_parser_by_extension(".snbt")
             if not parser_class:
@@ -256,33 +364,8 @@ class FTBQuestsChapterFilter(FTBQuestsFilter):
 
             entries = []
 
-            # 기본 필드들 처리
+            # 기본 재귀 처리로 모든 중첩 구조를 처리 (quests 배열 포함)
             self._extract_from_dict(data, entries, file_path, "")
-
-            # quests 배열 특별 처리 (old 로더 방식)
-            if "quests" in data and isinstance(data["quests"], list):
-                for i, quest in enumerate(data["quests"]):
-                    if isinstance(quest, dict):
-                        for key, value in quest.items():
-                            if (
-                                key in self.key_whitelist
-                                and isinstance(value, str)
-                                and value.strip()
-                            ):
-                                entry = TranslationEntry(
-                                    key=f"quests[{i}].{key}",
-                                    original_text=value,
-                                    file_path=file_path,
-                                    file_type=self.name,
-                                    context={
-                                        "file_type": "ftbquests_chapter",
-                                        "category": "quest_in_chapter",
-                                        "quest_index": i,
-                                        "key": key,
-                                    },
-                                    priority=self._get_key_priority(key),
-                                )
-                                entries.append(entry)
 
             logger.debug(
                 f"FTBQuests 챕터에서 {len(entries)}개 번역 항목 발견: {Path(file_path).name}"

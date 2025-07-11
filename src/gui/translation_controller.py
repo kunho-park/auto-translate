@@ -27,7 +27,7 @@ class TranslationController:
         # 설정값들
         self.settings = {
             "llm_provider": "gemini",
-            "llm_model": "gemini-1.5-flash",
+            "llm_model": "gemini-2.0-flash",
             "temperature": 0.1,
             "max_tokens_per_chunk": 2000,
             "max_concurrent_requests": 35,

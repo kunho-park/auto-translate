@@ -171,12 +171,30 @@ async def parse_and_extract_node(state: TranslatorState) -> TranslatorState:  # 
 
         logger.info(_m("translator.found_items", count=len(id_to_text)))
 
-        # 이미 번역된 항목 개수 로깅
-        if existing_translations:
-            already_translated_count = original_text_count - len(id_to_text)
-            if already_translated_count > 0:
+        # 건너뛴 항목들 개수 로깅
+        skipped_count = original_text_count - len(id_to_text)
+        if skipped_count > 0:
+            if existing_translations:
+                already_translated_count = sum(
+                    1
+                    for text in TokenOptimizer.optimize_json_for_translation(
+                        json_with_placeholders
+                    )
+                    if text in existing_translations
+                )
+                placeholder_only_count = skipped_count - already_translated_count
+
+                if already_translated_count > 0:
+                    logger.info(
+                        f"이미 번역된 항목 {already_translated_count}개를 건너뛰었습니다."
+                    )
+                if placeholder_only_count > 0:
+                    logger.info(
+                        f"Placeholder만으로 구성된 항목 {placeholder_only_count}개를 건너뛰었습니다."
+                    )
+            else:
                 logger.info(
-                    f"이미 번역된 항목 {already_translated_count}개를 건너뛰었습니다."
+                    f"Placeholder만으로 구성된 항목 {skipped_count}개를 건너뛰었습니다."
                 )
 
         return state
@@ -514,7 +532,10 @@ async def _extract_terms_from_chunk_worker_with_progress(
                         )
 
                 # SimpleGlossaryTerm을 도구로 바인딩하여 LLM 호출
-                llm_with_tools = llm.bind_tools([SimpleGlossaryTerm])
+                configured_llm = llm.with_config(
+                    configurable={"temperature": temperature}
+                )
+                llm_with_tools = configured_llm.bind_tools([SimpleGlossaryTerm])
                 response = await llm_with_tools.ainvoke(prompt)
 
                 # LLM의 도구 호출에서 SimpleGlossaryTerm 추출
@@ -770,7 +791,10 @@ async def _translate_chunk_worker_with_progress(
                     )
 
             # TranslatedItem을 도구로 바인딩하여 LLM 호출
-            llm_with_tools = current_llm.bind_tools([TranslatedItem])
+            configured_llm = current_llm.with_config(
+                configurable={"temperature": temperature}
+            )
+            llm_with_tools = configured_llm.bind_tools([TranslatedItem])
             response = await llm_with_tools.ainvoke(prompt)
 
             # LLM의 도구 호출에서 TranslatedItem 추출
@@ -901,9 +925,7 @@ async def validation_and_retry_node(state: TranslatorState) -> TranslatorState: 
                         f"플레이스홀더 누락 감지: '{original}' -> '{translated}' "
                         f"(누락된 플레이스홀더: {missing_placeholders})"
                     )
-                elif (
-                    original.startswith("[P") and original.endswith("]")
-                ) or original == "[NEWLINE]":
+                elif PlaceholderManager.is_placeholder_only(original):
                     should_retry = False
                 # 3. 번역 결과가 원본과 동일한 경우 (영어로 유지해야 하는 경우 제외)
                 elif translated == original and len(original) > 3:
@@ -952,7 +974,9 @@ async def validation_and_retry_node(state: TranslatorState) -> TranslatorState: 
         # 디버깅: 처음 5개 재시도 항목의 상세 정보 출력
         if len(to_retry) > 100:  # 100개 이상일 때만 디버깅 출력
             logger.warning("🔍 재시도 대상 샘플 분석:")
-            for i, item in enumerate(to_retry[:5]):
+            for i, item in enumerate(
+                [j for j in to_retry if j["reason"] != "동일한 결과"][:5]
+            ):
                 original = item["original"].strip()
                 translated = translation_map.get(item["id"], "").strip()
                 reason = item.get("reason", "알 수 없음")
@@ -1022,16 +1046,17 @@ async def validation_and_retry_node(state: TranslatorState) -> TranslatorState: 
                 validation_passed = False
 
                 if new_translation:
-                    # 1. 기본 번역 유효성 체크
-                    if new_translation != old_translation:
-                        # 이전 번역과 다르면 개선된 것으로 간주
-                        is_valid_translation = True
-                    elif new_translation != original_text:
-                        # 원본과 다르면 유효
-                        is_valid_translation = True
-                    elif len(new_translation) >= 1:
-                        # 최소 1글자 이상이면 유효 (너무 엄격했던 2글자 조건 완화)
-                        is_valid_translation = True
+                    # 1. 기본 번역 유효성 체크 (T-ID 패턴 제외)
+                    if not re.match(r"^T\d{3,}$", new_translation):
+                        if new_translation != old_translation:
+                            # 이전 번역과 다르면 개선된 것으로 간주
+                            is_valid_translation = True
+                        elif new_translation != original_text:
+                            # 원본과 다르면 유효
+                            is_valid_translation = True
+                        elif len(new_translation) >= 1:
+                            # 최소 1글자 이상이면 유효
+                            is_valid_translation = True
 
                     # 2. 플레이스홀더 검증 (더 중요한 검증)
                     if is_valid_translation:
@@ -1182,19 +1207,22 @@ async def _translate_single_item_worker(
                             and tool_call["args"].get("id") == tid
                         ):
                             item = TranslatedItem(**tool_call["args"])
-                            # 최종 검증: 플레이스홀더 보존 여부
-                            if PlaceholderManager.validate_placeholder_preservation(
+                            # 최종 검증: ID 패턴이 아니고 플레이스홀더가 보존되었는지 확인
+                            is_id_pattern = re.match(
+                                r"^T\d{3,}$", item.translated.strip()
+                            )
+                            if is_id_pattern:
+                                last_error = "ID 그대로 반환"
+                                logger.info(
+                                    f"⚠️ 최종 번역 재시도({attempt + 1}) 후에도 ID 그대로 반환: {tid} -> {item.translated}"
+                                )
+                            elif PlaceholderManager.validate_placeholder_preservation(
                                 original_text, item.translated
                             ):
                                 logger.info(
                                     f"✅ 최종 번역 재시도 성공 (시도 {attempt + 1}): {tid} -> {item.translated[:50]}..."
                                 )
                                 return tid, item.translated
-                            elif re.match(r"^T\d{3,}$", item.translated):
-                                last_error = "ID 그대로 반환"
-                                logger.info(
-                                    f"⚠️ 최종 번역 재시도({attempt + 1}) 후에도 ID 그대로 반환: {tid} -> {item.translated}"
-                                )
                             else:
                                 last_error = "플레이스홀더 누락"
                                 logger.warning(
@@ -1347,7 +1375,16 @@ def rebuild_json_node(state: TranslatorState) -> TranslatorState:  # noqa: D401
             if isinstance(obj, str):
                 # T001, T002 같은 ID가 translation_map에 있는지 확인
                 if obj in id_map:
-                    return id_map[obj]
+                    translated_text = id_map[obj]
+                    # 번역된 텍스트가 T-ID 패턴인지 다시 한번 확인
+                    if re.match(r"^T\d{3,}$", translated_text.strip()):
+                        logger.warning(
+                            f"번역 결과가 ID 패턴인 항목 발견: {obj} -> {translated_text}"
+                        )
+                        original_text = state["id_to_text_map"].get(obj, obj)
+                        logger.warning(f"원본 텍스트로 복원: {obj} -> {original_text}")
+                        return original_text
+                    return translated_text
                 # ID 패턴이지만 번역이 없는 경우 경고
                 elif re.match(r"^T\d{3,}$", obj):
                     logger.warning(f"번역되지 않은 ID 발견: {obj}")
@@ -1408,9 +1445,7 @@ def should_retry(state: TranslatorState) -> str:  # noqa: D401
             ):
                 needs_translation = True
                 placeholder_failed_items.append(tid)
-            elif (
-                original.startswith("[P") and original.endswith("]")
-            ) or original == "[NEWLINE]":
+            elif PlaceholderManager.is_placeholder_only(original):
                 needs_translation = False
             elif translated.strip() == original.strip() and len(original) > 3:
                 needs_translation = True
@@ -1676,7 +1711,6 @@ async def quality_review_node(state: TranslatorState) -> TranslatorState:
             return state
 
         # 검토할 항목들 준비 (번역된 것만)
-        placeholder_only_pattern = r"^\[(P\d{3,}|NEWLINE)\]$"
         review_items = []
         for tid, original_text in id_map.items():
             translated_text = translation_map.get(tid, "")
@@ -1684,9 +1718,9 @@ async def quality_review_node(state: TranslatorState) -> TranslatorState:
                 continue
 
             # 원문과 번역이 모두 내부 플레이스홀더만으로 이루어진 경우 품질 검토 건너뜀
-            if re.match(placeholder_only_pattern, original_text.strip()) and re.match(
-                placeholder_only_pattern, translated_text.strip()
-            ):
+            if PlaceholderManager.is_placeholder_only(
+                original_text
+            ) and PlaceholderManager.is_placeholder_only(translated_text):
                 continue
 
             review_items.append(

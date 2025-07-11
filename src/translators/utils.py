@@ -56,6 +56,7 @@ class PlaceholderManager:
     JSON_PLACEHOLDER_PATTERN = r"[{\[]{1}([,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]|\".*?\")+[}\]]{1}"  # JSON 객체와 배열 모두 지원
     HTML_TAG_PATTERN = r"<[^>]*>"
     MINECRAFT_ITEM_CODE_PATTERN = (
+        r"(\{[a-zA-Z_0-9]+[:.][a-zA-Z_0-9/.]+\})|"
         r"((\[[a-zA-Z_0-9]+[:.]([0-9a-zA-Z_]+([./][0-9a-zA-Z_]+)*)\])|"
         r"([a-zA-Z_0-9]+[:.]([0-9a-zA-Z_]+([./][0-9a-zA-Z_]+)*)))"
     )
@@ -65,6 +66,8 @@ class PlaceholderManager:
     )
     LEGACY_MINECRAFT_PATTERN = r"%[a-zA-Z_][a-zA-Z0-9_]*%"  # %username% 등
     NEWLINE_PATTERN = r"\\n|\\r\\n|\\r"  # \n, \r\n, \r 개행 문자들
+    # 이미지 플레이스홀더 패턴: {image:...} 또는 {image:... width:... height:... align:...}
+    IMAGE_PLACEHOLDER_PATTERN = r"\{image:[^}]+\}"
 
     _PLACEHOLDER_PATTERNS: List[str] = [
         NEWLINE_PATTERN,
@@ -78,6 +81,7 @@ class PlaceholderManager:
         SQUARE_BRACKET_TAG_PATTERN,
         LEGACY_MINECRAFT_PATTERN,
         r"\{\{[^}]+\}\}",
+        IMAGE_PLACEHOLDER_PATTERN,
     ]
     _INTERNAL_PLACEHOLDER_PATTERN = r"\[P\d{3,}\]"
     _INTERNAL_NEWLINE_PATTERN = r"\[NEWLINE\]"
@@ -264,6 +268,28 @@ class PlaceholderManager:
         newlines = re.findall(PlaceholderManager._INTERNAL_NEWLINE_PATTERN, text)
         return placeholders + newlines
 
+    @staticmethod
+    def is_placeholder_only(text: str) -> bool:
+        """텍스트가 placeholder만으로 구성되어 있는지 확인"""
+        if not isinstance(text, str):
+            return False
+
+        text = text.strip()
+        if not text:
+            return False
+
+        # 모든 내부 placeholder를 제거
+        temp_text = text
+        temp_text = re.sub(
+            PlaceholderManager._INTERNAL_PLACEHOLDER_PATTERN, "", temp_text
+        )
+        temp_text = re.sub(PlaceholderManager._INTERNAL_NEWLINE_PATTERN, "", temp_text)
+
+        # 모든 placeholder가 제거된 후 남은 텍스트가 있는지 확인
+        remaining_text = temp_text.strip()
+
+        return len(remaining_text) == 0
+
 
 class TokenOptimizer:
     """Helpers for ID substitution and token-count heuristics."""
@@ -376,6 +402,11 @@ class TokenOptimizer:
         if isinstance(json_obj, str) and json_obj.strip():
             text = json_obj.strip()
 
+            # placeholder만으로 구성된 텍스트는 번역하지 않음
+            if PlaceholderManager.is_placeholder_only(text):
+                logger.debug(f"Placeholder만으로 구성된 텍스트 건너뛰기: '{text}'")
+                return json_obj
+
             # 이미 한글로 번역된 텍스트인지 확인
             if is_korean_text(text):
                 # 이미 한글 텍스트면 그대로 반환 (번역 불필요)
@@ -405,9 +436,10 @@ class TokenOptimizer:
                 for i in obj:
                     collect(i)
             elif isinstance(obj, str) and obj.strip():
-                if not re.match(r"^T\d{3,}$", obj) and not re.match(
-                    r"^\[(P\d{3,}|NEWLINE)\]$", obj
-                ):
+                # ID 패턴(T###)과 placeholder만으로 구성된 텍스트 제외
+                if not re.match(
+                    r"^T\d{3,}$", obj
+                ) and not PlaceholderManager.is_placeholder_only(obj):
                     texts.append(obj)
 
         collect(data)
