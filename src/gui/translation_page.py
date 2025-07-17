@@ -8,7 +8,9 @@ from typing import Callable, Dict
 import flet as ft
 
 from .translation_controller import TranslationController
-from .translation_dialogs import TranslationCompletionDialog
+from .translation_dialogs import (
+    TranslationCompletionDialog,
+)
 from .translation_logger import TranslationLogger
 from .translation_progress import TranslationProgressManager
 from .translation_ui_builders import TranslationUIBuilders

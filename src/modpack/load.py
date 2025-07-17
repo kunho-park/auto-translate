@@ -34,6 +34,9 @@ class ModpackLoader:
         "/kubejs/server_scripts/",
         "/kubejs/startup_scripts/",
         "/kubejs/client_scripts/",
+        "/powers/",
+        "/origins/",
+        "/patchouli_books/",
     ]
 
     def __init__(
@@ -46,6 +49,7 @@ class ModpackLoader:
         translate_mods: bool = True,
         translate_resourcepacks: bool = True,
         translate_patchouli_books: bool = True,
+        translate_ftbquests: bool = True,
         progress_callback: callable = None,
     ):
         """
@@ -60,6 +64,7 @@ class ModpackLoader:
             translate_mods: mods 폴더 번역 여부
             translate_resourcepacks: 리소스팩 번역 여부
             translate_patchouli_books: patchouli 책 번역 여부
+            translate_ftbquests: FTB Quests 번역 여부
             progress_callback: 진행률 업데이트 콜백 함수
         """
         self.modpack_path = Path(modpack_path)
@@ -70,6 +75,7 @@ class ModpackLoader:
         self.translate_mods = translate_mods
         self.translate_resourcepacks = translate_resourcepacks
         self.translate_patchouli_books = translate_patchouli_books
+        self.translate_ftbquests = translate_ftbquests
         self.progress_callback = progress_callback
 
         # 지원하는 파일 확장자
@@ -115,6 +121,8 @@ class ModpackLoader:
         total_steps = 0
         if self.translate_config:
             total_steps += 1
+        if self.translate_ftbquests:
+            total_steps += 1
         if self.translate_kubejs:
             total_steps += 1
         if self.translate_patchouli_books:
@@ -137,6 +145,17 @@ class ModpackLoader:
                     "config 폴더를 스캔하고 있습니다...",
                 )
             self._load_config_files()
+
+        if self.translate_ftbquests:
+            current_step += 1
+            if self.progress_callback:
+                self.progress_callback(
+                    "FTB Quests 파일 스캔",
+                    current_step,
+                    total_steps,
+                    "FTB Quests 파일을 스캔하고 있습니다...",
+                )
+            self._load_ftbquests_files()
 
         if self.translate_kubejs:
             current_step += 1
@@ -196,11 +215,15 @@ class ModpackLoader:
         return self.translation_files, self.jar_files, self.fingerprints
 
     def _load_config_files(self):
-        """config 폴더에서 번역 대상 파일들을 찾습니다."""
+        """config 폴더에서 번역 대상 파일들을 찾습니다. (ftbquests 제외)"""
         pattern = self._normalize_glob_path(self.modpack_path / "config" / "**" / "*.*")
         files = glob(str(pattern), recursive=True)
 
         for file_path in files:
+            # ftbquests 폴더는 제외
+            if "ftbquests" in file_path.lower():
+                continue
+
             if self._is_translation_file(file_path):
                 lang_type = self._get_file_language_type(file_path)
                 self.translation_files.append(
@@ -213,6 +236,28 @@ class ModpackLoader:
 
         logger.info(
             f"config 폴더에서 {len([f for f in self.translation_files if f.get('type') == 'config'])}개 파일 발견"
+        )
+
+    def _load_ftbquests_files(self):
+        """config/ftbquests 폴더에서 번역 대상 파일들을 찾습니다."""
+        pattern = self._normalize_glob_path(
+            self.modpack_path / "config" / "ftbquests" / "**" / "*.*"
+        )
+        files = glob(str(pattern), recursive=True)
+
+        for file_path in files:
+            if self._is_translation_file(file_path):
+                lang_type = self._get_file_language_type(file_path)
+                self.translation_files.append(
+                    {
+                        "input": file_path,
+                        "type": "ftbquests",
+                        "lang_type": lang_type,
+                    }
+                )
+
+        logger.info(
+            f"ftbquests 폴더에서 {len([f for f in self.translation_files if f.get('type') == 'ftbquests'])}개 파일 발견"
         )
 
     def _load_kubejs_files(self):

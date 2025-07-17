@@ -68,8 +68,12 @@ class PlaceholderManager:
     NEWLINE_PATTERN = r"\\n|\\r\\n|\\r"  # \n, \r\n, \r 개행 문자들
     # 이미지 플레이스홀더 패턴: {image:...} 또는 {image:... width:... height:... align:...}
     IMAGE_PLACEHOLDER_PATTERN = r"\{image:[^}]+\}"
+    # 페이지 구분자({@pagebreak}) 패턴 추가
+    PAGEBREAK_PATTERN = r"\{@pagebreak\}"
 
     _PLACEHOLDER_PATTERNS: List[str] = [
+        IMAGE_PLACEHOLDER_PATTERN,
+        PAGEBREAK_PATTERN,
         NEWLINE_PATTERN,
         C_PLACEHOLDER_PATTERN,
         FORMAT_CODE_PATTERN,
@@ -81,7 +85,6 @@ class PlaceholderManager:
         SQUARE_BRACKET_TAG_PATTERN,
         LEGACY_MINECRAFT_PATTERN,
         r"\{\{[^}]+\}\}",
-        IMAGE_PLACEHOLDER_PATTERN,
     ]
     _INTERNAL_PLACEHOLDER_PATTERN = r"\[P\d{3,}\]"
     _INTERNAL_NEWLINE_PATTERN = r"\[NEWLINE\]"

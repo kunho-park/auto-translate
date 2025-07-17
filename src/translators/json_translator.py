@@ -951,7 +951,7 @@ async def validation_and_retry_node(state: TranslatorState) -> TranslatorState: 
                     missing_placeholders = PlaceholderManager.get_missing_placeholders(
                         original, translated
                     )
-                    logger.debug(
+                    logger.info(
                         f"플레이스홀더 누락 감지: '{original}' -> '{translated}' "
                         f"(누락된 플레이스홀더: {missing_placeholders})"
                     )
@@ -961,7 +961,7 @@ async def validation_and_retry_node(state: TranslatorState) -> TranslatorState: 
                 elif translated == original and len(original) > 3:
                     should_retry = True
                     retry_reason = "동일한 결과"
-                    logger.debug(
+                    logger.info(
                         f"번역 누락 감지: '{original}' -> '{translated}' (동일한 결과)"
                     )
             if should_retry:

@@ -41,6 +41,14 @@ Items to translate:
 - Translating or replacing placeholders with other text is absolutely forbidden.
 </critical_placeholders>
 
+<natural_translation>
+- Translate naturally without using brackets around Korean translations
+- Bad example: "[Leviathan Blade]로 [좀비 주민]에게 [나약함]을(를) 부여하세요"
+- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요"
+- Integrate translated terms naturally into Korean sentence structure
+- Do not preserve English formatting patterns like brackets when they are not part of placeholders
+</natural_translation>
+
 <mandatory_completion>
 - You must translate all given items without omission and call the 'TranslatedItem' tool - absolutely no omissions allowed
 - Missing even one tool call will result in the entire task being considered failed with severe penalties
@@ -54,6 +62,7 @@ Items to translate:
 - Omitting some items or skipping 'TranslatedItem' tool calls is absolutely forbidden
 - Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
 - Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
+- Using brackets around Korean translations (e.g., [한국어 번역]) is absolutely forbidden unless they are actual placeholders
 </forbidden>
 </rules>"""
 
@@ -102,6 +111,14 @@ Items to retry:
 - Be especially careful about placeholder omissions in retries as they occur frequently.
 </critical_placeholders>
 
+<natural_translation>
+- Translate naturally without using brackets around Korean translations
+- Bad example: "[Leviathan Blade]로 [좀비 주민]에게 [나약함]을(를) 부여하세요"
+- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요"
+- Integrate translated terms naturally into Korean sentence structure
+- Do not preserve English formatting patterns like brackets when they are not part of placeholders
+</natural_translation>
+
 <mandatory_completion>
 - You must translate all retry items without omission and call the 'TranslatedItem' tool - even in retries, translating only some items and omitting the rest is absolutely not allowed
 - Missing even one tool call will result in the entire task being considered failed with severe penalties
@@ -115,6 +132,7 @@ Items to retry:
 - Omitting some items or skipping 'TranslatedItem' tool calls is absolutely forbidden
 - Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
 - Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
+- Using brackets around Korean translations (e.g., [한국어 번역]) is absolutely forbidden unless they are actual placeholders
 </forbidden>
 </rules>"""
 
@@ -221,6 +239,14 @@ List of placeholders that must be included in the translation. The order and cou
 </glossary>
 
 <rules>
+<natural_translation>
+- Translate naturally without using brackets around Korean translations
+- Bad example: "[Leviathan Blade]로 [좀비 주민]에게 [나약함]을(를) 부여하세요"
+- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요"
+- Integrate translated terms naturally into Korean sentence structure
+- Do not preserve English formatting patterns like brackets when they are not part of placeholders
+</natural_translation>
+
 <critical>
 - This is the final retry. Follow all rules strictly.
 - The translation result must include all placeholders specified in <required_placeholders>.
@@ -362,6 +388,14 @@ For each completed translation item, call the 'TranslatedItem' tool to record th
 - Placeholders must remain in exactly the same position in the translated text
 - Translating or replacing placeholders with other text is absolutely forbidden
 </critical_placeholders>
+
+<natural_translation>
+- Translate naturally without using brackets around Korean translations
+- Bad example: "[Leviathan Blade]로 [좀비 주민]에게 [나약함]을(를) 부여하세요"
+- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요"
+- Integrate translated terms naturally into Korean sentence structure
+- Do not preserve English formatting patterns like brackets when they are not part of placeholders
+</natural_translation>
 
 <quality_improvement>
 - Provide natural translations that accurately convey the original meaning

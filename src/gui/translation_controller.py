@@ -24,7 +24,7 @@ class TranslationController:
         self.is_translating = False
         self.translation_task = None
 
-        # 설정값들
+        # 설정값들 (번역 영역 설정 포함)
         self.settings = {
             "llm_provider": "gemini",
             "llm_model": "gemini-2.0-flash",
@@ -39,6 +39,13 @@ class TranslationController:
             "enable_quality_review": True,
             "final_fallback_max_retries": 2,
             "max_quality_retries": 1,
+            # 번역 영역 설정 (기본값: 모든 영역 활성화)
+            "translate_mods": True,
+            "translate_kubejs": True,
+            "translate_resourcepacks": True,
+            "translate_patchouli_books": True,
+            "translate_ftbquests": True,
+            "translate_config": True,
         }
 
         # 콜백들
@@ -51,6 +58,12 @@ class TranslationController:
     def set_modpack(self, modpack_info: Dict):
         """선택된 모드팩 설정"""
         self.selected_modpack = modpack_info
+
+    def set_translation_areas(self, areas: Dict[str, bool]):
+        """번역 영역 설정"""
+        self.settings.update(areas)
+        if self.log_callback:
+            self.log_callback("DEBUG", f"번역 영역 설정 업데이트: {areas}")
 
     def set_callbacks(
         self,
@@ -155,6 +168,12 @@ class TranslationController:
             max_concurrent_requests=self.settings["max_concurrent_requests"],
             delay_between_requests_ms=self.settings["delay_between_requests_ms"],
             progress_callback=self.progress_callback,  # 진행률 콜백 전달
+            translate_config=self.settings["translate_config"],
+            translate_kubejs=self.settings["translate_kubejs"],
+            translate_mods=self.settings["translate_mods"],
+            translate_resourcepacks=self.settings["translate_resourcepacks"],
+            translate_patchouli_books=self.settings["translate_patchouli_books"],
+            translate_ftbquests=self.settings["translate_ftbquests"],
         )
 
         # 토큰 실시간 업데이트 콜백 연결

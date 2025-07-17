@@ -33,6 +33,12 @@ class ModpackTranslator:
         max_concurrent_requests: int = 3,
         delay_between_requests_ms: int = 500,
         progress_callback: Optional[callable] = None,
+        translate_config: bool = True,
+        translate_kubejs: bool = True,
+        translate_mods: bool = True,
+        translate_resourcepacks: bool = True,
+        translate_patchouli_books: bool = True,
+        translate_ftbquests: bool = True,
     ):
         self.modpack_path = modpack_path
         self.glossary_path = glossary_path
@@ -51,11 +57,12 @@ class ModpackTranslator:
             source_lang=source_lang,
             target_lang=target_lang_code,  # 타겟 언어 추가
             progress_callback=progress_callback,
-            translate_mods=True,  # JAR 파일 처리 비활성화 (테스트용)
-            translate_config=True,
-            translate_kubejs=True,
-            translate_resourcepacks=True,
-            translate_patchouli_books=True,
+            translate_mods=translate_mods,
+            translate_config=translate_config,
+            translate_kubejs=translate_kubejs,
+            translate_resourcepacks=translate_resourcepacks,
+            translate_patchouli_books=translate_patchouli_books,
+            translate_ftbquests=translate_ftbquests,
         )
         self.filter_manager = ExtendedFilterManager()
         self.translator = JSONTranslator(glossary_path=glossary_path)
