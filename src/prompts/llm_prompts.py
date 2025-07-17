@@ -236,8 +236,7 @@ List of placeholders that must be included in the translation. The order and cou
 - Never include the ID in the translation result.
 - Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
 - Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
-- Do not return translation result directly.
-- Use the 'TranslatedItem' tool to return the translation result.
+- It is strictly forbidden to output the translation result directly or return it as raw output without using the 'TranslatedItem' tool.
 </forbidden>
 </rules>
 """
