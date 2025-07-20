@@ -53,7 +53,7 @@ class PlaceholderManager:
     FORMAT_CODE_PATTERN = r"[§&][0-9a-fk-or]"
     C_PLACEHOLDER_PATTERN = r"%(?:[0-9]+\$[sd]|[sd])"  # %1$s, %2$d, %s, %d 등
     ITEM_PLACEHOLDER_PATTERN = r"\$\([^)]*\)"
-    JSON_PLACEHOLDER_PATTERN = r"[{\[]{1}([,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]|\".*?\")+[}\]]{1}"  # JSON 객체와 배열 모두 지원
+    JSON_PLACEHOLDER_PATTERN = r"([{\[]{1}([,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]|\".*?\")+[}\]]{1})"  # JSON 객체와 배열 모두 지원
     HTML_TAG_PATTERN = r"<[^>]*>"
     MINECRAFT_ITEM_CODE_PATTERN = (
         r"(\{[a-zA-Z_0-9]+[:.][a-zA-Z_0-9/.]+\})|"
@@ -74,11 +74,11 @@ class PlaceholderManager:
     _PLACEHOLDER_PATTERNS: List[str] = [
         IMAGE_PLACEHOLDER_PATTERN,
         PAGEBREAK_PATTERN,
+        JSON_PLACEHOLDER_PATTERN,
         NEWLINE_PATTERN,
         C_PLACEHOLDER_PATTERN,
         FORMAT_CODE_PATTERN,
         ITEM_PLACEHOLDER_PATTERN,
-        JSON_PLACEHOLDER_PATTERN,
         HTML_TAG_PATTERN,
         MINECRAFT_ITEM_CODE_PATTERN,
         JS_TEMPLATE_LITERAL_PATTERN,

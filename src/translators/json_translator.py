@@ -535,7 +535,9 @@ async def _extract_terms_from_chunk_worker_with_progress(
                 configured_llm = llm.with_config(
                     configurable={"temperature": temperature}
                 )
-                llm_with_tools = configured_llm.bind_tools([SimpleGlossaryTerm])
+                llm_with_tools = configured_llm.bind_tools(
+                    [SimpleGlossaryTerm], tool_choice="any"
+                )
                 response = await llm_with_tools.ainvoke(prompt)
 
                 # LLM의 도구 호출에서 SimpleGlossaryTerm 추출
@@ -794,7 +796,9 @@ async def _translate_chunk_worker_with_progress(
             configured_llm = current_llm.with_config(
                 configurable={"temperature": temperature}
             )
-            llm_with_tools = configured_llm.bind_tools([TranslatedItem])
+            llm_with_tools = configured_llm.bind_tools(
+                [TranslatedItem], tool_choice="any"
+            )
             response = await llm_with_tools.ainvoke(prompt)
 
             # LLM의 도구 호출에서 TranslatedItem 추출
@@ -1226,7 +1230,9 @@ async def _translate_single_item_worker(
                 configured_llm = current_llm.with_config(
                     configurable={"temperature": temperature}
                 )
-                llm_with_tools = configured_llm.bind_tools([TranslatedItem])
+                llm_with_tools = configured_llm.bind_tools(
+                    [TranslatedItem], tool_choice="any"
+                )
 
                 response = await llm_with_tools.ainvoke(prompt)
 
@@ -1234,7 +1240,6 @@ async def _translate_single_item_worker(
                     for tool_call in response.tool_calls:
                         if (
                             tool_call["name"] == "TranslatedItem"
-                            and tool_call["args"].get("id") == tid
                         ):
                             item = TranslatedItem(**tool_call["args"])
                             # 최종 검증: ID 패턴이 아니고 플레이스홀더가 보존되었는지 확인
@@ -1317,8 +1322,6 @@ async def final_fallback_translation_node(state: TranslatorState) -> TranslatorS
                     original.startswith("[P") and original.endswith("]")
                 ) or original == "[NEWLINE]":
                     needs_translation = False
-                elif translated.strip() == original.strip() and len(original) > 3:
-                    needs_translation = True
 
             if needs_translation:
                 untranslated_items.append(tid)
@@ -1963,7 +1966,7 @@ async def _review_chunk_worker(
             prompt = quality_review_prompt(target_language, review_text)
 
             # LLM 호출 - QualityIssue 도구 바인딩
-            llm_with_tools = current_llm.bind_tools([QualityIssue])
+            llm_with_tools = current_llm.bind_tools([QualityIssue], tool_choice="any")
             response = await llm_with_tools.ainvoke(prompt)
 
             # 응답 파싱 - 개별 QualityIssue들 수집
@@ -2195,8 +2198,28 @@ async def quality_based_retranslation_node(state: TranslatorState) -> Translator
                     return {k: replace(v) for k, v in obj.items()}
                 if isinstance(obj, list):
                     return [replace(i) for i in obj]
-                if isinstance(obj, str) and obj in id_map:
-                    return id_map[obj]
+                if isinstance(obj, str):
+                    # T001, T002 같은 ID가 translation_map에 있는지 확인
+                    if obj in id_map:
+                        translated_text = id_map[obj]
+                        # 번역된 텍스트가 T-ID 패턴인지 다시 한번 확인
+                        if re.match(r"^T\d{3,}$", translated_text.strip()):
+                            logger.warning(
+                                f"번역 결과가 ID 패턴인 항목 발견: {obj} -> {translated_text}"
+                            )
+                            original_text = state["id_to_text_map"].get(obj, obj)
+                            logger.warning(
+                                f"원본 텍스트로 복원: {obj} -> {original_text}"
+                            )
+                            return original_text
+                        return translated_text
+                    # ID 패턴이지만 번역이 없는 경우 경고
+                    elif re.match(r"^T\d{3,}$", obj):
+                        logger.warning(f"번역되지 않은 ID 발견: {obj}")
+                        # 원본 텍스트로 복원 시도
+                        original_text = state["id_to_text_map"].get(obj, obj)
+                        logger.warning(f"원본 텍스트로 복원: {obj} -> {original_text}")
+                        return original_text
                 return obj
 
             state["translated_json"] = replace(state["processed_json"])
@@ -2303,7 +2326,9 @@ async def _quality_retranslate_chunk_worker(
                 )
 
                 # LLM 호출
-                llm_with_tools = current_llm.bind_tools([TranslatedItem])
+                llm_with_tools = current_llm.bind_tools(
+                    [TranslatedItem], tool_choice="any"
+                )
                 response = await llm_with_tools.ainvoke(prompt)
 
                 # 응답 파싱
