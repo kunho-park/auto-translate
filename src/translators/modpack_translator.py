@@ -823,6 +823,7 @@ class ModpackTranslator:
 
     async def run_full_translation(
         self,
+        loader: ModpackLoader,
         output_path: str = "modpack_translation.json",
         max_retries: int = 5,
         max_tokens_per_chunk: int = 2000,
@@ -856,6 +857,7 @@ class ModpackTranslator:
                 self.delay_between_requests_ms = delay_between_requests_ms
                 logger.info(f"요청 간 지연 변경: {delay_between_requests_ms}ms")
 
+            self.loader.translation_files = loader.translation_files
             # 1. 번역 대상 수집 (병렬 처리)
             await self.collect_all_translations(
                 selected_files=selected_files,

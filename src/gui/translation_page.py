@@ -7,6 +7,8 @@ from typing import Callable, Dict
 
 import flet as ft
 
+from src.modpack.load import ModpackLoader
+
 from .translation_controller import TranslationController
 from .translation_dialogs import (
     TranslationCompletionDialog,
@@ -27,6 +29,7 @@ class TranslationPage:
         self.current_language = "ko"
         self.selected_files = None
         self.selected_glossary_files = None
+        self.loader: ModpackLoader = None
 
         # 모듈들 초기화
         self.controller = TranslationController(page)
@@ -164,6 +167,7 @@ class TranslationPage:
         # 컨트롤러에서 번역 시작
         # 컨트롤러에서 번역 시작 (선택된 파일 목록 전달)
         self.controller.start_translation(
+            loader=self.loader,
             selected_files=self.selected_files,
             selected_glossary_files=self.selected_glossary_files,
         )

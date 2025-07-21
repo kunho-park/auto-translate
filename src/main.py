@@ -15,6 +15,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 from src.gui import FileSelectionPage, ModpackBrowser, TranslationPage
+from src.modpack.load import ModpackLoader
 
 # 로깅 설정
 logging.basicConfig(
@@ -50,7 +51,9 @@ class MainApp:
         self.file_selection_page.set_modpack(modpack_info)
         self.file_selection_page.build_ui()
 
-    async def show_translation_page(self, selected_files: list, selected_glossary_files: list):
+    async def show_translation_page(
+        self, loader: ModpackLoader, selected_files: list, selected_glossary_files: list
+    ):
         """번역 페이지로 이동"""
         modpack_info = self.file_selection_page.selected_modpack
         logger.info(
@@ -63,6 +66,7 @@ class MainApp:
         # 현재 TranslationPage에는 해당 기능이 없으므로 컨트롤러에 직접 전달합니다.
         self.translation_page.selected_files = selected_files
         self.translation_page.selected_glossary_files = selected_glossary_files
+        self.translation_page.loader = loader
         self.translation_page.build_ui()
         # 사용자가 번역 페이지의 시작 버튼을 누르면 번역이 시작됩니다.
 

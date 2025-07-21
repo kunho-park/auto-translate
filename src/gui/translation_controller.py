@@ -9,6 +9,8 @@ from typing import Callable, Dict, List, Optional
 
 import flet as ft
 
+from src.modpack.load import ModpackLoader
+
 from ..translators.modpack_translator import ModpackTranslator
 
 
@@ -86,6 +88,7 @@ class TranslationController:
 
     def start_translation(
         self,
+        loader: ModpackLoader,
         selected_files: Optional[List[str]] = None,
         selected_glossary_files: Optional[List[str]] = None,
     ):
@@ -101,12 +104,14 @@ class TranslationController:
         # Flet의 run_task를 사용하여 비동기 작업 실행
         self.page.run_task(
             self._start_translation_async,
+            loader,
             selected_files,
             selected_glossary_files,
         )
 
     async def _start_translation_async(
         self,
+        loader: ModpackLoader,
         selected_files: Optional[List[str]] = None,
         selected_glossary_files: Optional[List[str]] = None,
     ):
@@ -132,7 +137,7 @@ class TranslationController:
             await self._initialize_translator()
 
             # 번역 실행
-            await self._run_translation(selected_files, selected_glossary_files)
+            await self._run_translation(loader, selected_files, selected_glossary_files)
 
         except Exception as error:
             if self.log_callback:
@@ -195,6 +200,7 @@ class TranslationController:
 
     async def _run_translation(
         self,
+        loader: ModpackLoader,
         selected_files: Optional[List[str]] = None,
         selected_glossary_files: Optional[List[str]] = None,
     ):
@@ -212,7 +218,7 @@ class TranslationController:
         # 번역 태스크 생성
         self.translation_task = asyncio.create_task(
             self._execute_translation(
-                output_dir, selected_files, selected_glossary_files
+                loader, output_dir, selected_files, selected_glossary_files
             )
         )
 
@@ -262,12 +268,14 @@ class TranslationController:
 
     async def _execute_translation(
         self,
+        loader: ModpackLoader,
         output_dir: str,
         selected_files: Optional[List[str]] = None,
         selected_glossary_files: Optional[List[str]] = None,
     ):
         """번역 실행"""
         return await self.translator.run_full_translation(
+            loader=loader,
             output_path=os.path.join(output_dir, "modpack_translation.json"),
             max_tokens_per_chunk=self.settings["max_tokens_per_chunk"],
             max_retries=self.settings["max_retries"],
