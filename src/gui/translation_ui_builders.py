@@ -223,61 +223,6 @@ class TranslationUIBuilders:
             spacing=8,
         )
 
-        # 번역 영역 체크박스들
-        translation_area_checkboxes = ft.Column(
-            [
-                ft.Checkbox(
-                    label=tr("gui.checkbox.translate_mods", "모드들 번역 (JAR 파일)"),
-                    value=settings.get("translate_mods", True),
-                    on_change=lambda e: update_setting_callback(
-                        "translate_mods", e.control.value
-                    ),
-                ),
-                ft.Checkbox(
-                    label=tr("gui.checkbox.translate_kubejs", "KubeJS 번역"),
-                    value=settings.get("translate_kubejs", True),
-                    on_change=lambda e: update_setting_callback(
-                        "translate_kubejs", e.control.value
-                    ),
-                ),
-                ft.Checkbox(
-                    label=tr("gui.checkbox.translate_resourcepacks", "리소스팩 번역"),
-                    value=settings.get("translate_resourcepacks", True),
-                    on_change=lambda e: update_setting_callback(
-                        "translate_resourcepacks", e.control.value
-                    ),
-                ),
-                ft.Checkbox(
-                    label=tr(
-                        "gui.checkbox.translate_patchouli_books",
-                        "패치울리 책 번역",
-                    ),
-                    value=settings.get("translate_patchouli_books", True),
-                    on_change=lambda e: update_setting_callback(
-                        "translate_patchouli_books", e.control.value
-                    ),
-                ),
-                ft.Checkbox(
-                    label=tr(
-                        "gui.checkbox.translate_ftbquests",
-                        "퀘스트 번역 (FTB Quests)",
-                    ),
-                    value=settings.get("translate_ftbquests", True),
-                    on_change=lambda e: update_setting_callback(
-                        "translate_ftbquests", e.control.value
-                    ),
-                ),
-                ft.Checkbox(
-                    label=tr("gui.checkbox.translate_config", "Config 파일들 번역"),
-                    value=settings.get("translate_config", True),
-                    on_change=lambda e: update_setting_callback(
-                        "translate_config", e.control.value
-                    ),
-                ),
-            ],
-            spacing=8,
-        )
-
         # ------------------------------------------------------------------
         # Glossary info
         # ------------------------------------------------------------------
@@ -359,12 +304,6 @@ class TranslationUIBuilders:
                     quality_retries_text,
                 ),
                 ft.Container(height=10),
-                ft.Text(
-                    tr("gui.text.translation_areas", "번역 영역"),
-                    size=16,
-                    weight=ft.FontWeight.BOLD,
-                ),
-                translation_area_checkboxes,
                 ft.Divider(),
                 ft.Text(
                     tr("gui.text.additional_options", "추가 옵션"),

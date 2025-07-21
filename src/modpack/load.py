@@ -517,6 +517,63 @@ class ModpackLoader:
 
         return "/".join(parts)
 
+    def _get_category_from_file_info(self, file_info: Dict[str, str]) -> str:
+        """파일 정보에서 카테고리를 결정합니다."""
+        file_type = file_info.get("type", "unknown")
+
+        if file_type == "mod":
+            jar_name = file_info.get("jar_name", "Unknown Mod")
+            # .jar 확장자 및 버전 정보 제거
+            mod_name = Path(jar_name).stem.split("-")[0].replace("_", " ").title()
+            return f"Mod: {mod_name}"
+        elif file_type == "kubejs":
+            return "KubeJS"
+        elif file_type == "ftbquests":
+            return "FTB Quests"
+        elif file_type == "patchouli":
+            return "Patchouli Books"
+        elif file_type == "config":
+            return "Configuration"
+        elif file_type in ["resourcepacks", "datapacks"]:
+            return "Resource/Data Packs"
+        else:
+            return "Other"
+
+    def scan_translatable_files(self) -> List[Dict[str, Any]]:
+        """
+        번역 선택 페이지에 표시할 번역 가능한 소스 파일 목록을 스캔합니다.
+        이 메서드는 UI에 필요한 형식으로 데이터를 반환합니다.
+        """
+        logger.info("UI용 번역 가능 파일 스캔 시작...")
+
+        # 기존 파일 로딩 로직을 실행하여 모든 파일 정보를 수집합니다.
+        # 이전에 스캔한 결과가 있으면 재사용합니다.
+        if not self.translation_files:
+            self.load_translation_files()
+
+        selectable_files = []
+        for file_info in self.translation_files:
+            # 소스 언어 파일만 선택 가능하도록 필터링합니다.
+            if file_info.get("lang_type") == "source":
+                file_path = Path(file_info["input"])
+                try:
+                    relative_path = file_path.relative_to(self.modpack_path)
+                except ValueError:
+                    relative_path = file_path  # 모드팩 외부에 있는 경우 전체 경로 사용
+
+                selectable_files.append(
+                    {
+                        "file_name": file_path.name,
+                        "relative_path": str(relative_path),
+                        "full_path": str(file_path),
+                        "category": self._get_category_from_file_info(file_info),
+                        "selected": True,  # 기본적으로 선택 상태로 설정
+                    }
+                )
+
+        logger.info(f"UI용으로 {len(selectable_files)}개의 선택 가능한 파일 스캔 완료.")
+        return selectable_files
+
     def get_translation_stats(self) -> Dict[str, int]:
         """번역 파일 통계를 반환합니다."""
         stats = {}

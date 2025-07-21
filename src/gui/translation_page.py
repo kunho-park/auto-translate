@@ -25,6 +25,8 @@ class TranslationPage:
         self.page = page
         self.selected_modpack = None
         self.current_language = "ko"
+        self.selected_files = None
+        self.selected_glossary_files = None
 
         # 모듈들 초기화
         self.controller = TranslationController(page)
@@ -43,7 +45,7 @@ class TranslationPage:
         self.status_text = None
 
         # 콜백
-        self.on_back_to_browser = None
+        self.on_back = None
 
         # 컨트롤러에 콜백 설정
         self._setup_controller_callbacks()
@@ -56,7 +58,7 @@ class TranslationPage:
 
     def set_back_callback(self, callback: Callable):
         """뒤로가기 콜백 설정"""
-        self.on_back_to_browser = callback
+        self.on_back = callback
 
     def _setup_controller_callbacks(self):
         """컨트롤러 콜백들 설정"""
@@ -160,7 +162,11 @@ class TranslationPage:
         self.progress_manager.start_time_tracker(lambda: self.controller.is_translating)
 
         # 컨트롤러에서 번역 시작
-        self.controller.start_translation()
+        # 컨트롤러에서 번역 시작 (선택된 파일 목록 전달)
+        self.controller.start_translation(
+            selected_files=self.selected_files,
+            selected_glossary_files=self.selected_glossary_files,
+        )
 
     def _stop_translation(self, e):
         """번역 중지"""
@@ -203,24 +209,25 @@ class TranslationPage:
             )
         else:
             # 번역 중이 아니면 바로 돌아가기
-            if self.on_back_to_browser:
-                self.page.run_task(self._back_to_browser_async)
+            if self.on_back:
+                self.page.run_task(self._back_async)
 
     def _force_back(self):
         """강제로 뒤로가기 (번역 중지하고)"""
         self.controller.stop_translation()
-        if self.on_back_to_browser:
-            self.page.run_task(self._back_to_browser_async)
+        if self.on_back:
+            self.page.run_task(self._back_async)
 
-    async def _back_to_browser_async(self):
-        """브라우저로 돌아가기 - 비동기"""
+    async def _back_async(self):
+        """뒤로가기 - 비동기"""
         # 정리 작업
         self.logger.cleanup_log_handler()
         self.progress_manager.reset_progress()
         self.controller.reset_controller()
 
-        if self.on_back_to_browser:
-            await self.on_back_to_browser()
+        if self.on_back:
+            # The callback needs the modpack_info to rebuild the selection page
+            await self.on_back(self.selected_modpack)
 
     def get_translation_status(self) -> Dict:
         """번역 상태 정보 반환"""

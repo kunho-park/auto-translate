@@ -5,7 +5,7 @@
 import asyncio
 import os
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable, Dict, List, Optional
 
 import flet as ft
 
@@ -59,12 +59,6 @@ class TranslationController:
         """선택된 모드팩 설정"""
         self.selected_modpack = modpack_info
 
-    def set_translation_areas(self, areas: Dict[str, bool]):
-        """번역 영역 설정"""
-        self.settings.update(areas)
-        if self.log_callback:
-            self.log_callback("DEBUG", f"번역 영역 설정 업데이트: {areas}")
-
     def set_callbacks(
         self,
         progress_callback: Callable = None,
@@ -90,7 +84,11 @@ class TranslationController:
         """현재 설정값들 반환"""
         return self.settings.copy()
 
-    def start_translation(self):
+    def start_translation(
+        self,
+        selected_files: Optional[List[str]] = None,
+        selected_glossary_files: Optional[List[str]] = None,
+    ):
         """번역 시작"""
         if self.is_translating:
             if self.log_callback:
@@ -101,9 +99,17 @@ class TranslationController:
             self.log_callback("INFO", "번역 시작 요청을 받았습니다")
 
         # Flet의 run_task를 사용하여 비동기 작업 실행
-        self.page.run_task(self._start_translation_async)
+        self.page.run_task(
+            self._start_translation_async,
+            selected_files,
+            selected_glossary_files,
+        )
 
-    async def _start_translation_async(self):
+    async def _start_translation_async(
+        self,
+        selected_files: Optional[List[str]] = None,
+        selected_glossary_files: Optional[List[str]] = None,
+    ):
         """실제 번역 시작 로직 (비동기)"""
         if self.is_translating:
             return
@@ -126,7 +132,7 @@ class TranslationController:
             await self._initialize_translator()
 
             # 번역 실행
-            await self._run_translation()
+            await self._run_translation(selected_files, selected_glossary_files)
 
         except Exception as error:
             if self.log_callback:
@@ -168,12 +174,6 @@ class TranslationController:
             max_concurrent_requests=self.settings["max_concurrent_requests"],
             delay_between_requests_ms=self.settings["delay_between_requests_ms"],
             progress_callback=self.progress_callback,  # 진행률 콜백 전달
-            translate_config=self.settings["translate_config"],
-            translate_kubejs=self.settings["translate_kubejs"],
-            translate_mods=self.settings["translate_mods"],
-            translate_resourcepacks=self.settings["translate_resourcepacks"],
-            translate_patchouli_books=self.settings["translate_patchouli_books"],
-            translate_ftbquests=self.settings["translate_ftbquests"],
         )
 
         # 토큰 실시간 업데이트 콜백 연결
@@ -193,7 +193,11 @@ class TranslationController:
         if self.log_callback:
             self.log_callback("SUCCESS", "ModpackTranslator 초기화 완료")
 
-    async def _run_translation(self):
+    async def _run_translation(
+        self,
+        selected_files: Optional[List[str]] = None,
+        selected_glossary_files: Optional[List[str]] = None,
+    ):
         """실제 번역 작업 실행"""
         # 출력 디렉토리 설정 (현재 실행 위치의 output 폴더에 저장)
         modpack_name = Path(self.selected_modpack["path"]).name
@@ -207,7 +211,9 @@ class TranslationController:
 
         # 번역 태스크 생성
         self.translation_task = asyncio.create_task(
-            self._execute_translation(output_dir)
+            self._execute_translation(
+                output_dir, selected_files, selected_glossary_files
+            )
         )
 
         try:
@@ -254,7 +260,12 @@ class TranslationController:
                 self.progress_callback("오류 발생", 0, 0, str(error))
             raise
 
-    async def _execute_translation(self, output_dir: str):
+    async def _execute_translation(
+        self,
+        output_dir: str,
+        selected_files: Optional[List[str]] = None,
+        selected_glossary_files: Optional[List[str]] = None,
+    ):
         """번역 실행"""
         return await self.translator.run_full_translation(
             output_path=os.path.join(output_dir, "modpack_translation.json"),
@@ -273,6 +284,8 @@ class TranslationController:
             enable_quality_review=self.settings["enable_quality_review"],
             final_fallback_max_retries=self.settings["final_fallback_max_retries"],
             max_quality_retries=self.settings["max_quality_retries"],
+            selected_files=selected_files,
+            selected_glossary_files=selected_glossary_files,
         )
 
     def stop_translation(self):

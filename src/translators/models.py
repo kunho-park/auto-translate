@@ -55,6 +55,8 @@ class TranslatorState(TypedDict):
 
     llm_client: Optional[Any]  # LLM 클라이언트 인스턴스
 
+    glossary_text: str  # 선택된 사전 파일 경로
+
     final_fallback_max_retries: int
 
     enable_quality_review: bool  # 품질 검토 사용 여부

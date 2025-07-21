@@ -5,7 +5,6 @@
 """
 
 import asyncio
-import concurrent.futures
 import json
 import logging
 from pathlib import Path
@@ -77,40 +76,36 @@ class ModpackTranslator:
         )
         logger.info(f"타겟 언어: {target_language} ({target_lang_code})")
 
-    async def collect_all_translations(self) -> Dict[str, str]:
-        """모드팩에서 모든 번역 대상을 수집하고 통합 (병렬 처리)"""
-        logger.info("모드팩에서 번역 대상 수집 시작")
+    async def collect_all_translations(
+        self,
+        selected_files: Optional[List[str]] = None,
+        selected_glossary_files: Optional[List[str]] = None,
+    ) -> Dict[str, str]:
+        """
+        모드팩에서 번역 대상을 수집하고 통합합니다.
+        selected_files가 제공되면 해당 파일들만 처리하고, 그렇지 않으면 전체를 스캔합니다.
+        """
+        logger.info(f"{len(selected_files)}개의 선택된 파일에 대한 번역 대상 수집 시작")
+        if not self.loader.translation_files:
+            logger.info("초기 파일 목록이 없습니다. 전체 파일을 먼저 스캔합니다.")
+            self.loader.load_translation_files()
 
-        # 진행률 콜백 호출
-        if self.progress_callback:
-            self.progress_callback(
-                "파일 수집 시작", 0, 0, "번역 대상 파일들을 수집하고 있습니다..."
-            )
+        all_files_map = {
+            f["input"].replace("\\", "/"): f for f in self.loader.translation_files
+        }
+        translation_files = [
+            all_files_map[path.replace("\\", "/")]
+            for path in selected_files
+            if path.replace("\\", "/") in all_files_map
+        ]
 
-        # 1. 파일 수집 (블로킹 작업을 별도 스레드에서 실행)
+        glossary_files = [
+            all_files_map[path.replace("\\", "/")]
+            for path in selected_glossary_files
+            if path.replace("\\", "/") in all_files_map
+        ]
 
-        def run_loader():
-            """별도 스레드에서 파일 로더 실행"""
-            translation_files, jar_files, fingerprints = (
-                self.loader.load_translation_files()
-            )
-            # 기존 번역 데이터 분석
-            existing_translations = self.loader.analyze_existing_translations()
-            return translation_files, jar_files, fingerprints, existing_translations
-
-        # 별도 스레드에서 파일 수집 실행
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(run_loader)
-
-            # 진행률 업데이트를 위한 대기 (다른 스레드가 작업하는 동안)
-            while not future.done():
-                await asyncio.sleep(0.5)  # GUI가 멈추지 않도록 양보
-            # 결과 가져오기
-            translation_files, jar_files, fingerprints, existing_translations_data = (
-                future.result()
-            )
-
-        logger.info(f"총 {len(translation_files)}개 파일 수집됨")
+        logger.info(f"필터링 후 {len(translation_files)}개의 파일을 처리합니다.")
 
         # 기존 번역 데이터 저장
         self.existing_translations = self.loader.get_all_existing_translations()
@@ -185,6 +180,56 @@ class ModpackTranslator:
                 )
 
         logger.info(f"총 {len(all_entries)}개 번역 항목 수집됨")
+
+        glossary_source_files = [
+            f for f in glossary_files if f.get("lang_type", "other") == "source"
+        ]
+
+        self.glossary_text = ""
+
+        if len(glossary_source_files) != len(selected_glossary_files):
+            logger.info(
+                f"사전 파일만 필터링: {len(glossary_source_files)}/{len(selected_glossary_files)}개 파일"
+            )
+
+        # 소스 파일들을 청크로 나누어 처리
+        for i in range(0, len(glossary_source_files), chunk_size):
+            chunk = glossary_source_files[i : i + chunk_size]
+
+            # 현재 청크의 파일들을 병렬 처리
+            chunk_tasks = [
+                self._process_single_file(file_info["input"]) for file_info in chunk
+            ]
+
+            # 병렬 실행
+            try:
+                chunk_results = await asyncio.gather(
+                    *chunk_tasks, return_exceptions=True
+                )
+            except Exception as e:
+                logger.error(f"청크 처리 실패: {e}")
+                chunk_results = [e] * len(chunk_tasks)
+
+            # 결과 수집 (예외 처리)
+            for file_info, result in zip(chunk, chunk_results):
+                if isinstance(result, Exception):
+                    logger.error(
+                        f"파일 처리 실패 ({Path(file_info['input']).name}): {result}"
+                    )
+                elif result:
+                    self.glossary_text += "\n\n" + "\n".join(
+                        str(i.original_text) for i in result
+                    )
+
+            # 진행률 콜백 호출
+            processed_count = min(i + chunk_size, len(glossary_source_files))
+            if self.progress_callback:
+                self.progress_callback(
+                    "사전 데이터 추출 중",
+                    processed_count,
+                    len(glossary_source_files),
+                    f"사전 데이터 추출: {processed_count}/{len(glossary_source_files)} 파일",
+                )
 
         # 3. 중복 제거 및 고유 엔트리만 남기기
         if self.progress_callback:
@@ -361,6 +406,7 @@ class ModpackTranslator:
         enable_quality_review: bool = True,
         final_fallback_max_retries: int = 2,
         max_quality_retries: int = 1,
+        selected_glossary_files: Optional[List[str]] = None,
     ) -> Dict[str, str]:
         """통합된 번역 데이터를 번역"""
         logger.info("통합 번역 데이터 번역 시작")
@@ -379,6 +425,7 @@ class ModpackTranslator:
         # JSONTranslator로 번역 (ModpackTranslator의 설정 사용)
         translated_result = await self.translator.translate(
             self.integrated_data,
+            glossary_text=self.glossary_text,
             target_language=self.target_language,
             max_retries=max_retries,
             max_tokens_per_chunk=max_tokens_per_chunk,
@@ -795,6 +842,8 @@ class ModpackTranslator:
         enable_quality_review: bool = True,
         final_fallback_max_retries: int = 2,
         max_quality_retries: int = 1,
+        selected_files: Optional[List[str]] = None,
+        selected_glossary_files: Optional[List[str]] = None,
     ) -> Dict[str, str]:
         """전체 번역 과정 실행 (최적화된 병렬 처리)"""
         try:
@@ -808,7 +857,10 @@ class ModpackTranslator:
                 logger.info(f"요청 간 지연 변경: {delay_between_requests_ms}ms")
 
             # 1. 번역 대상 수집 (병렬 처리)
-            await self.collect_all_translations()
+            await self.collect_all_translations(
+                selected_files=selected_files,
+                selected_glossary_files=selected_glossary_files,
+            )
 
             # self.integrated_data = dict(list(self.integrated_data.items())[:3000])
             # 디버그용
@@ -826,6 +878,7 @@ class ModpackTranslator:
                 enable_quality_review=enable_quality_review,
                 final_fallback_max_retries=final_fallback_max_retries,
                 max_quality_retries=max_quality_retries,
+                selected_glossary_files=selected_glossary_files,
             )
 
             # 3. 결과 저장 (병렬 처리)

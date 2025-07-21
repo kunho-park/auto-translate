@@ -284,7 +284,8 @@ async def extract_terms_from_json_chunks_node(
                 f"1차 사전에서 {primary_added_count}개 새로운 용어를 추가했습니다."
             )
 
-        all_texts = "\n".join(state["id_to_text_map"].values())
+        all_texts = state.get("glossary_text")
+
         if not all_texts:
             logger.info(_m("translator.contextual_terms_no_new"))
             return state
@@ -1238,9 +1239,7 @@ async def _translate_single_item_worker(
 
                 if response.tool_calls:
                     for tool_call in response.tool_calls:
-                        if (
-                            tool_call["name"] == "TranslatedItem"
-                        ):
+                        if tool_call["name"] == "TranslatedItem":
                             item = TranslatedItem(**tool_call["args"])
                             # 최종 검증: ID 패턴이 아니고 플레이스홀더가 보존되었는지 확인
                             is_id_pattern = re.match(
@@ -2572,6 +2571,7 @@ class JSONTranslator:
         use_multi_api_keys: bool = False,
         multi_llm_manager: Optional[MultiLLMManager] = None,
         track_tokens: bool = True,
+        glossary_text: Optional[str] = None,
     ) -> Dict[str, Any]:
         """번역 실행 및 토큰 사용량 추적"""
         if isinstance(json_input, dict):
@@ -2657,6 +2657,7 @@ class JSONTranslator:
             use_multi_api_keys=use_multi_api_keys,
             multi_llm_manager=multi_llm_manager,
             token_counter=self.token_counter,
+            glossary_text=glossary_text,
         )
 
         result = await self._workflow.ainvoke(initial_state, {"recursion_limit": 50})
