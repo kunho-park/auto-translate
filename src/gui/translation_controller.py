@@ -12,6 +12,7 @@ import flet as ft
 from src.modpack.load import ModpackLoader
 
 from ..translators.modpack_translator import ModpackTranslator
+from ..utils.auto_registration import auto_register_after_translation
 
 
 class TranslationController:
@@ -48,6 +49,8 @@ class TranslationController:
             "translate_patchouli_books": True,
             "translate_ftbquests": True,
             "translate_config": True,
+            # 자동 등록 설정
+            "auto_register_enabled": True,
         }
 
         # 콜백들
@@ -254,6 +257,9 @@ class TranslationController:
             if self.completion_callback:
                 self.completion_callback(output_dir, len(result))
 
+            # 번역 완료 후 자동 등록 시도
+            self._attempt_auto_registration(loader, output_dir, len(result))
+
         except asyncio.CancelledError:
             if self.log_callback:
                 self.log_callback("WARNING", "번역이 사용자에 의해 중지되었습니다")
@@ -295,6 +301,83 @@ class TranslationController:
             selected_files=selected_files,
             selected_glossary_files=selected_glossary_files,
         )
+
+    def _attempt_auto_registration(
+        self, loader: ModpackLoader, output_dir: str, translated_count: int
+    ):
+        """번역 완료 후 자동 등록을 시도합니다."""
+        try:
+            # 자동 등록이 비활성화된 경우 건너뛰기
+            if not self.settings.get("auto_register_enabled", True):
+                if self.log_callback:
+                    self.log_callback("INFO", "⏭️ 자동 등록이 비활성화되어 건너뜁니다.")
+                return
+
+            if not self.selected_modpack:
+                return
+
+            # 로더 설정 추출
+            loader_settings = {
+                "translate_config": loader.translate_config,
+                "translate_kubejs": loader.translate_kubejs,
+                "translate_mods": loader.translate_mods,
+                "translate_resourcepacks": loader.translate_resourcepacks,
+                "translate_patchouli_books": loader.translate_patchouli_books,
+                "translate_ftbquests": loader.translate_ftbquests,
+            }
+
+            # 모드팩 정보 추출
+            modpack_info = {
+                "path": self.selected_modpack.get("path", ""),
+                "name": self.selected_modpack.get("name", ""),
+            }
+
+            # 로그 출력
+            if self.log_callback:
+                self.log_callback("INFO", "🚀 자동 등록을 시도합니다...")
+
+            # 비동기로 자동 등록 실행
+            asyncio.create_task(
+                self._run_auto_registration(
+                    output_dir, modpack_info, loader_settings, translated_count
+                )
+            )
+
+        except Exception as e:
+            if self.log_callback:
+                self.log_callback("WARNING", f"자동 등록 시도 중 오류: {e}")
+
+    async def _run_auto_registration(
+        self,
+        output_dir: str,
+        modpack_info: Dict,
+        loader_settings: Dict,
+        translated_count: int,
+    ):
+        """비동기로 자동 등록을 실행합니다."""
+        try:
+            success = auto_register_after_translation(
+                output_dir=output_dir,
+                modpack_info=modpack_info,
+                loader_settings=loader_settings,
+                translated_count=translated_count,
+                version="1.0.0",  # 기본값 (manifest.json에서 자동 추출됨)
+                description="",  # 자동 생성됨
+                api_base_url="https://mcat.2odk.com",  # 기본 서버 URL
+            )
+
+            if success:
+                if self.log_callback:
+                    self.log_callback("SUCCESS", "✅ 자동 등록이 완료되었습니다!")
+            else:
+                if self.log_callback:
+                    self.log_callback(
+                        "WARNING", "⚠️ 자동 등록에 실패했습니다. 수동으로 등록해 주세요."
+                    )
+
+        except Exception as e:
+            if self.log_callback:
+                self.log_callback("ERROR", f"자동 등록 실행 중 오류: {e}")
 
     def stop_translation(self):
         """번역 중지"""

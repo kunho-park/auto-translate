@@ -4,6 +4,7 @@
 
 import asyncio
 import time
+import traceback
 from datetime import datetime
 from typing import Any, Callable, Dict, Optional
 
@@ -108,9 +109,9 @@ class TranslationProgressManager:
 
                 # UI 업데이트
                 self.page.update()
-            except Exception as e:
+            except Exception:
                 # 토큰 표시 업데이트 오류는 무시하되 디버깅을 위해 로그 출력
-                print(f"토큰 표시 업데이트 오류: {e}")
+                print(f"토큰 표시 업데이트 오류: {traceback.format_exc()}")
                 pass
 
     def start_translation(self):

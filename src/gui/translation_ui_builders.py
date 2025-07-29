@@ -219,6 +219,16 @@ class TranslationUIBuilders:
                         "enable_quality_review", e.control.value
                     ),
                 ),
+                ft.Checkbox(
+                    label=tr(
+                        "gui.checkbox.auto_register_enabled", "번역 완료 후 자동 등록"
+                    ),
+                    value=settings["auto_register_enabled"],
+                    on_change=lambda e: update_setting_callback(
+                        "auto_register_enabled", e.control.value
+                    ),
+                    tooltip="번역 완료 시 자동으로 서버에 등록합니다",
+                ),
             ],
             spacing=8,
         )
