@@ -96,32 +96,34 @@ class MultiLLMManager:
         ]
 
     def get_next_key(self) -> Optional[str]:
-        """다음 사용할 API 키를 선택합니다."""
+        """다음에 사용할 API 키를 선택합니다.
+
+        로직 우선순위
+        1. `min_request_interval` 이상 쉬었던 키가 있으면 그중 가장 오래 쉬었던 키
+        2. 그렇지 않으면 **라운드로빈** 방식으로 순차 선택해 키가 고르게 분배되도록 함
+        """
         active_keys = self.get_active_keys()
         if not active_keys:
             return None
 
-        # 가장 오래 사용하지 않은 키를 우선 선택
         current_time = time.time()
-        available_keys = []
 
+        # 1) 최소 휴식 간격을 만족하는 후보 키 목록 추출
+        candidates: List[tuple[str, float]] = []
         for key_id in active_keys:
-            key_info = self.api_keys[key_id]
-            time_since_last_use = current_time - key_info.last_used
+            elapsed = current_time - self.api_keys[key_id].last_used
+            if elapsed >= self.min_request_interval:
+                candidates.append((key_id, elapsed))
 
-            if time_since_last_use >= self.min_request_interval:
-                available_keys.append((key_id, time_since_last_use))
+        if candidates:
+            # 가장 오래 쉬었던 키 우선 선택
+            candidates.sort(key=lambda x: x[1], reverse=True)
+            return candidates[0][0]
 
-        if not available_keys:
-            # 모든 키가 최소 간격 내에 사용됨 - 가장 오래된 것 선택
-            available_keys = [
-                (key_id, current_time - self.api_keys[key_id].last_used)
-                for key_id in active_keys
-            ]
-
-        # 가장 오래 사용하지 않은 키 선택
-        available_keys.sort(key=lambda x: x[1], reverse=True)
-        return available_keys[0][0]
+        # 2) 모든 키가 아직 min_request_interval 내에 있으면 라운드로빈으로 분배
+        selected_key = active_keys[self.current_key_index % len(active_keys)]
+        self.current_key_index += 1
+        return selected_key
 
     async def get_client(self, key_id: Optional[str] = None) -> Optional[Any]:
         """LLM 클라이언트를 가져옵니다."""
