@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from typing import Any, Dict, List
 
 import regex as re
@@ -36,15 +37,30 @@ def is_korean_text(text: str) -> bool:
 
 
 class RequestDelayManager:
-    """Small helper for yielding between API calls."""
+    """글로벌 요청 간격을 보장하는 비동기 딜레이 관리자.
+
+    여러 코루틴이 동시에 API 요청을 시도해도 최소 `delay_ms` 만큼의 간격을 확보합니다.
+    1) 각 요청 전에 `wait()` 를 호출합니다.
+    2) 내부에서 마지막 요청 시각을 체크해 부족한 시간을 `await asyncio.sleep()` 으로 채웁니다.
+    """
 
     def __init__(self, delay_ms: int):
-        self.delay_seconds = delay_ms / 1000.0
+        self.delay_seconds = max(delay_ms / 1000.0, 0.0)
+        self._lock = asyncio.Lock()
+        self._last_request_time: float = 0.0
 
     async def wait(self) -> None:  # noqa: D401 – imperative mood is fine
-        """Sleep for the configured delay."""
-        if self.delay_seconds > 0:
-            await asyncio.sleep(self.delay_seconds)
+        """다음 요청까지 필요한 만큼 대기한다."""
+        if self.delay_seconds <= 0:
+            return
+
+        async with self._lock:
+            now = time.monotonic()
+            elapsed = now - self._last_request_time
+            if elapsed < self.delay_seconds:
+                await asyncio.sleep(self.delay_seconds - elapsed)
+            # 요청 직전 시간을 기록
+            self._last_request_time = time.monotonic()
 
 
 class PlaceholderManager:
