@@ -1576,23 +1576,43 @@ async def load_vanilla_glossary_node(state: TranslatorState) -> TranslatorState:
 def load_glossary_node(state: TranslatorState) -> TranslatorState:
     """Load existing glossary from the specified file path."""
     path = state.get("glossary_path")
+    important_terms = []
+
+    # user_glossary.json 파일 확인 및 로드
+    user_glossary_path = "./user_glossary.json"
+    if os.path.exists(user_glossary_path):
+        try:
+            with open(user_glossary_path, "r", encoding="utf-8") as f:
+                user_data = json.load(f)
+                user_terms = [GlossaryEntry(**item) for item in user_data]
+                important_terms.extend(user_terms)
+                logger.info(
+                    f"사용자 용어집 로드 완료: {len(user_terms)}개 용어 ({user_glossary_path})"
+                )
+        except (IOError, json.JSONDecodeError, TypeError) as exc:
+            logger.warning(
+                f"사용자 용어집 로드 실패: {user_glossary_path}, 오류: {exc}"
+            )
+
+    # 기본 glossary 로드
     if path and os.path.exists(path):
         try:
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                state["important_terms"] = [GlossaryEntry(**item) for item in data]
+                important_terms = [GlossaryEntry(**item) for item in data]
                 logger.info(
                     _m(
                         "translator.glossary_loaded",
-                        count=len(state["important_terms"]),
+                        count=len(important_terms),
                         path=path,
                     )
                 )
         except (IOError, json.JSONDecodeError, TypeError) as exc:
             logger.warning(_m("translator.glossary_load_error", path=path, error=exc))
-            state["important_terms"] = []
-    else:
-        state["important_terms"] = []
+            important_terms = []
+
+    state["important_terms"] = important_terms
+
     return state
 
 
