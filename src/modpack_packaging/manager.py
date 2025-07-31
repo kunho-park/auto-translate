@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Dict
 
 from .base import PackagingResult
+from .jar_modifier import JarModifierPackager
 from .modpack import ModpackPackager
 from .resourcepack import ResourcePackBuilder
 
@@ -51,6 +52,10 @@ class PackageManager:
             source_lang=source_lang, target_lang=target_lang
         )
 
+        self.jar_modifier = JarModifierPackager(
+            source_lang=source_lang, target_lang=target_lang
+        )
+
     async def package_all(
         self, translated_files: Dict[str, str], output_dir: Path, **kwargs
     ) -> Dict[str, PackagingResult]:
@@ -63,8 +68,10 @@ class PackageManager:
             **kwargs: 추가 옵션들
                 - create_resourcepack: 리소스팩 생성 여부 (기본값: True)
                 - create_modpack: 모드팩 생성 여부 (기본값: True)
+                - create_jar_mods: JAR 파일 수정 여부 (기본값: True)
                 - create_zips: ZIP 파일 생성 여부 (기본값: True)
                 - parallel: 병렬 처리 여부 (기본값: True)
+                - mods_path: 모드 JAR 파일들이 위치한 경로
 
         Returns:
             Dict[패키징 타입, 결과]: 패키징 결과들
@@ -73,6 +80,7 @@ class PackageManager:
 
         create_resourcepack = kwargs.get("create_resourcepack", True)
         create_modpack = kwargs.get("create_modpack", True)
+        create_jar_mods = kwargs.get("create_jar_mods", True)
         parallel = kwargs.get("parallel", True)
 
         results = {}
@@ -100,11 +108,18 @@ class PackageManager:
                     self._package_modpack(translated_files, output_dir, **kwargs)
                 )
 
+            if create_jar_mods and stats.get("data_files", 0) > 0:
+                tasks.append(
+                    self._package_jar_mods(translated_files, output_dir, **kwargs)
+                )
+
             if tasks:
                 task_results = await asyncio.gather(*tasks, return_exceptions=True)
 
                 # 결과 처리
                 task_names = []
+                if create_jar_mods and stats.get("data_files", 0) > 0:
+                    task_names.append("jar_mods")
                 if create_resourcepack and stats.get("mod_files", 0) > 0:
                     task_names.append("resourcepack")
                 if create_modpack and stats.get("modpack_files", 0) > 0:
@@ -127,6 +142,11 @@ class PackageManager:
 
             if create_modpack and stats.get("modpack_files", 0) > 0:
                 results["modpack"] = await self._package_modpack(
+                    translated_files, output_dir, **kwargs
+                )
+
+            if create_jar_mods and stats.get("data_files", 0) > 0:
+                results["jar_mods"] = await self._package_jar_mods(
                     translated_files, output_dir, **kwargs
                 )
 
@@ -174,6 +194,14 @@ class PackageManager:
             translated_files, output_dir, **kwargs
         )
 
+    async def _package_jar_mods(
+        self, translated_files: Dict[str, str], output_dir: Path, **kwargs
+    ) -> PackagingResult:
+        """JAR 파일 수정 패키징 작업"""
+        logger.info("JAR 파일 수정 패키징 시작")
+
+        return await self.jar_modifier.package(translated_files, output_dir, **kwargs)
+
     def _analyze_translated_files(
         self, translated_files: Dict[str, str]
     ) -> Dict[str, int]:
@@ -182,6 +210,7 @@ class PackageManager:
             "total_files": len(translated_files),
             "mod_files": 0,
             "modpack_files": 0,
+            "data_files": 0,
             "config_files": 0,
             "kubejs_files": 0,
             "patchouli_files": 0,
@@ -191,10 +220,13 @@ class PackageManager:
         for original_path in translated_files.keys():
             path_lower = original_path.lower()
 
-            # 모드 파일 확인
-            if self.resourcepack_builder._is_mod_file(original_path):
-                stats["mod_files"] += 1
+            # /data 폴더 파일 확인
+            if self.jar_modifier._is_data_file(original_path):
+                stats["data_files"] += 1
 
+            # 모드 파일 확인
+            elif self.resourcepack_builder._is_mod_file(original_path):
+                stats["mod_files"] += 1
             # 모드팩 파일 확인
             elif "config" in path_lower:
                 stats["config_files"] += 1
@@ -295,6 +327,18 @@ class PackageManager:
                 ]
             )
 
+        if "jar_mods" in results and results["jar_mods"].success:
+            content.extend(
+                [
+                    "### 수정된 모드 JAR 파일들",
+                    "- /data 폴더의 번역된 파일들이 포함된 수정된 모드 JAR 파일들",
+                    "- `backup/` 폴더: 원본 JAR 파일들의 백업",
+                    "- `translated/` 폴더: 번역이 적용된 수정된 JAR 파일들",
+                    "- 모드 폴더의 원본 JAR 파일들을 백업한 후 교체하세요",
+                    "",
+                ]
+            )
+
         content.extend(
             [
                 "## 설치 방법",
@@ -309,10 +353,18 @@ class PackageManager:
                 f"3. `{modpack_name}_{lang_name}_덮어쓰기.zip` 파일을 압축 해제합니다",
                 "4. 게임을 재시작합니다",
                 "",
+                "### 수정된 모드 JAR 파일 설치",
+                "1. 모드팩 인스턴스의 `mods/` 폴더를 찾습니다",
+                "2. 기존 모드 JAR 파일들을 안전한 곳에 백업합니다",
+                "3. `translated/` 폴더의 수정된 JAR 파일들을 `mods/` 폴더로 복사합니다",
+                "4. 게임을 재시작합니다",
+                "5. 문제 발생 시 `backup/` 폴더의 원본 파일들로 복원합니다",
+                "",
                 "## 주의사항",
                 "",
                 "- 설치 전 반드시 백업하세요",
                 "- 모드팩 업데이트 시 번역 파일들이 덮어쓰여질 수 있습니다",
+                "- 수정된 JAR 파일은 모드 업데이트 시 원본으로 교체됩니다",
                 "- 번역에 오류가 있다면 원본 파일로 복원하세요",
                 "",
                 f"번역 언어: {self.source_lang} → {self.target_lang}",

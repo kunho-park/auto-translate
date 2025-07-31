@@ -7,6 +7,7 @@
 import asyncio
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -966,6 +967,8 @@ class ModpackTranslator:
                 create_resourcepack=True,
                 create_modpack=True,
                 create_zips=True,
+                create_jar_mods=True,
+                mods_path=os.path.join(self.modpack_path, "mods"),
                 parallel=True,
                 modpack_name=modpack_name,  # 모드팩 이름 전달
             )
