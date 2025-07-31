@@ -129,7 +129,7 @@ class AutoRegistrationManager:
                 translator=translator_hash,
                 resource_pack_path=resource_pack_path,
                 override_files_path=override_files_path,
-                loader_settings=loader_settings,
+                translation_scope=translation_scope,
             )
 
             if success:
@@ -244,7 +244,7 @@ class AutoRegistrationManager:
 
         Args:
             output_dir: 출력 디렉토리
-            loader_settings: 로더 설정
+            translation_scope: 번역 범위 정보
 
         Returns:
             Dict[str, bool]: 번역 범위 정보
@@ -406,7 +406,7 @@ class AutoRegistrationManager:
         translator: str,
         resource_pack_path: Optional[str],
         override_files_path: Optional[str],
-        loader_settings: Dict,
+        translation_scope: Dict[str, bool],
     ) -> bool:
         """
         서버에 모드팩을 등록합니다.
@@ -418,37 +418,41 @@ class AutoRegistrationManager:
             translator: 번역자 해시
             resource_pack_path: 리소스팩 파일 경로
             override_files_path: 덮어쓰기 파일 경로
-            loader_settings: 로더 설정
+            translation_scope: 번역 범위 정보
 
         Returns:
             bool: 등록 성공 여부
         """
         try:
-            # 폼 데이터 준비
+            # 폼 데이터 준비 (기본 정보)
             data = {
                 "curseforgeId": curseforge_id,
                 "version": version,
                 "description": description,
                 "translator": translator,
-                "translateConfig": str(
-                    loader_settings.get("translate_config", False)
-                ).lower(),
-                "translateKubejs": str(
-                    loader_settings.get("translate_kubejs", False)
-                ).lower(),
-                "translateMods": str(
-                    loader_settings.get("translate_mods", True)
-                ).lower(),
-                "translateResourcepacks": str(
-                    loader_settings.get("translate_resourcepacks", False)
-                ).lower(),
-                "translatePatchouliBooks": str(
-                    loader_settings.get("translate_patchouli_books", False)
-                ).lower(),
-                "translateFtbquests": str(
-                    loader_settings.get("translate_ftbquests", False)
-                ).lower(),
             }
+
+            # 번역 범위 플래그 설정 (translation_scope 기반)
+            data.update(
+                {
+                    "translateConfig": str(
+                        translation_scope.get("config", False)
+                    ).lower(),
+                    "translateKubejs": str(
+                        translation_scope.get("kubejs", False)
+                    ).lower(),
+                    "translateMods": str(translation_scope.get("mods", False)).lower(),
+                    "translateResourcepacks": str(
+                        translation_scope.get("resourcepacks", False)
+                    ).lower(),
+                    "translatePatchouliBooks": str(
+                        translation_scope.get("patchouli_books", False)
+                    ).lower(),
+                    "translateFtbquests": str(
+                        translation_scope.get("ftbquests", False)
+                    ).lower(),
+                }
+            )
 
             files = {}
 
