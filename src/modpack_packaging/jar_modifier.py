@@ -35,6 +35,8 @@ class JarModifierPackager(BasePackager):
         super().__init__(source_lang, target_lang)
         self.mods_path = mods_path
         self._mod_id_cache: Dict[str, Path] = {}  # mod_id -> jar_path 매핑
+        self._mod_id_retry_count: Dict[str, int] = {}  # mod_id -> retry count
+        self._max_retry_attempts = 1  # 최대 재시도 횟수
 
         # 초기화 시 모드 경로가 주어지면 스캔
         if mods_path:
@@ -51,7 +53,6 @@ class JarModifierPackager(BasePackager):
             output_dir: 출력 디렉토리
             **kwargs: 추가 옵션
                 - mods_path: 모드 JAR 파일들이 위치한 경로
-                - create_backup: 원본 JAR 백업 생성 여부 (기본값: True)
 
         Returns:
             PackagingResult: 패키징 결과
@@ -92,14 +93,11 @@ class JarModifierPackager(BasePackager):
 
             # 각 모드의 JAR 파일 수정
             modified_jars = []
-            create_backup = kwargs.get("create_backup", True)
 
             for mod_id, files in mod_groups.items():
                 # kwargs에서 중복 매개변수 제거 (중복 방지)
                 filtered_kwargs = {
-                    k: v
-                    for k, v in kwargs.items()
-                    if k not in ["mods_path", "create_backup"]
+                    k: v for k, v in kwargs.items() if k not in ["mods_path"]
                 }
 
                 jar_path = await self._modify_mod_jar(
@@ -107,7 +105,6 @@ class JarModifierPackager(BasePackager):
                     files,
                     mods_path,
                     output_dir,
-                    create_backup,
                     **filtered_kwargs,
                 )
                 if jar_path:
@@ -273,6 +270,14 @@ class JarModifierPackager(BasePackager):
 
     def _find_mod_jar(self, mod_id: str, mods_path: Path) -> Optional[Path]:
         """모드 ID에 해당하는 JAR 파일을 찾습니다."""
+        # 재시도 횟수 확인 (무한 시도 방지)
+        retry_count = self._mod_id_retry_count.get(mod_id, 0)
+        if retry_count >= self._max_retry_attempts:
+            logger.warning(
+                f"모드 ID 찾기 최대 재시도 횟수 초과: {mod_id} (시도횟수: {retry_count})"
+            )
+            return None
+
         # 캐시된 모드 ID 매핑 사용
         if mod_id in self._mod_id_cache:
             jar_path = self._mod_id_cache[mod_id]
@@ -282,15 +287,20 @@ class JarModifierPackager(BasePackager):
                 logger.warning(f"캐시된 JAR 파일이 더 이상 존재하지 않음: {jar_path}")
                 del self._mod_id_cache[mod_id]
 
-        # 캐시에 없으면 재스캔 후 다시 시도
-        self._scan_mod_jars()
+        # 첫 번째 시도가 아니라면 재스캔하지 않음 (재시도 제한)
+        if retry_count == 0:
+            # 재시도 횟수 증가
+            self._mod_id_retry_count[mod_id] = retry_count + 1
 
-        if mod_id in self._mod_id_cache:
-            return self._mod_id_cache[mod_id]
+            # 캐시에 없으면 재스캔 후 다시 시도
+            self._scan_mod_jars()
+
+            if mod_id in self._mod_id_cache:
+                return self._mod_id_cache[mod_id]
 
         # 여전히 찾을 수 없으면 fallback으로 파일명 기반 매칭 시도
         logger.warning(
-            f"mods.toml에서 모드 ID를 찾을 수 없어서 파일명 기반 매칭 시도: {mod_id}"
+            f"mods.toml에서 모드 ID를 찾을 수 없어서 파일명 기반 매칭 시도: {mod_id} (시도횟수: {retry_count + 1})"
         )
 
         for jar_file in mods_path.glob("*.jar"):
@@ -299,6 +309,9 @@ class JarModifierPackager(BasePackager):
             # 모드 ID가 파일명에 포함되는지 확인
             if mod_id.lower() in jar_name:
                 logger.info(f"파일명 기반 매칭 성공: {mod_id} -> {jar_file.name}")
+                # 성공하면 캐시에 저장하고 재시도 카운터 초기화
+                self._mod_id_cache[mod_id] = jar_file
+                self._mod_id_retry_count.pop(mod_id, None)
                 return jar_file
 
             # 언더스코어를 하이픈으로 변환해서 시도
@@ -306,6 +319,9 @@ class JarModifierPackager(BasePackager):
                 logger.info(
                     f"파일명 기반 매칭 성공 (변환): {mod_id} -> {jar_file.name}"
                 )
+                # 성공하면 캐시에 저장하고 재시도 카운터 초기화
+                self._mod_id_cache[mod_id] = jar_file
+                self._mod_id_retry_count.pop(mod_id, None)
                 return jar_file
 
             # 하이픈을 언더스코어로 변환해서 시도
@@ -313,9 +329,16 @@ class JarModifierPackager(BasePackager):
                 logger.info(
                     f"파일명 기반 매칭 성공 (변환): {mod_id} -> {jar_file.name}"
                 )
+                # 성공하면 캐시에 저장하고 재시도 카운터 초기화
+                self._mod_id_cache[mod_id] = jar_file
+                self._mod_id_retry_count.pop(mod_id, None)
                 return jar_file
 
-        logger.warning(f"모드 JAR 파일을 찾을 수 없음: {mod_id}")
+        # 실패한 경우 재시도 카운터 증가
+        self._mod_id_retry_count[mod_id] = retry_count + 1
+        logger.warning(
+            f"모드 JAR 파일을 찾을 수 없음: {mod_id} (시도횟수: {retry_count + 1})"
+        )
         return None
 
     async def _modify_mod_jar(
@@ -324,7 +347,6 @@ class JarModifierPackager(BasePackager):
         files: List[tuple],
         mods_path: Path,
         output_dir: Path,
-        create_backup: bool = True,
         **kwargs,
     ) -> Optional[Path]:
         """모드 JAR 파일을 수정합니다."""
@@ -335,26 +357,18 @@ class JarModifierPackager(BasePackager):
                 logger.error(f"모드 JAR 파일을 찾을 수 없음: {mod_id}")
                 return None
 
-            # 모드팩 이름 기반 폴더 구조 생성
-            modpack_name = kwargs.get("modpack_name", "Unknown_Modpack") + "_Mods"
-            modpack_dir = output_dir / modpack_name
+            # 모드팩 이름과 언어 기반 폴더 구조 생성
+            modpack_name = kwargs.get("modpack_name", "Unknown_Modpack")
+            lang_name = self._get_language_name(self.target_lang)
+            overwrite_folder_name = f"{modpack_name}_{lang_name}_덮어쓰기"
+            overwrite_dir = output_dir / overwrite_folder_name
 
-            # 백업과 번역 폴더 분리
-            backup_dir = modpack_dir / "backup"
-            translated_dir = modpack_dir / "translated"
+            # mods 폴더 생성 (덮어쓰기 폴더 안에)
+            mods_dir = overwrite_dir / "mods"
+            mods_dir.mkdir(parents=True, exist_ok=True)
 
-            # 디렉토리 생성
-            backup_dir.mkdir(parents=True, exist_ok=True)
-            translated_dir.mkdir(parents=True, exist_ok=True)
-
-            # 출력 JAR 파일 경로 (번역 폴더에)
-            output_jar = translated_dir / f"{original_jar.stem}_korean_modified.jar"
-
-            # 백업 생성 (백업 폴더에)
-            if create_backup:
-                backup_jar = backup_dir / f"{original_jar.stem}_backup.jar"
-                shutil.copy2(original_jar, backup_jar)
-                logger.info(f"JAR 백업 생성: {backup_jar}")
+            # 출력 JAR 파일 경로 (mods 폴더에)
+            output_jar = mods_dir / f"{original_jar.stem}_korean_modified.jar"
 
             # 임시 디렉토리에서 JAR 파일 수정
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -474,8 +488,9 @@ class JarModifierPackager(BasePackager):
         self.mods_path = Path(mods_path)
         logger.info(f"모드 경로 설정: {self.mods_path}")
 
-        # 경로가 변경되면 캐시 초기화 후 재스캔
+        # 경로가 변경되면 캐시 및 재시도 카운터 초기화 후 재스캔
         self._mod_id_cache.clear()
+        self._mod_id_retry_count.clear()
         if self.mods_path.exists():
             self._scan_mod_jars()
         else:
@@ -494,3 +509,19 @@ class JarModifierPackager(BasePackager):
                     mod_ids.add(mod_id)
 
         return mod_ids
+
+    def _get_language_name(self, lang_code: str) -> str:
+        """언어 코드를 사람이 읽기 좋은 이름으로 변환합니다."""
+        lang_mapping = {
+            "ko_kr": "korean",
+            "ja_jp": "japanese",
+            "zh_cn": "chinese_simplified",
+            "zh_tw": "chinese_traditional",
+            "fr_fr": "french",
+            "de_de": "german",
+            "es_es": "spanish",
+            "pt_br": "portuguese",
+            "ru_ru": "russian",
+            "it_it": "italian",
+        }
+        return lang_mapping.get(lang_code.lower(), lang_code.lower())

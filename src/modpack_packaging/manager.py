@@ -330,11 +330,10 @@ class PackageManager:
         if "jar_mods" in results and results["jar_mods"].success:
             content.extend(
                 [
-                    "### 수정된 모드 JAR 파일들",
+                    f"### 수정된 모드 JAR 파일들 ({modpack_name}_{lang_name}_덮어쓰기/)",
                     "- /data 폴더의 번역된 파일들이 포함된 수정된 모드 JAR 파일들",
-                    "- `backup/` 폴더: 원본 JAR 파일들의 백업",
-                    "- `translated/` 폴더: 번역이 적용된 수정된 JAR 파일들",
-                    "- 모드 폴더의 원본 JAR 파일들을 백업한 후 교체하세요",
+                    "- `mods/` 폴더에 번역된 JAR 파일들이 있습니다",
+                    "- 원본 모드 JAR 파일들을 번역된 JAR 파일로 교체하세요",
                     "",
                 ]
             )
@@ -355,17 +354,16 @@ class PackageManager:
                 "",
                 "### 수정된 모드 JAR 파일 설치",
                 "1. 모드팩 인스턴스의 `mods/` 폴더를 찾습니다",
-                "2. 기존 모드 JAR 파일들을 안전한 곳에 백업합니다",
-                "3. `translated/` 폴더의 수정된 JAR 파일들을 `mods/` 폴더로 복사합니다",
+                "2. 기존 모드 JAR 파일들을 안전한 곳에 백업합니다 (권장)",
+                f"3. `{modpack_name}_{lang_name}_덮어쓰기/mods/` 폴더에서 `*_korean_modified.jar` 파일들을 `mods/` 폴더로 복사합니다",
                 "4. 게임을 재시작합니다",
-                "5. 문제 발생 시 `backup/` 폴더의 원본 파일들로 복원합니다",
                 "",
                 "## 주의사항",
                 "",
                 "- 설치 전 반드시 백업하세요",
                 "- 모드팩 업데이트 시 번역 파일들이 덮어쓰여질 수 있습니다",
                 "- 수정된 JAR 파일은 모드 업데이트 시 원본으로 교체됩니다",
-                "- 번역에 오류가 있다면 원본 파일로 복원하세요",
+                "- 번역에 오류가 있다면 백업해둔 원본 파일로 복원하세요",
                 "",
                 f"번역 언어: {self.source_lang} → {self.target_lang}",
                 "",
