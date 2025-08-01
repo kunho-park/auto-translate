@@ -409,16 +409,33 @@ class JarModifierPackager(BasePackager):
 
             with zipfile.ZipFile(jar_path, "r") as source_jar:
                 with zipfile.ZipFile(temp_jar, "w", zipfile.ZIP_DEFLATED) as target_jar:
-                    # 기존 JAR 내용 복사 (번역 파일은 제외)
+                    # 1단계: 번역된 파일들 먼저 추가
+                    for original_path, translated_path in files:
+                        jar_internal_path = self._get_jar_internal_path(original_path)
+                        if jar_internal_path:
+                            try:
+                                # 번역된 파일을 JAR에 먼저 추가
+                                with open(translated_path, "rb") as f:
+                                    translated_data = f.read()
+                                target_jar.writestr(jar_internal_path, translated_data)
+                                logger.debug(
+                                    f"JAR에 번역 파일 추가: {jar_internal_path}"
+                                )
+                            except Exception as e:
+                                logger.error(
+                                    f"번역 파일 추가 실패 ({jar_internal_path}): {e}"
+                                )
+
+                    # 2단계: 기존 JAR 내용 복사 (이미 추가된 번역 파일은 제외)
                     for item in source_jar.infolist():
                         # 디렉토리는 건너뛰기
                         if item.filename.endswith("/"):
                             continue
 
-                        # 번역될 파일은 건너뛰기 (나중에 번역된 버전으로 덮어쓰기)
+                        # 이미 번역된 파일이 추가되었으면 건너뛰기 (중복 방지)
                         if item.filename in translation_paths:
                             logger.debug(
-                                f"기존 파일 건너뛰기 (번역으로 교체): {item.filename}"
+                                f"번역 파일로 이미 교체됨, 원본 건너뛰기: {item.filename}"
                             )
                             continue
 
@@ -427,23 +444,6 @@ class JarModifierPackager(BasePackager):
                             target_jar.writestr(item.filename, data)
                         except Exception as e:
                             logger.warning(f"파일 복사 실패 ({item.filename}): {e}")
-
-                    # 번역된 파일들 추가 (기존 파일 덮어쓰기)
-                    for original_path, translated_path in files:
-                        jar_internal_path = self._get_jar_internal_path(original_path)
-                        if jar_internal_path:
-                            try:
-                                # 번역된 파일을 JAR에 추가
-                                with open(translated_path, "rb") as f:
-                                    translated_data = f.read()
-                                target_jar.writestr(jar_internal_path, translated_data)
-                                logger.debug(
-                                    f"JAR에 번역 파일 추가 (덮어쓰기): {jar_internal_path}"
-                                )
-                            except Exception as e:
-                                logger.error(
-                                    f"번역 파일 추가 실패 ({jar_internal_path}): {e}"
-                                )
 
             # 임시 파일을 원본으로 교체
             temp_jar.replace(jar_path)
