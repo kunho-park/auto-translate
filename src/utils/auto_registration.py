@@ -4,7 +4,6 @@
 
 import json
 import os
-import zipfile
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
@@ -34,6 +33,8 @@ class AutoRegistrationManager:
         translated_count: int,
         version: str = "1.0.0",
         description: str = "",
+        resource_pack_path: Optional[str] = None,
+        override_files_path: Optional[str] = None,
     ) -> bool:
         """
         번역 완료 후 자동으로 모드팩을 등록합니다.
@@ -45,13 +46,15 @@ class AutoRegistrationManager:
             translated_count: 번역된 항목 수
             version: 번역 버전
             description: 번역 설명
+            resource_pack_path: 리소스팩 파일 경로 (직접 지정)
+            override_files_path: 덮어쓰기 파일 경로 (직접 지정)
 
         Returns:
             bool: 등록 성공 여부
         """
-        # 변수 초기화 (오류 방지용)
-        resource_pack_path = None
-        override_files_path = None
+        # 파일 경로 변수 (직접 제공되거나 검색을 통해 찾음)
+        final_resource_pack_path = resource_pack_path
+        final_override_files_path = override_files_path
 
         try:
             print("\n" + "=" * 60)
@@ -111,13 +114,21 @@ class AutoRegistrationManager:
                 print("❌ 번역 설명 생성에 실패하여 자동 등록을 건너뛰니다.")
                 return False
 
-            # 리소스팩과 덮어쓰기 파일 생성
-            resource_pack_path, override_files_path = self._create_upload_files(
-                output_dir, modpack_info
-            )
+            # 파일 경로가 직접 제공되지 않은 경우에만 찾기
+            if not final_resource_pack_path and not final_override_files_path:
+                print("🔍 생성된 파일들을 검색 중...")
+                final_resource_pack_path, final_override_files_path = (
+                    self._find_generated_files(output_dir, modpack_info)
+                )
+            else:
+                print("📁 직접 제공된 파일 경로 사용:")
+                if final_resource_pack_path:
+                    print(f"   리소스팩: {final_resource_pack_path}")
+                if final_override_files_path:
+                    print(f"   덮어쓰기: {final_override_files_path}")
 
             # 업로드할 파일이 하나도 없으면 등록 중단
-            if not resource_pack_path and not override_files_path:
+            if not final_resource_pack_path and not final_override_files_path:
                 print("❌ 업로드할 파일이 생성되지 않아 자동 등록을 건너뛰니다.")
                 return False
 
@@ -127,8 +138,8 @@ class AutoRegistrationManager:
                 version=modpack_version,
                 description=description,
                 translator=translator_hash,
-                resource_pack_path=resource_pack_path,
-                override_files_path=override_files_path,
+                resource_pack_path=final_resource_pack_path,
+                override_files_path=final_override_files_path,
                 translation_scope=translation_scope,
             )
 
@@ -150,8 +161,8 @@ class AutoRegistrationManager:
             print("=" * 60)
             return False
         finally:
-            # 임시 파일 정리
-            self._cleanup_temp_files(resource_pack_path, override_files_path)
+            # 생성된 파일들은 정리하지 않음 (packaging_output의 원본 파일들)
+            pass
 
     def _extract_modpack_metadata(
         self, modpack_info: Dict
@@ -337,11 +348,11 @@ class AutoRegistrationManager:
 
         return description
 
-    def _create_upload_files(
+    def _find_generated_files(
         self, output_dir: str, modpack_info: Dict
     ) -> Tuple[Optional[str], Optional[str]]:
         """
-        업로드할 파일들을 생성합니다.
+        packaging_output에서 생성된 파일들을 찾습니다.
 
         Args:
             output_dir: 출력 디렉토리
@@ -350,51 +361,54 @@ class AutoRegistrationManager:
         Returns:
             Tuple[Optional[str], Optional[str]]: (리소스팩 경로, 덮어쓰기 파일 경로)
         """
-        output_path = Path(output_dir)
-        modpack_name = Path(modpack_info.get("path", "")).name
+        # packaging_output 디렉토리 경로
+        packaging_output_dir = Path(output_dir) / "packaging_output"
 
         resource_pack_path = None
         override_files_path = None
 
         try:
-            # 리소스팩 파일 생성 (resourcepacks 폴더가 있는 경우)
-            resourcepacks_dir = output_path / "resourcepacks"
-            if resourcepacks_dir.exists() and any(resourcepacks_dir.iterdir()):
-                resource_pack_path = f"./{modpack_name}_korean_resourcepack.zip"
+            if not packaging_output_dir.exists():
+                print(
+                    f"⚠️ packaging_output 디렉토리가 존재하지 않음: {packaging_output_dir}"
+                )
+                return None, None
 
-                with zipfile.ZipFile(
-                    resource_pack_path, "w", zipfile.ZIP_DEFLATED
-                ) as zipf:
-                    for file_path in resourcepacks_dir.rglob("*"):
-                        if file_path.is_file():
-                            arcname = file_path.relative_to(resourcepacks_dir)
-                            zipf.write(file_path, arcname)
+            # 리소스팩 파일 찾기 (*_리소스팩.zip)
+            resourcepack_files = list(packaging_output_dir.glob("*_리소스팩.zip"))
+            if resourcepack_files:
+                resource_pack_path = str(resourcepack_files[0])
+                print(f"✓ 리소스팩 파일 발견: {resourcepack_files[0].name}")
 
-                print(f"✓ 리소스팩 파일 생성: {resource_pack_path}")
+            # 덮어쓰기 파일 찾기 (*_덮어쓰기.zip)
+            override_files = list(packaging_output_dir.glob("*_덮어쓰기.zip"))
+            if override_files:
+                override_files_path = str(override_files[0])
+                print(f"✓ 덮어쓰기 파일 발견: {override_files[0].name}")
 
-            # 덮어쓰기 파일 생성 (나머지 모든 파일들)
-            other_files = []
-            for item in output_path.iterdir():
-                if item.name != "resourcepacks" and item.is_dir():
-                    other_files.extend(item.rglob("*"))
-                elif item.is_file():
-                    other_files.append(item)
+            # 추가로 korean 키워드가 포함된 zip 파일들도 찾아보기
+            if not resource_pack_path:
+                korean_resourcepack_files = list(
+                    packaging_output_dir.glob("*korean*리소스팩*.zip")
+                )
+                if korean_resourcepack_files:
+                    resource_pack_path = str(korean_resourcepack_files[0])
+                    print(
+                        f"✓ 한국어 리소스팩 파일 발견: {korean_resourcepack_files[0].name}"
+                    )
 
-            if other_files:
-                override_files_path = f"./{modpack_name}_korean_overrides.zip"
-
-                with zipfile.ZipFile(
-                    override_files_path, "w", zipfile.ZIP_DEFLATED
-                ) as zipf:
-                    for file_path in other_files:
-                        if file_path.is_file():
-                            arcname = file_path.relative_to(output_path)
-                            zipf.write(file_path, arcname)
-
-                print(f"✓ 덮어쓰기 파일 생성: {override_files_path}")
+            if not override_files_path:
+                korean_override_files = list(
+                    packaging_output_dir.glob("*korean*덮어쓰기*.zip")
+                )
+                if korean_override_files:
+                    override_files_path = str(korean_override_files[0])
+                    print(
+                        f"✓ 한국어 덮어쓰기 파일 발견: {korean_override_files[0].name}"
+                    )
 
         except Exception as e:
-            print(f"⚠️ 파일 생성 중 오류: {e}")
+            print(f"⚠️ 생성된 파일 검색 중 오류: {e}")
 
         return resource_pack_path, override_files_path
 
@@ -551,6 +565,8 @@ def auto_register_after_translation(
     version: str = "1.0.0",
     description: str = "",
     api_base_url: str = "https://mcat.2odk.com",
+    resource_pack_path: Optional[str] = None,
+    override_files_path: Optional[str] = None,
 ) -> bool:
     """
     번역 완료 후 자동 등록을 수행합니다.
@@ -563,6 +579,8 @@ def auto_register_after_translation(
         version: 번역 버전
         description: 번역 설명
         api_base_url: API 서버 URL
+        resource_pack_path: 리소스팩 파일 경로 (직접 지정)
+        override_files_path: 덮어쓰기 파일 경로 (직접 지정)
 
     Returns:
         bool: 등록 성공 여부
@@ -579,4 +597,6 @@ def auto_register_after_translation(
         translated_count=translated_count,
         version=version,
         description=description,
+        resource_pack_path=resource_pack_path,
+        override_files_path=override_files_path,
     )

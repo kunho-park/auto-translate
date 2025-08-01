@@ -846,7 +846,7 @@ class ModpackTranslator:
         max_quality_retries: int = 1,
         selected_files: Optional[List[str]] = None,
         selected_glossary_files: Optional[List[str]] = None,
-    ) -> Dict[str, str]:
+    ) -> Dict[str, any]:
         """전체 번역 과정 실행 (최적화된 병렬 처리)"""
         try:
             # API 호출 설정 업데이트 (필요시)
@@ -910,10 +910,15 @@ class ModpackTranslator:
                     logger.info(f"파일 업데이트 통계 저장됨: {update_stats_path}")
 
             # 5. 패키징 (선택적)
+            packaging_result = {"resource_pack_path": None, "override_files_path": None}
             if enable_packaging and apply_to_files and output_dir:
-                await self.package_translations(output_dir)
+                packaging_result = await self.package_translations(output_dir)
 
-            return translated_data
+            # 전체 결과 반환 (번역 데이터 + 패키징 결과)
+            return {
+                "translated_data": translated_data,
+                "packaging_result": packaging_result,
+            }
 
         except Exception:
             import traceback
@@ -921,8 +926,14 @@ class ModpackTranslator:
             logger.error(f"번역 과정 중 오류 발생: {traceback.format_exc()}")
             raise
 
-    async def package_translations(self, output_dir: str) -> None:
-        """번역 결과를 패키징합니다."""
+    async def package_translations(self, output_dir: str) -> Dict[str, Optional[str]]:
+        """번역 결과를 패키징합니다.
+
+        Returns:
+            Dict[str, Optional[str]]: 패키징 결과 파일 경로들
+                - "resource_pack_path": 리소스팩 zip 파일 경로
+                - "override_files_path": 덮어쓰기 zip 파일 경로
+        """
         try:
             logger.info("번역 결과 패키징 시작")
 
@@ -995,11 +1006,31 @@ class ModpackTranslator:
 
             logger.info(f"패키징 완료: {packaging_output}")
 
+            # 생성된 파일 경로 추출
+            resource_pack_path = None
+            override_files_path = None
+
+            # 리소스팩과 모드팩 결과에서 zip 파일 경로 찾기
+            if "resourcepack" in results and results["resourcepack"].success:
+                if results["resourcepack"].output_path:
+                    resource_pack_path = str(results["resourcepack"].output_path)
+
+            if "modpack" in results and results["modpack"].success:
+                if results["modpack"].output_path:
+                    override_files_path = str(results["modpack"].output_path)
+
+            return {
+                "resource_pack_path": resource_pack_path,
+                "override_files_path": override_files_path,
+            }
+
         except ImportError:
             logger.warning("패키징 모듈을 찾을 수 없습니다. 패키징을 건너뜁니다.")
+            return {"resource_pack_path": None, "override_files_path": None}
         except Exception as e:
             logger.error(f"패키징 실패: {e}")
             # 패키징 실패는 전체 프로세스를 중단시키지 않음
+            return {"resource_pack_path": None, "override_files_path": None}
 
     # 기존 save_results는 호환성을 위해 유지하되 비동기 버전 호출
     def save_results(

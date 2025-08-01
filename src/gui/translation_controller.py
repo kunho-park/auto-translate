@@ -229,8 +229,19 @@ class TranslationController:
             # 번역 실행 및 결과 대기
             result = await self.translation_task
 
+            # 결과가 새로운 형식인지 확인 (번역 데이터 + 패키징 결과)
+            if isinstance(result, dict) and "translated_data" in result:
+                translated_data = result["translated_data"]
+                packaging_result = result.get("packaging_result", {})
+            else:
+                # 호환성을 위한 기존 형식 처리
+                translated_data = result
+                packaging_result = {}
+
             if self.log_callback:
-                self.log_callback("SUCCESS", f"번역 완료! {len(result)}개 항목 번역됨")
+                self.log_callback(
+                    "SUCCESS", f"번역 완료! {len(translated_data)}개 항목 번역됨"
+                )
 
             # 토큰 사용량 추출 및 UI 업데이트
             if (
@@ -255,10 +266,12 @@ class TranslationController:
 
             # 완료 콜백 호출
             if self.completion_callback:
-                self.completion_callback(output_dir, len(result))
+                self.completion_callback(output_dir, len(translated_data))
 
-            # 번역 완료 후 자동 등록 시도
-            self._attempt_auto_registration(loader, output_dir, len(result))
+            # 번역 완료 후 자동 등록 시도 (패키징 결과 포함)
+            self._attempt_auto_registration(
+                loader, output_dir, len(translated_data), packaging_result
+            )
 
         except asyncio.CancelledError:
             if self.log_callback:
@@ -303,7 +316,11 @@ class TranslationController:
         )
 
     def _attempt_auto_registration(
-        self, loader: ModpackLoader, output_dir: str, translated_count: int
+        self,
+        loader: ModpackLoader,
+        output_dir: str,
+        translated_count: int,
+        packaging_result: Dict[str, Optional[str]],
     ):
         """번역 완료 후 자동 등록을 시도합니다."""
         try:
@@ -332,14 +349,28 @@ class TranslationController:
                 "name": self.selected_modpack.get("name", ""),
             }
 
-            # 로그 출력
+            # 패키징 결과 로그 출력
             if self.log_callback:
                 self.log_callback("INFO", "🚀 자동 등록을 시도합니다...")
+                if packaging_result.get("resource_pack_path"):
+                    self.log_callback(
+                        "INFO",
+                        f"📦 리소스팩 파일: {Path(packaging_result['resource_pack_path']).name}",
+                    )
+                if packaging_result.get("override_files_path"):
+                    self.log_callback(
+                        "INFO",
+                        f"📁 덮어쓰기 파일: {Path(packaging_result['override_files_path']).name}",
+                    )
 
             # 비동기로 자동 등록 실행
             asyncio.create_task(
                 self._run_auto_registration(
-                    output_dir, modpack_info, loader_settings, translated_count
+                    output_dir,
+                    modpack_info,
+                    loader_settings,
+                    translated_count,
+                    packaging_result,
                 )
             )
 
@@ -353,6 +384,7 @@ class TranslationController:
         modpack_info: Dict,
         loader_settings: Dict,
         translated_count: int,
+        packaging_result: Dict[str, Optional[str]],
     ):
         """비동기로 자동 등록을 실행합니다."""
         try:
@@ -364,6 +396,12 @@ class TranslationController:
                 version="1.0.0",  # 기본값 (manifest.json에서 자동 추출됨)
                 description="",  # 자동 생성됨
                 api_base_url="https://mcat.2odk.com",  # 기본 서버 URL
+                resource_pack_path=packaging_result.get(
+                    "resource_pack_path"
+                ),  # 직접 경로 지정
+                override_files_path=packaging_result.get(
+                    "override_files_path"
+                ),  # 직접 경로 지정
             )
 
             if success:
