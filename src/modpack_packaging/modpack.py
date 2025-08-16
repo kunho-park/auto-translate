@@ -30,7 +30,12 @@ class ModpackPackager(BasePackager):
             include_types: 포함할 파일 타입들 (기본값: config, kubejs, patchouli)
         """
         super().__init__(source_lang, target_lang)
-        self.include_types = include_types or ["config", "kubejs", "patchouli"]
+        self.include_types = include_types or [
+            "config",
+            "kubejs",
+            "patchouli",
+            "ftbquests",
+        ]
 
     async def package(
         self, translated_files: Dict[str, str], output_dir: Path, **kwargs
@@ -112,11 +117,19 @@ class ModpackPackager(BasePackager):
         # 경로에서 타입 확인
         for part in path_parts:
             part_lower = part.lower()
-            if part_lower in ["config", "kubejs", "patchouli", "patchouli_books"]:
+            if part_lower in [
+                "config",
+                "kubejs",
+                "patchouli",
+                "patchouli_books",
+                "ftbquests",
+            ]:
                 return part_lower.replace("patchouli_books", "patchouli")
 
         # 더 구체적인 패턴 확인
-        if "config" in path_lower:
+        if "ftbquests" in path_lower:
+            return "ftbquests"
+        elif "config" in path_lower:
             return "config"
         elif "kubejs" in path_lower:
             return "kubejs"
@@ -182,7 +195,13 @@ class ModpackPackager(BasePackager):
         path_parts = list(path.parts)
 
         # 기준 폴더들 찾기
-        base_folders = ["config", "kubejs", "patchouli_books", "patchouli"]
+        base_folders = [
+            "config",
+            "kubejs",
+            "patchouli_books",
+            "patchouli",
+            "ftbquests",
+        ]
 
         for i, part in enumerate(path_parts):
             if part.lower() in [f.lower() for f in base_folders]:
