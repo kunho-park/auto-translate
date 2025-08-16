@@ -786,12 +786,20 @@ class ModpackLoader:
         return mapping
 
     def get_all_existing_translations(self) -> Dict[str, str]:
-        """모든 기존 번역 데이터를 하나의 딕셔너리로 통합하여 반환합니다."""
+        """
+        모든 기존 번역 데이터를 하나의 '번역 캐시' 딕셔너리로 통합하여 반환합니다.
+        키는 원본 영어 텍스트, 값은 한국어 번역입니다.
+        """
         if not self.existing_translations:
             self.analyze_existing_translations()
 
-        combined_translations = {}
+        # 번역 캐시: { "English Text": "한국어 번역" }
+        translation_cache = {}
         for file_mapping in self.existing_translations.values():
-            combined_translations.update(file_mapping)
+            for source_text, target_text in file_mapping.items():
+                # 이미 캐시에 있지만 다른 번역이 있는 경우, 일단 덮어씁니다.
+                # (나중에 더 정교한 로직 추가 가능, 예: 가장 긴 번역 선택)
+                translation_cache[source_text] = target_text
 
-        return combined_translations
+        logger.info(f"통합된 번역 캐시 생성 완료: {len(translation_cache)}개 항목")
+        return translation_cache

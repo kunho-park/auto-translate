@@ -255,7 +255,8 @@ class ModpackTranslator:
         # all_entries = puffish_entries
 
         # 통합 처리 실행
-        self._integrate_translation_entries(all_entries)
+        # 통합 처리 실행 (번역 캐시 전달)
+        self._integrate_translation_entries(all_entries, self.existing_translations)
 
         logger.info(
             f"통합 완료: {len(self.integrated_data)}개 항목이 self.integrated_data에 저장됨"
@@ -315,76 +316,71 @@ class ModpackTranslator:
             logger.error(f"트레이스백: {traceback.format_exc()}")
             return []
 
-    def _integrate_translation_entries(self, entries: List):
-        """번역 항목들을 통합하여 중복 제거 및 우선순위 적용"""
-        logger.info(f"통합 처리 시작: {len(entries)}개 항목")
-
-        # 키별로 그룹화 및 우선순위 적용
-        key_groups = {}
-        empty_text_count = 0
-        processed_count = 0
-
-        for entry in entries:
-            processed_count += 1
-
-            # 파일별로 고유한 키 생성 (전체 파일경로 + 원본키)
-            # 모드팩 경로를 기준으로 상대 경로 생성하여 고유성 보장
-            try:
-                # 모드팩 경로를 기준으로 상대 경로 계산
-                relative_path = Path(entry.file_path).relative_to(
-                    Path(self.modpack_path)
-                )
-                file_identifier = str(relative_path).replace("\\", "/")  # Windows 호환
-            except ValueError:
-                # 상대 경로 계산이 실패하면 전체 경로 사용
-                file_identifier = str(Path(entry.file_path)).replace("\\", "/")
-
-            unique_key = f"{file_identifier}|{entry.key}"
-            text = entry.original_text.strip() if entry.original_text else ""
-
-            if not text:  # 빈 텍스트는 제외
-                empty_text_count += 1
-                if empty_text_count <= 5:  # 처음 5개만 로그
-                    logger.debug(
-                        f"빈 텍스트 제외: {unique_key}, 원본: '{entry.original_text}'"
-                    )
-                continue
-
-            if unique_key not in key_groups:
-                key_groups[unique_key] = []
-
-            key_groups[unique_key].append(entry)
-
+    def _integrate_translation_entries(
+        self, entries: List, translation_cache: Dict[str, str]
+    ):
+        """
+        번역 항목들을 통합하고, 번역 캐시를 사용해 이미 번역된 항목을 제외합니다.
+        """
         logger.info(
-            f"처리 완료: {processed_count}개 항목 중 {empty_text_count}개 빈 텍스트 제외, {len(key_groups)}개 유효 그룹"
+            f"통합 처리 시작: {len(entries)}개 항목, 캐시 크기: {len(translation_cache)}개"
         )
 
-        # 각 키에 대해 가장 높은 우선순위 항목 선택
-        added_count = 0
-        for unique_key, group in key_groups.items():
-            # 우선순위순으로 정렬 (높은 우선순위 먼저)
+        # 원본 텍스트를 기준으로 그룹화하여 중복 번역 방지
+        text_groups = {}
+        for entry in entries:
+            text = entry.original_text.strip() if entry.original_text else ""
+            if not text:
+                continue
+
+            if text not in text_groups:
+                text_groups[text] = []
+            text_groups[text].append(entry)
+
+        logger.info(f"고유한 원본 텍스트 {len(text_groups)}개로 그룹화 완료")
+
+        # 캐시를 확인하며 번역 대상 데이터 생성
+        skipped_count = 0
+        for text, group in text_groups.items():
+            # 번역 캐시에 있는지 확인
+            if text in translation_cache:
+                skipped_count += 1
+                continue  # 캐시에 있으면 건너뛰기
+
+            # 우선순위가 가장 높은 항목을 대표로 선택
             group.sort(key=lambda x: x.priority, reverse=True)
-
             best_entry = group[0]
-            text = best_entry.original_text.strip()
 
-            # 통합 데이터에 추가 (고유 키 사용)
-            self.integrated_data[unique_key] = text
-            added_count += 1
+            # 파일 경로와 원본 키를 조합하여 고유 ID 생성
+            # (나중에 번역 결과를 다시 파일에 적용하기 위해 필요)
+            try:
+                relative_path = Path(best_entry.file_path).relative_to(
+                    Path(self.modpack_path)
+                )
+                file_identifier = str(relative_path).replace("\\", "/")
+            except ValueError:
+                file_identifier = str(Path(best_entry.file_path)).replace("\\", "/")
 
-            # 원본 위치 추적 정보 저장
-            self.translation_map[unique_key] = [
+            unique_id = f"{file_identifier}|{best_entry.key}"
+
+            # 번역 대상 데이터에 추가
+            self.integrated_data[unique_id] = text
+
+            # 원본 위치 추적 정보 저장 (해당 텍스트를 사용하는 모든 위치)
+            self.translation_map[unique_id] = [
                 {
                     "file_path": entry.file_path,
                     "file_type": entry.file_type,
                     "context": entry.context,
                     "priority": entry.priority,
-                    "original_key": entry.key,  # 원본 키 정보도 저장
+                    "original_key": entry.key,
                 }
                 for entry in group
             ]
 
-        logger.info(f"통합 데이터 생성 완료: {added_count}개 항목 추가")
+        logger.info(
+            f"통합 완료: {len(self.integrated_data)}개 항목 번역 필요 (캐시로 인해 {skipped_count}개 건너뜀)"
+        )
 
         # 샘플 데이터 출력
         if self.integrated_data:
