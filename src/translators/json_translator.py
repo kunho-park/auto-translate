@@ -1449,44 +1449,57 @@ def should_retry(state: TranslatorState) -> str:  # noqa: D401
     if not id_map:
         return "complete"
 
-    # 번역되지 않은 항목 체크 (지능적으로, 플레이스홀더 검증 포함)
-    untranslated_items = []
+    # 번역되지 않은 항목과 그 이유를 체크
+    untranslated_items_with_reasons = []
     placeholder_failed_items = []
 
     for tid, original_text in id_map.items():
         translated = translation_map.get(tid, "").strip()
         original = original_text.strip()
 
-        # 번역이 필요한 상황 체크
         needs_translation = False
+        reason = ""
 
-        # 1. 번역이 아예 없는 경우
         if not translated:
             needs_translation = True
-        # 2. 번역 결과가 ID 패턴(T###)인 경우 (실제 번역이 아님)
+            reason = "번역 누락"
         elif re.match(r"^T\d{3,}$", translated):
             needs_translation = True
-        # 3. 원본이 의미있는 텍스트인데 제대로 번역되지 않은 경우
+            reason = "ID 그대로 반환"
         elif original:
             if len(translated) == 0:
                 needs_translation = True
-            elif re.match(r"^T\d{3,}$", translated):
-                needs_translation = True
+                reason = "빈 번역"
             elif not PlaceholderManager.validate_placeholder_preservation(
                 original, translated
             ):
                 needs_translation = True
+                reason = "플레이스홀더 누락"
                 placeholder_failed_items.append(tid)
             elif PlaceholderManager.is_placeholder_only(original):
                 needs_translation = False
             elif translated.strip() == original.strip() and len(original) > 3:
                 needs_translation = True
-        if needs_translation:
-            untranslated_items.append(tid)
+                reason = "동일한 결과"
 
-    needs_retry = len(untranslated_items) > 0
+        if needs_translation:
+            untranslated_items_with_reasons.append({"id": tid, "reason": reason})
+
+    needs_retry = len(untranslated_items_with_reasons) > 0
+    untranslated_items = [item["id"] for item in untranslated_items_with_reasons]
 
     if needs_retry and current_retry < max_retries:
+        # 모든 재시도 이유가 '동일한 결과'인지 확인
+        all_same_result = all(
+            item["reason"] == "동일한 결과" for item in untranslated_items_with_reasons
+        )
+
+        if all_same_result:
+            logger.warning(
+                f"모든 재시도({len(untranslated_items)})가 '동일한 결과'이므로 재시도를 건너뜁니다."
+            )
+            return "complete"  # 재시도 대신 완료로
+
         logger.info(
             _m(
                 "translator.untranslated_retry",

@@ -188,11 +188,24 @@ class PackageManager:
         logger.info("모드팩 패키징 시작")
 
         # ZIP 생성 옵션 전달
-        kwargs["create_zip"] = kwargs.get("create_zips", True)
+        create_zip = kwargs.get("create_zips", True)
 
-        return await self.modpack_packager.package(
+        result = await self.modpack_packager.package(
             translated_files, output_dir, **kwargs
         )
+
+        # ZIP 파일 생성
+        if result.success and create_zip and result.output_path:
+            modpack_name = kwargs.get("modpack_name", "Unknown")
+            lang_name = self._get_language_name(self.target_lang)
+            zip_name = f"{modpack_name}_{lang_name}_덮어쓰기.zip"
+            zip_path = self.modpack_packager.create_zip_package(
+                result.output_path, zip_name
+            )
+            if zip_path:
+                result.output_path = zip_path
+
+        return result
 
     async def _package_jar_mods(
         self, translated_files: Dict[str, str], output_dir: Path, **kwargs
