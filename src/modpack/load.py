@@ -242,26 +242,29 @@ class ModpackLoader:
         )
 
     def _load_ftbquests_files(self):
-        """config/ftbquests 폴더에서 번역 대상 파일들을 찾습니다."""
-        pattern = self._normalize_glob_path(
-            self.modpack_path / "config" / "ftbquests" / "**" / "*.*"
-        )
-        files = glob(str(pattern), recursive=True)
+        """config/ftbquests 및 ftbquests 폴더에서 번역 대상 파일들을 찾습니다."""
+        found_files_count = 0
+        search_paths = [
+            self.modpack_path / "config" / "ftbquests",
+        ]
 
-        for file_path in files:
-            if self._is_translation_file(file_path):
-                lang_type = self._get_file_language_type(file_path)
-                self.translation_files.append(
-                    {
-                        "input": file_path,
-                        "type": "ftbquests",
-                        "lang_type": lang_type,
-                    }
-                )
+        for path in search_paths:
+            if path.is_dir():
+                pattern = self._normalize_glob_path(path / "**" / "*.*")
+                files = glob(str(pattern), recursive=True)
+                for file_path in files:
+                    if self._is_translation_file(file_path):
+                        found_files_count += 1
+                        lang_type = self._get_file_language_type(file_path)
+                        self.translation_files.append(
+                            {
+                                "input": file_path,
+                                "type": "ftbquests",
+                                "lang_type": lang_type,
+                            }
+                        )
 
-        logger.info(
-            f"ftbquests 폴더에서 {len([f for f in self.translation_files if f.get('type') == 'ftbquests'])}개 파일 발견"
-        )
+        logger.info(f"ftbquests 폴더에서 {found_files_count}개 파일 발견")
 
     def _load_kubejs_files(self):
         """kubejs 폴더에서 번역 대상 파일들을 찾습니다."""
@@ -462,9 +465,8 @@ class ModpackLoader:
         if "lang/" in file_path_normalized:
             return is_source or is_target
         else:
-            # 다른 폴더(config, kubejs 등)에서는 en_us, ko_kr 등이 포함된 파일만 대상으로 함
-            # 예를 들어 quests_en_us.json은 대상이지만, quests.json은 대상이 아님
-            return is_source or is_target
+            # lang 폴더 밖의 파일들은 언어 코드 체크 없이 대상으로 간주
+            return True
 
     def _get_file_language_type(self, file_path: str) -> str:
         """파일의 언어 타입을 반환합니다 (source, target, other)"""
