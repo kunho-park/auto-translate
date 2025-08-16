@@ -204,6 +204,9 @@ class ModpackLoader:
         logger.info(f"총 {len(self.translation_files)}개의 번역 파일을 찾았습니다.")
         logger.info(f"총 {len(self.jar_files)}개의 JAR 파일을 찾았습니다.")
 
+        # 기존 번역 데이터 분석
+        self.analyze_existing_translations()
+
         if self.progress_callback:
             self.progress_callback(
                 "파일 스캔 완료",
@@ -442,17 +445,26 @@ class ModpackLoader:
         if ext not in [ext.lower() for ext in self.supported_extensions]:
             return False
 
-        # lang 폴더 내 파일인 경우 소스 언어 또는 타겟 언어 파일인지 확인
-        if "lang/" in file_path_normalized:
-            is_source = self.source_lang in file_path_normalized
-            is_target = self.target_lang and self.target_lang in file_path_normalized
-            return is_source or is_target
-
-        # 기타 번역 대상 디렉토리에 있는지 확인 (소스 언어만)
-        return any(
+        # 번역 대상 디렉토리에 있는지 먼저 확인
+        if not any(
             dir_filter.lower() in file_path_normalized
             for dir_filter in self.DIR_FILTER_WHITELIST
-        )
+        ):
+            return False
+
+        # lang 폴더 내 파일이거나, 파일 이름에 언어 코드가 포함된 경우
+        # 소스 또는 타겟 언어 파일인지 확인
+        is_source = self.source_lang in file_path_normalized
+        is_target = self.target_lang and self.target_lang in file_path_normalized
+
+        # lang 폴더 밖의 파일들은 보통 en_us.json 처럼 언어 코드가 파일명에 포함됨
+        # 따라서 소스 또는 타겟 언어 코드를 포함하면 번역 파일로 간주
+        if "lang/" in file_path_normalized:
+            return is_source or is_target
+        else:
+            # 다른 폴더(config, kubejs 등)에서는 en_us, ko_kr 등이 포함된 파일만 대상으로 함
+            # 예를 들어 quests_en_us.json은 대상이지만, quests.json은 대상이 아님
+            return is_source or is_target
 
     def _get_file_language_type(self, file_path: str) -> str:
         """파일의 언어 타입을 반환합니다 (source, target, other)"""
@@ -773,8 +785,10 @@ class ModpackLoader:
 
     def get_all_existing_translations(self) -> Dict[str, str]:
         """모든 기존 번역 데이터를 하나의 딕셔너리로 통합하여 반환합니다."""
-        combined_translations = {}
+        if not self.existing_translations:
+            self.analyze_existing_translations()
 
+        combined_translations = {}
         for file_mapping in self.existing_translations.values():
             combined_translations.update(file_mapping)
 
