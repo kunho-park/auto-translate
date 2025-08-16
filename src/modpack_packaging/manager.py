@@ -7,7 +7,7 @@
 import asyncio
 import logging
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Tuple
 
 from .base import PackagingResult
 from .jar_modifier import JarModifierPackager
@@ -117,36 +117,31 @@ class PackageManager:
                 task_results = await asyncio.gather(*tasks, return_exceptions=True)
 
                 # 결과 처리
-                task_names = []
-                if create_jar_mods and stats.get("data_files", 0) > 0:
-                    task_names.append("jar_mods")
-                if create_resourcepack and stats.get("mod_files", 0) > 0:
-                    task_names.append("resourcepack")
-                if create_modpack and stats.get("modpack_files", 0) > 0:
-                    task_names.append("modpack")
-
-                for name, result in zip(task_names, task_results):
+                for result in task_results:
                     if isinstance(result, Exception):
-                        logger.error(f"{name} 패키징 실패: {result}")
-                        results[name] = PackagingResult(
-                            success=False, errors=[str(result)]
-                        )
+                        # 예외 발생 시 처리. 어떤 태스크에서 발생했는지 특정하기 어려움.
+                        # 필요하다면 태스크 식별자를 결과에 포함시켜야 함.
+                        logger.error(f"패키징 작업 중 예외 발생: {result}")
+                        # 모든 태스크가 실패했다고 가정하거나, 별도의 오류 처리가 필요.
+                    elif isinstance(result, tuple) and len(result) == 2:
+                        name, package_result = result
+                        results[name] = package_result
                     else:
-                        results[name] = result
+                        logger.error(f"알 수 없는 결과 타입: {result}")
         else:
             # 순차 처리
             if create_resourcepack and stats.get("mod_files", 0) > 0:
-                results["resourcepack"] = await self._package_resourcepack(
+                _, results["resourcepack"] = await self._package_resourcepack(
                     translated_files, output_dir, **kwargs
                 )
 
             if create_modpack and stats.get("modpack_files", 0) > 0:
-                results["modpack"] = await self._package_modpack(
+                _, results["modpack"] = await self._package_modpack(
                     translated_files, output_dir, **kwargs
                 )
 
             if create_jar_mods and stats.get("data_files", 0) > 0:
-                results["jar_mods"] = await self._package_jar_mods(
+                _, results["jar_mods"] = await self._package_jar_mods(
                     translated_files, output_dir, **kwargs
                 )
 
@@ -157,7 +152,7 @@ class PackageManager:
 
     async def _package_resourcepack(
         self, translated_files: Dict[str, str], output_dir: Path, **kwargs
-    ) -> PackagingResult:
+    ) -> tuple[str, PackagingResult]:
         """리소스팩 패키징 작업"""
         logger.info("리소스팩 패키징 시작")
 
@@ -167,12 +162,11 @@ class PackageManager:
         result = await self.resourcepack_builder.package(
             translated_files, output_dir, **kwargs
         )
-
-        return result
+        return "resourcepack", result
 
     async def _package_modpack(
         self, translated_files: Dict[str, str], output_dir: Path, **kwargs
-    ) -> PackagingResult:
+    ) -> tuple[str, PackagingResult]:
         """모드팩 패키징 작업"""
         logger.info("모드팩 패키징 시작")
 
@@ -182,16 +176,18 @@ class PackageManager:
         result = await self.modpack_packager.package(
             translated_files, output_dir, **kwargs
         )
-
-        return result
+        return "modpack", result
 
     async def _package_jar_mods(
         self, translated_files: Dict[str, str], output_dir: Path, **kwargs
-    ) -> PackagingResult:
+    ) -> tuple[str, PackagingResult]:
         """JAR 파일 수정 패키징 작업"""
         logger.info("JAR 파일 수정 패키징 시작")
 
-        return await self.jar_modifier.package(translated_files, output_dir, **kwargs)
+        result = await self.jar_modifier.package(
+            translated_files, output_dir, **kwargs
+        )
+        return "jar_mods", result
 
     def _analyze_translated_files(
         self, translated_files: Dict[str, str]
@@ -235,7 +231,7 @@ class PackageManager:
 
     def _log_packaging_summary(self, results: Dict[str, PackagingResult]) -> None:
         """패키징 결과 요약을 로그에 출력합니다."""
-        logger.info("=== 패키징 작업 완료 ===")
+        logger.info("=== 패키징 결과 ===")
 
         total_files = 0
         successful_packages = 0

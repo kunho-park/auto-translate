@@ -72,11 +72,22 @@ class ResourcePackBuilder(BasePackager):
             file_count = await self._copy_mod_files(mod_files, resourcepack_dir)
 
             if file_count > 0:
+                create_zip = kwargs.get("create_zips", True)
+                if create_zip:
+                    zip_path = self.create_zip_package(resourcepack_dir)
+                    if zip_path:
+                        result.output_path = zip_path
+                    else:
+                        # ZIP 생성 실패 시 디렉토리 경로로 대체
+                        result.output_path = resourcepack_dir
+                        result.errors.append("ZIP 파일 생성에 실패했습니다.")
+                else:
+                    result.output_path = resourcepack_dir
+
                 result.success = True
-                result.output_path = resourcepack_dir
                 result.file_count = file_count
                 logger.info(
-                    f"리소스팩 생성 완료: {resourcepack_dir} ({file_count}개 파일)"
+                    f"리소스팩 생성 완료: {result.output_path} ({file_count}개 파일)"
                 )
             else:
                 result.errors.append("복사된 파일이 없습니다.")
