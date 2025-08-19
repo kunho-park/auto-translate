@@ -4,140 +4,21 @@ These functions return fully formatted prompts for the translation workflow.
 """
 
 # XML-structured prompt templates
-TRANSLATION_PROMPT_TEMPLATE = """<instructions>
-You are a professional translator. Please translate the given text into {language}.
-For each completed translation item, call the 'TranslatedItem' tool to record the result.
-</instructions>
+TRANSLATION_PROMPT_TEMPLATE = """<persona>
+You are an expert translator specializing in game localization, particularly for sandbox and RPG genres. Your task is to translate the given English text into natural-sounding {language}, maintaining the original nuance and tone.
+</persona>
 
-<glossary>
-{glossary}
-</glossary>
+<instructions>
+For each item, you must follow a Chain-of-Thought process to ensure the highest quality translation, and then call the 'TranslatedItem' tool with the final result.
 
-<input>
-Items to translate:
-{chunk}
-</input>
-
-<rules>
-<required>
-- Never change the id
-- All items must be completely translated into {language}
-- Even proper nouns or brand names should be translated into {language} or appropriately localized when possible
-- For difficult technical terms, refer to the glossary or translate while preserving the meaning
-- Do not add English original text or explanations in parentheses when translating (e.g., use "마법사" instead of "마법사 (Wizard)")
-- You must call the 'TranslatedItem' tool for all given items - absolutely no omissions allowed
-</required>
-
-<glossary_usage>
-- The "(Context: ...)" parts in the glossary are for reference only and should not be included in actual translations
-- Example: "마법사 (Context: 게임 직업)" → Use only "마법사" in translation and ignore the "(Context: 게임 직업)" part
-- Use Context only to understand the meaning of terms, never include it in translation results
-</glossary_usage>
-
-<critical_placeholders>
-- Never delete or modify placeholders in the format [PXXX] or [NEWLINE] or [S] (space).
-- These placeholders are important markers that will be restored to original content after translation.
-- Placeholders must remain in exactly the same position in the translated text.
-- Translating or replacing placeholders with other text is absolutely forbidden.
-</critical_placeholders>
-
-<natural_translation>
-- Translate naturally without using brackets around Korean translations
-- Bad example: "[Leviathan Blade]로 [좀비 주민]에게 [나약함]을(를) 부여하세요"
-- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요"
-- Integrate translated terms naturally into Korean sentence structure
-- Do not preserve English formatting patterns like brackets when they are not part of placeholders
-</natural_translation>
-
-<mandatory_completion>
-- You must translate all given items without omission and call the 'TranslatedItem' tool - absolutely no omissions allowed
-- Missing even one tool call will result in the entire task being considered failed with severe penalties
-</mandatory_completion>
-
-<forbidden>
-- Copying English original text as-is is absolutely forbidden
-- Empty translations or leaving original text unchanged is not allowed
-- Adding English original text or explanations in parentheses to translated text is forbidden
-- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] or [S] (space) is absolutely forbidden.
-- Omitting some items or skipping 'TranslatedItem' tool calls is absolutely forbidden
-- Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
-- Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
-- Using brackets around Korean translations (e.g., [한국어 번역]) is absolutely forbidden unless they are actual placeholders
-</forbidden>
-</rules>"""
-
-RETRY_TRANSLATION_PROMPT_TEMPLATE = """<instructions>
-You are a professional translator. Please re-translate the items that failed translation previously.
-This time, you must succeed.
-For each completed translation item, call the 'TranslatedItem' tool to record the result.
-</instructions>
-
-<glossary>
-Glossary (must be followed for consistency):
-{glossary}
-</glossary>
-
-<input>
-Items to retry:
-{chunk}
-</input>
-
-<rules>
-<critical>
-- This is a retry. Since it failed previously, translate more carefully
-- All items must be completely translated into {language}
-- Even difficult terms should be translated by referring to the glossary or understanding the meaning
-- Proper nouns and brand names should also be localized or written in {language} when possible
-</critical>
-
-<required>
-- Never change the id
-- Don't give up just because it failed previously - you must complete the translation
-- Do not add English original text or explanations in parentheses when translating (e.g., use "방패" instead of "방패 (Shield)")
-- You must call the 'TranslatedItem' tool for all retry items - absolutely no omissions allowed
-</required>
-
-<glossary_usage>
-- The "(Context: ...)" parts in the glossary are for reference only and should not be included in actual translations
-- Example: "검사 (Context: 게임 직업)" → Use only "검사" in translation and ignore the "(Context: 게임 직업)" part
-- Use Context only to understand the meaning of terms, never include it in translation results
-</glossary_usage>
-
-<critical_placeholders>
-- Never delete or modify placeholders in the format [PXXX] or [NEWLINE] or [S] (space).
-- These placeholders are very important markers that will be restored to original content after translation.
-- Placeholders must remain in exactly the same position in the translated text.
-- Translating or replacing placeholders with other text is absolutely forbidden.
-- Be especially careful about placeholder omissions in retries as they occur frequently.
-</critical_placeholders>
-
-<natural_translation>
-- Translate naturally without using brackets around Korean translations
-- Bad example: "[Leviathan Blade]로 [좀비 주민]에게 [나약함]을(를) 부여하세요"
-- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요"
-- Integrate translated terms naturally into Korean sentence structure
-- Do not preserve English formatting patterns like brackets when they are not part of placeholders
-</natural_translation>
-
-<mandatory_completion>
-- You must translate all retry items without omission and call the 'TranslatedItem' tool - even in retries, translating only some items and omitting the rest is absolutely not allowed
-- Missing even one tool call will result in the entire task being considered failed with severe penalties
-</mandatory_completion>
-
-<forbidden>
-- Copying or maintaining English original text as-is is absolutely forbidden
-- Empty translations or leaving original text unchanged is not allowed
-- Adding English original text or explanations in parentheses to translated text is forbidden
-- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] or [S] (space) is absolutely forbidden.
-- Omitting some items or skipping 'TranslatedItem' tool calls is absolutely forbidden
-- Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
-- Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
-- Using brackets around Korean translations (e.g., [한국어 번역]) is absolutely forbidden unless they are actual placeholders
-</forbidden>
-</rules>"""
-
-CONTEXTUAL_TERMS_PROMPT_TEMPLATE = """<instructions>
-You are a terminology expert. Please extract important terms that need consistent translation from the following text.
+<chain_of_thought>
+1.  **Analyze**: Read the original English text to fully understand its meaning, context, and any specific nuances.
+2.  **Glossary Check**: Consult the provided glossary to ensure terminological consistency.
+3.  **Translate**: Translate the text into natural {language}, paying close attention to grammar and style.
+4.  **Placeholder Integration**: Carefully place all placeholders like [PXXX], [NEWLINE], and [S] into the correct positions in the translated text. The count and order must be identical to the original.
+5.  **Final Review**: Read the final translated text to check for awkward phrasing or errors.
+6.  **Tool Call**: Call the 'TranslatedItem' tool with the `text_id` and the final `translation`.
+</chain_of_thought>
 </instructions>
 
 <glossary>
@@ -148,28 +29,57 @@ You are a terminology expert. Please extract important terms that need consisten
 {chunk}
 </input>
 
-<task>
-Extract important terms from the text and provide original ({language} translation) and context.
-If a term has multiple meanings, call the 'SimpleGlossaryTerm' tool separately for each meaning.
-</task>
-
 <rules>
-<required>
-- Extract only important terms
-- Write context concisely in less than 10 words
-- You must call the 'SimpleGlossaryTerm' tool for each meaning/translation of each term.
-- You must call the 'SimpleGlossaryTerm' tool for all extracted terms - absolutely no omissions allowed
-</required>
+<core_principles>
+- **Accuracy**: The translation must accurately reflect the meaning of the original text.
+- **Naturalness**: The language should be fluent and natural, as if originally written in {language}.
+- **Consistency**: All terms must be translated consistently, following the provided glossary.
+- **Completeness**: Every item must be translated and submitted via the 'TranslatedItem' tool. No exceptions.
+</core_principles>
 
-<mandatory_completion>
-- You must call the 'SimpleGlossaryTerm' tool for all extracted important terms without omission - absolutely no omissions allowed
-- Missing even one tool call will result in the entire task being considered failed with severe penalties
-</mandatory_completion>
+<placeholder_handling_critical>
+- Placeholders ([PXXX], [NEWLINE], [S]) are CRITICAL. They must not be altered, translated, or omitted.
+- The number and relative order of placeholders in the translation must EXACTLY match the original text.
+- Example: "Text with [P001] and [P002]." -> "번역된 텍스트 [P001] 그리고 [P002]." (Correct)
+- Example: "Text with [P001] and [P002]." -> "번역된 텍스트 [P002] 그리고 [P001]." (Incorrect Order)
+</placeholder_handling_critical>
+
+<style_guide>
+- Do not add the original English text in parentheses. E.g., "마법사" is correct, "마법사 (Wizard)" is incorrect.
+- Integrate translated terms smoothly into the sentence structure.
+- Bad example: "[리바이어던 블레이드]로 [좀비 주민]에게 [나약함]을(를) 부여하세요."
+- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요."
+</style_guide>
+
+<tool_usage_mandatory>
+- You MUST call the 'TranslatedItem' tool for every single item provided in the input.
+- Failure to call the tool for even one item will be considered a task failure.
+- The `text_id` must be passed to the tool exactly as it was given.
+</tool_usage_mandatory>
+
+<absolute_donts>
+- **Do not** leave any text untranslated.
+- **Do not** output translations directly. Use the specified tool.
+- **Do not** alter placeholder content (e.g., changing [P001] to [P001번]).
+- **Do not** include glossary context like "(Context: ...)" in the final translation.
+</absolute_donts>
 </rules>"""
 
-RETRY_CONTEXTUAL_TERMS_PROMPT_TEMPLATE = """<instructions>
-You are a terminology expert. Since term extraction failed previously, please try again.
-This time, you must follow the rules strictly.
+RETRY_TRANSLATION_PROMPT_TEMPLATE = """<persona>
+You are an expert translator specializing in game localization. A previous translation attempt for the following items failed. This is a retry, and you must succeed by paying meticulous attention to the rules.
+</persona>
+
+<instructions>
+You must re-translate the provided items into {language}. The previous failure was likely due to a rule violation. Follow the Chain-of-Thought process with extra care, especially regarding placeholders.
+
+<chain_of_thought>
+1.  **Analyze Failure**: Review the original text and consider why the previous translation might have failed. Pay special attention to complex sentences and placeholder density.
+2.  **Glossary Check**: Strictly adhere to the provided glossary for all key terms.
+3.  **Translate Carefully**: Translate the text into natural {language}.
+4.  **Validate Placeholders**: Double-check that every single placeholder ([PXXX], [NEWLINE], [S]) is present, unaltered, and in the correct order. This is the most common reason for failure.
+5.  **Final Review**: Proofread the translation for any errors.
+6.  **Tool Call**: Call the 'TranslatedItem' tool with the `text_id` and the final `translation`.
+</chain_of_thought>
 </instructions>
 
 <glossary>
@@ -180,48 +90,149 @@ This time, you must follow the rules strictly.
 {chunk}
 </input>
 
-<task>
-Extract important terms from the text and provide original ({language} translation) and context.
-If a term has multiple meanings, call the 'SimpleGlossaryTerm' tool separately for each meaning.
-</task>
-
 <rules>
-<critical>
-- This is a retry. Previously, an error occurred because null values were provided in the 'context' field.
-- The 'context' field can never be null and must always have a string value.
-- If it's difficult to find context, you must provide at least a simple string like "general" or "universal".
-</critical>
+<reason_for_retry>
+The previous attempt failed, likely due to one of the following critical errors:
+- **Placeholder Mismatch**: One or more placeholders were missing, altered, or in the wrong order.
+- **Rule Violation**: A rule from the 'absolute_donts' section was ignored.
+- **Incomplete Translation**: Not all items were translated and submitted via the tool.
+You must not repeat these mistakes.
+</reason_for_retry>
 
-<required>
-- Extract only important terms
-- Write context concisely in less than 10 words
-- You must call the 'SimpleGlossaryTerm' tool for each meaning/translation of each term.
-- You must call the 'SimpleGlossaryTerm' tool for all extracted terms - absolutely no omissions allowed
-</required>
+<placeholder_handling_critical>
+- Placeholders ([PXXX], [NEWLINE], [S]) are CRITICAL. They must not be altered, translated, or omitted.
+- The number and relative order of placeholders in the translation must EXACTLY match the original text.
+- This is a retry, so be extra vigilant. A single placeholder error will cause another failure.
+</placeholder_handling_critical>
 
-<mandatory_completion>
-- You must call the 'SimpleGlossaryTerm' tool for all extracted important terms without omission - absolutely no omissions allowed
-- Missing even one tool call will result in the entire task being considered failed with severe penalties
-</mandatory_completion>
+<style_guide>
+- Do not add the original English text in parentheses. E.g., "마법사" is correct, "마법사 (Wizard)" is incorrect.
+- Integrate translated terms smoothly into the sentence structure.
+</style_guide>
+
+<tool_usage_mandatory>
+- You MUST call the 'TranslatedItem' tool for every single item.
+- Failure to call the tool for even one item will be considered a task failure.
+</tool_usage_mandatory>
+
+<absolute_donts>
+- **Do not** leave any text untranslated.
+- **Do not** output translations directly. Use the specified tool.
+- **Do not** alter placeholder content.
+- **Do not** include glossary context like "(Context: ...)" in the final translation.
+</absolute_donts>
 </rules>"""
 
-FINAL_FALLBACK_PROMPT_TEMPLATE = """<instructions>
-You are a translation expert. The following text previously failed translation or had missing placeholders.
-This time, you must translate perfectly by following the rules strictly.
-Once translation is complete, call the 'TranslatedItem' tool to record the result.
-Do not return translation result directly.
-Use the 'TranslatedItem' tool to return the translation result.
+CONTEXTUAL_TERMS_PROMPT_TEMPLATE = """<persona>
+You are a terminology expert and data analyst. Your task is to identify and extract key terms from the provided text that are essential for maintaining translation consistency in a game mod.
+</persona>
+
+<instructions>
+Analyze the input text and identify terms that are likely to be repeated, are domain-specific (e.g., item names, character skills), or are important for the game's lore. For each term, provide its translation and a concise context.
+
+<workflow>
+1.  **Scan**: Read through the text to identify candidate terms.
+2.  **Filter**: Select only the most important terms. Prioritize nouns, proper nouns, and unique verbs. Exclude generic words.
+3.  **Define Context**: For each term, define its context (e.g., "Item", "Block", "Enemy", "UI Element", "Skill").
+4.  **Translate**: Provide the standard {language} translation for the term.
+5.  **Tool Call**: For each unique meaning of a term, call the 'SimpleGlossaryTerm' tool with the `original`, `translation`, and `context`.
+</workflow>
 </instructions>
 
-<strong_critical>
-- Absolutely all output must be provided via the 'TranslatedItem' tool.
-- Under no circumstances is raw output or direct translation text allowed. 
-- If you do not use the tool, the task will be considered failed.
-</strong_critical>
+<glossary>
+{glossary}
+</glossary>
 
-<metadata>
-- Target language: {language}
-</metadata>
+<input>
+{chunk}
+</input>
+
+<rules>
+<term_selection_criteria>
+- **Importance**: Is the term central to gameplay or understanding?
+- **Reusability**: Is the term likely to appear in other parts of the mod?
+- **Specificity**: Is it a specific name (e.g., "Netherite Sword") rather than a generic category (e.g., "Sword")?
+</term_selection_criteria>
+
+<context_guidelines>
+- Context must be concise and descriptive (e.g., "Hostile Mob", "Crafting Material", "UI Button").
+- Good context helps differentiate between multiple meanings of the same word.
+- Example: "Charge" could have contexts like "Financial Cost" or "Attack Skill".
+</context_guidelines>
+
+<tool_usage_mandatory>
+- You MUST call the 'SimpleGlossaryTerm' tool for every extracted term.
+- If a term has two distinct meanings, you must call the tool twice for that term.
+- Do not bundle multiple terms into a single tool call.
+</tool_usage_mandatory>
+
+<absolute_donts>
+- **Do not** extract common words (e.g., "the", "is", "a").
+- **Do not** provide empty or null context. A simple context like "General Term" is acceptable if nothing more specific applies.
+</absolute_donts>
+</rules>"""
+
+RETRY_CONTEXTUAL_TERMS_PROMPT_TEMPLATE = """<persona>
+You are a terminology expert and data analyst. A previous attempt to extract terms failed, most likely due to an invalid tool call. You must now retry the task, ensuring every rule is followed precisely.
+</persona>
+
+<instructions>
+Re-analyze the input text to extract key terms. The most critical part of this retry is ensuring that every call to the 'SimpleGlossaryTerm' tool is valid and that a non-empty `context` is always provided.
+
+<workflow>
+1.  **Scan**: Read through the text to identify candidate terms.
+2.  **Filter**: Select only the most important terms.
+3.  **Define Context**: For each term, define its context. THIS IS A CRITICAL STEP.
+4.  **Translate**: Provide the standard {language} translation.
+5.  **Tool Call**: For each term, call the 'SimpleGlossaryTerm' tool. Ensure all fields (`original`, `translation`, `context`) are non-empty strings.
+</workflow>
+</instructions>
+
+<glossary>
+{glossary}
+</glossary>
+
+<input>
+{chunk}
+</input>
+
+<rules>
+<reason_for_retry>
+The previous attempt failed, likely because the `context` field in a 'SimpleGlossaryTerm' tool call was null or empty. This is a critical error.
+</reason_for_retry>
+
+<context_guidelines_critical>
+- The `context` field is MANDATORY and must not be empty.
+- If a specific context is hard to determine, use a general but valid string like "General Term", "Game Concept", or "UI Text".
+- **Never** provide `null`, an empty string `""`, or omit the context field.
+</context_guidelines_critical>
+
+<tool_usage_mandatory>
+- You MUST call the 'SimpleGlossaryTerm' tool for every extracted term.
+- Every field in the tool call must be a valid string.
+</tool_usage_mandatory>
+
+<absolute_donts>
+- **Do not** call the tool with a null or empty `context`.
+- **Do not** extract common, non-essential words.
+</absolute_donts>
+</rules>"""
+
+FINAL_FALLBACK_PROMPT_TEMPLATE = """<persona>
+You are a master translator and a specialist in handling complex edge cases. The following text has failed multiple translation attempts, likely due to extremely complex placeholder arrangements. This is the final attempt. Your goal is a perfect translation.
+</persona>
+
+<instructions>
+This is a high-stakes final attempt. You must translate the text to {language} while perfectly preserving all placeholders. The most critical task is to ensure the translated output contains the exact placeholders listed in the `<required_placeholders>` section, in the correct order.
+
+<chain_of_thought>
+1.  **Analyze Source**: Scrutinize the original text and the list of required placeholders. Note the exact sequence and number of placeholders.
+2.  **Translate Core Text**: Translate the non-placeholder parts of the text into natural {language}.
+3.  **Reconstruct with Placeholders**: Meticulously reconstruct the translated sentence, inserting each placeholder from the `<required_placeholders>` list into its semantically correct position.
+4.  **Verify**: Cross-check the final translation against the `<required_placeholders>` list one last time to confirm that every placeholder is present and correctly ordered.
+5.  **Tool Call**: Call the 'TranslatedItem' tool with the result.
+</chain_of_thought>
+</instructions>
 
 <input_text>
 ```
@@ -230,7 +241,7 @@ Use the 'TranslatedItem' tool to return the translation result.
 </input_text>
 
 <required_placeholders>
-List of placeholders that must be included in the translation. The order and count must match exactly.
+This is the ground truth. The final translation's placeholders must match this list EXACTLY in count and order.
 {placeholders}
 </required_placeholders>
 
@@ -239,37 +250,45 @@ List of placeholders that must be included in the translation. The order and cou
 </glossary>
 
 <rules>
-<natural_translation>
-- Translate naturally without using brackets around Korean translations
-- Bad example: "[Leviathan Blade]로 [좀비 주민]에게 [나약함]을(를) 부여하세요"
-- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요"
-- Integrate translated terms naturally into Korean sentence structure
-- Do not preserve English formatting patterns like brackets when they are not part of placeholders
-</natural_translation>
+<placeholder_handling_absolute_priority>
+- Your primary objective is the perfect preservation of placeholders as listed in `<required_placeholders>`.
+- A translation is only considered successful if the placeholder sequence matches perfectly.
+- Do not add, omit, or reorder any placeholders.
+</placeholder_handling_absolute_priority>
 
-<critical>
-- This is the final retry. Follow all rules strictly.
-- The translation result must include all placeholders specified in <required_placeholders>.
-- Never translate, modify, or omit placeholders.
-- Maintain the order and structure of placeholders from the original text as much as possible.
-- Never include the ID in the translation result.
-</critical>
+<style_guide>
+- Translate naturally, making the final text read fluently in {language}.
+- Do not add English in parentheses.
+</style_guide>
 
-<forbidden>
-- Do not arbitrarily add placeholders not in <required_placeholders>.
-- Do not include English original text in parentheses in translations. (e.g., "마법사 (Wizard)" -> "마법사")
-- Empty translations or translations identical to the original are not allowed.
-- Never include the ID in the translation result.
-- Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
-- Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
-- It is strictly forbidden to output the translation result directly or return it as raw output without using the 'TranslatedItem' tool.
-</forbidden>
+<tool_usage_mandatory>
+- The final translation must be submitted via the 'TranslatedItem' tool.
+- Direct text output is forbidden and will result in failure.
+</tool_usage_mandatory>
+
+<absolute_donts>
+- **Do not** deviate from the `<required_placeholders>` list.
+- **Do not** translate the content of placeholders.
+- **Do not** leave the text untranslated.
+</absolute_donts>
 </rules>
 """
 
-QUALITY_REVIEW_PROMPT_TEMPLATE = """<instructions>
-You are a translation quality review expert. Please review the following translations to find quality issues.
-Whenever you find an issue, immediately call the 'QualityIssue' tool to record individual problems.
+QUALITY_REVIEW_PROMPT_TEMPLATE = """<persona>
+You are a meticulous Quality Assurance (QA) specialist for game localization. Your role is to systematically review translations and identify any issues based on a strict set of criteria.
+</persona>
+
+<instructions>
+For each translated item, compare the original text with its {target_language} translation. If you find any issues, you must immediately report them by calling the 'QualityIssue' tool.
+
+<workflow>
+1.  **Select Item**: Focus on one [T-ID] item at a time.
+2.  **Compare**: Read the original and the translation side-by-side.
+3.  **Evaluate**: Assess the translation against the `review_criteria`.
+4.  **Report Issues**: If any criterion is not met, call the 'QualityIssue' tool immediately. You can call the tool multiple times for a single item if it has multiple issues.
+5.  **Confirm Review**: If an item has no issues, simply move to the next one. No confirmation message is needed for perfect items.
+6.  **Complete**: Continue until all items are reviewed.
+</workflow>
 </instructions>
 
 <input>
@@ -277,148 +296,94 @@ Whenever you find an issue, immediately call the 'QualityIssue' tool to record i
 </input>
 
 <review_criteria>
-Translation quality review criteria:
-1. Whether the original meaning is accurately conveyed
-2. Whether the translation is natural and easy to read
-3. Whether placeholders ([P###], [NEWLINE], etc.) are preserved
-4. Whether terms and expressions are consistently translated
-5. Whether there are no typos or grammatical errors
-6. Whether the translation is a natural expression in {target_language}
+- **Accuracy**: Does the translation faithfully convey the original's meaning?
+- **Fluency**: Is the translation natural and grammatically correct in {target_language}?
+- **Placeholders**: Are all placeholders ([P###], [NEWLINE], [S]) perfectly preserved in count and order?
+- **Consistency**: Are glossary terms used correctly and consistently?
+- **Completeness**: Is any part of the original text omitted in the translation?
+- **Style**: Does the translation fit the expected tone (e.g., game dialogue, UI text)?
 </review_criteria>
 
 <rules>
-<required>
-- Review each [T-ID] item individually
-- Immediately call the 'QualityIssue' tool whenever you find a problem
-- Clearly record text_id, issue_type, severity, description for each problem
-- Classify severity as one of: low, medium, high
-- Provide suggested_fix when possible
-- After completing the review, verify that you have called the 'QualityIssue' tool for all discovered problems
-</required>
+<tool_usage_mandatory>
+- You MUST call the 'QualityIssue' tool for every single issue you find.
+- Do not wait until the end; report issues as you find them.
+- Each call should report only one issue.
+</tool_usage_mandatory>
+
+<issue_reporting_format>
+- `text_id`: The ID of the item with the issue (e.g., "T001").
+- `issue_type`: A category from the `issue_types` list.
+- `severity`: `low`, `medium`, or `high`, based on the `severity_guidelines`.
+- `description`: A clear, concise explanation of the problem.
+- `suggested_fix`: (Optional but recommended) A corrected version of the translation.
+</issue_reporting_format>
 
 <issue_types>
-Main issue types:
-- Mistranslation: Original meaning is incorrectly translated
-- Omission: Part of the original is missing from the translation
-- Unnaturalness: Translation is awkward or unnatural
-- Placeholder issues: [P###], [NEWLINE], etc. are missing or modified
-- Consistency issues: Same terms are translated differently
-- Grammar errors: Spelling or grammatical mistakes
-- Untranslated: Original text remains unchanged
+- `Mistranslation`: The core meaning is wrong.
+- `Unnatural`: Grammatically correct but sounds awkward.
+- `Placeholder`: A placeholder is missing, added, or altered.
+- `Consistency`: A glossary term is translated incorrectly.
+- `Omission`: Content from the original is missing.
+- `Grammar`: Spelling or grammar errors.
+- `Untranslated`: The text is still in the original language.
 </issue_types>
 
 <severity_guidelines>
-Severity classification criteria:
-- high: Meaning distortion, placeholder omission, complete mistranslation
-- medium: Awkward expressions, consistency issues, partial mistranslation
-- low: Minor grammatical errors, better expression suggestions
+- `high`: Critical error that breaks the game or severely alters meaning (e.g., placeholder error, major mistranslation).
+- `medium`: Noticeable error that makes the text awkward or slightly incorrect (e.g., unnatural phrasing, inconsistency).
+- `low`: Minor error that doesn't impact understanding (e.g., typo, minor punctuation issue).
 </severity_guidelines>
-
-<workflow>
-Review process:
-1. Review each translation item in order
-2. Immediately call 'QualityIssue' tool when problems are found
-3. After completing all item reviews, recheck for any missed problems
-4. Provide a brief confirmation message even for items without problems to indicate they were reviewed
-</workflow>
-
-<mandatory_completion>
-- You must review all translation items without omission
-- You must call the 'QualityIssue' tool for all discovered problems
-- You must complete the review process even if no problems are found
-- Stopping the review work or skipping parts is forbidden
-</mandatory_completion>
-
-<examples>
-Good QualityIssue call example:
-- text_id: "T001"
-- issue_type: "Placeholder issues"
-- severity: "high"
-- description: "[P001] placeholder is missing from the translation"
-- suggested_fix: "Add [P001] placeholder to the original position in the translation"
-</examples>
 </rules>"""
 
-QUALITY_RETRANSLATION_PROMPT_TEMPLATE = """<instructions>
-You are a professional translator. The following texts have quality issues discovered in review and need retranslation.
-Please provide high-quality translations by resolving the problems in each item.
-For each completed translation item, call the 'TranslatedItem' tool to record the result.
-</instructions>
+QUALITY_RETRANSLATION_PROMPT_TEMPLATE = """<persona>
+You are a senior localization expert. Your task is to fix translations that were flagged for quality issues. You will be given the original text, the flawed translation, and a description of the problem. Your goal is to provide a corrected, high-quality translation.
+</persona>
 
-<target_language>
-{target_language}
-</target_language>
+<instructions>
+Carefully review the provided information for each item and produce a corrected translation in {target_language}. The new translation must resolve the specified issue while adhering to all standard translation rules.
+
+<workflow>
+1.  **Analyze the Issue**: Read the `description` and `suggested_fix` for the quality issue to understand what needs to be corrected.
+2.  **Re-translate**: Create a new translation that directly addresses the problem. For example, if a placeholder was missing, ensure it's included. If the phrasing was unnatural, revise it.
+3.  **Verify**: Check your new translation against all quality criteria (placeholders, glossary, style).
+4.  **Tool Call**: Call the 'TranslatedItem' tool with the corrected translation.
+</workflow>
+</instructions>
 
 <glossary>
 {glossary}
 </glossary>
-
-<retry_info>
-{retry_info}
-</retry_info>
 
 <input>
 {formatted_items}
 </input>
 
 <rules>
-<critical>
-- This is retranslation to resolve quality issues
-- You must resolve the problems specified for each item
-- You must accurately preserve placeholders ([P###], [NEWLINE], etc.)
-- If there are suggested fixes for discovered problems, refer to them when translating
-</critical>
+<primary_objective>
+- Your main goal is to fix the specific `issue_type` and `description` provided for each item.
+- While fixing the issue, you must also ensure no new errors are introduced.
+</primary_objective>
 
-<required>
-- Never change the id
-- All items must be completely translated into {target_language}
-- You must accurately convey the original meaning while resolving quality issues
-- Do not add English original text or explanations in parentheses when translating
-- You must call the 'TranslatedItem' tool for all retranslation items
-</required>
+<placeholder_handling_critical>
+- Placeholder errors are common. Double-check that your corrected translation has the perfect count and order of all placeholders ([PXXX], [NEWLINE], [S]).
+</placeholder_handling_critical>
 
-<glossary_usage>
-- The "(Context: ...)" parts in the glossary are for reference only and should not be included in actual translations
-- Use Context only to understand the meaning of terms, never include it in translation results
-</glossary_usage>
+<style_guide>
+- The corrected translation must be fluent and natural in {target_language}.
+- Do not add English in parentheses.
+</style_guide>
 
-<critical_placeholders>
-- Never delete or modify placeholders in the format [PXXX] or [NEWLINE] or [S] (space)
-- These placeholders are important markers that will be restored to original content after translation
-- Placeholders must remain in exactly the same position in the translated text
-- Translating or replacing placeholders with other text is absolutely forbidden
-</critical_placeholders>
+<tool_usage_mandatory>
+- You MUST call the 'TranslatedItem' tool for every item, even if you only made a small change.
+- Every item in the input requires a corresponding tool call.
+</tool_usage_mandatory>
 
-<natural_translation>
-- Translate naturally without using brackets around Korean translations
-- Bad example: "[Leviathan Blade]로 [좀비 주민]에게 [나약함]을(를) 부여하세요"
-- Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요"
-- Integrate translated terms naturally into Korean sentence structure
-- Do not preserve English formatting patterns like brackets when they are not part of placeholders
-</natural_translation>
-
-<quality_improvement>
-- Provide natural translations that accurately convey the original meaning
-- Actively use the glossary for consistent terminology
-- Follow grammar and spelling accurately
-- Use natural expressions in {target_language}
-</quality_improvement>
-
-<mandatory_completion>
-- You must translate all retranslation items without omission and call the 'TranslatedItem' tool
-- Even items that had problems must be translated and results submitted
-- Stopping retranslation work or skipping parts is forbidden
-</mandatory_completion>
-
-<forbidden>
-- Copying or maintaining English original text as-is is absolutely forbidden
-- Empty translations or leaving original text unchanged is not allowed
-- Adding English original text or explanations in parentheses to translated text is forbidden
-- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] or [S] (space) is absolutely forbidden
-- Omitting some items or skipping 'TranslatedItem' tool calls is absolutely forbidden
-- Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
-- Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
-</forbidden>
+<absolute_donts>
+- **Do not** ignore the specified quality issue. Your translation will be rejected if the original problem is not fixed.
+- **Do not** introduce new errors.
+- **Do not** alter placeholders.
+</absolute_donts>
 </rules>"""
 
 
