@@ -51,7 +51,7 @@ class FileSelectionPage:
     def set_modpack(self, modpack_info: Dict):
         """선택된 모드팩 정보 설정"""
         self.selected_modpack = modpack_info
-        self.loader = ModpackLoader(modpack_info["path"])
+        self.loader = ModpackLoader(modpack_info["path"], target_lang="ko_kr")
 
     def set_callbacks(self, on_start: Callable, on_back: Callable):
         """콜백 함수 설정"""
@@ -391,13 +391,17 @@ class FileSelectionPage:
         # 전체 파일 데이터에 적용
         for file_data in self.filtered_files_data:
             file_data["selected"] = is_selected
-        
+
         # 현재 페이지의 UI 체크박스들도 업데이트
         for row in self.datatable.rows:
             checkbox = row.cells[0].content
-            if isinstance(checkbox, ft.Checkbox) and checkbox.data and isinstance(checkbox.data, dict):
+            if (
+                isinstance(checkbox, ft.Checkbox)
+                and checkbox.data
+                and isinstance(checkbox.data, dict)
+            ):
                 checkbox.value = is_selected
-        
+
         self._update_button_state()
         self._update_category_checkboxes()
         self.page.update()
@@ -408,14 +412,18 @@ class FileSelectionPage:
         # 전체 파일 데이터에 적용
         for file_data in self.filtered_files_data:
             file_data["glossary_selected"] = is_selected
-        
+
         # 현재 페이지의 UI 체크박스들도 업데이트
         for row in self.datatable.rows:
             if len(row.cells) > 1:
                 glossary_checkbox = row.cells[1].content
-                if isinstance(glossary_checkbox, ft.Checkbox) and glossary_checkbox.data and isinstance(glossary_checkbox.data, dict):
+                if (
+                    isinstance(glossary_checkbox, ft.Checkbox)
+                    and glossary_checkbox.data
+                    and isinstance(glossary_checkbox.data, dict)
+                ):
                     glossary_checkbox.value = is_selected
-        
+
         self._update_category_checkboxes()
         self.page.update()
 
@@ -423,12 +431,12 @@ class FileSelectionPage:
         """카테고리 헤더 번역 체크박스 변경 시 호출 - 전체 파일 중 해당 카테고리에 적용"""
         category = e.control.data
         is_selected = e.control.value
-        
+
         # 전체 파일 데이터 중 해당 카테고리에 적용
         for file_data in self.filtered_files_data:
             if file_data.get("category") == category:
                 file_data["selected"] = is_selected
-        
+
         # 현재 페이지의 UI 체크박스들도 업데이트
         for row in self.datatable.rows:
             checkbox = row.cells[0].content
@@ -439,7 +447,7 @@ class FileSelectionPage:
                 and checkbox.data.get("category") == category
             ):
                 checkbox.value = is_selected
-        
+
         self._update_button_state()
         self._update_global_checkboxes()
         self.page.update()
@@ -448,12 +456,12 @@ class FileSelectionPage:
         """카테고리 헤더 사전 생성 체크박스 변경 시 호출 - 전체 파일 중 해당 카테고리에 적용"""
         category = e.control.data
         is_selected = e.control.value
-        
+
         # 전체 파일 데이터 중 해당 카테고리에 적용
         for file_data in self.filtered_files_data:
             if file_data.get("category") == category:
                 file_data["glossary_selected"] = is_selected
-        
+
         # 현재 페이지의 UI 체크박스들도 업데이트
         for row in self.datatable.rows:
             if len(row.cells) > 1:
@@ -465,7 +473,7 @@ class FileSelectionPage:
                     and glossary_checkbox.data.get("category") == category
                 ):
                     glossary_checkbox.value = is_selected
-        
+
         self._update_global_checkboxes()
         self.page.update()
 
@@ -481,8 +489,10 @@ class FileSelectionPage:
         """전역 체크박스 상태 업데이트 (전체 선택/해제 체크박스들)"""
         # 번역 전체 선택 체크박스 상태 업데이트
         total_files = len(self.filtered_files_data)
-        selected_files = sum(1 for file_data in self.filtered_files_data if file_data.get("selected"))
-        
+        selected_files = sum(
+            1 for file_data in self.filtered_files_data if file_data.get("selected")
+        )
+
         if selected_files == 0:
             self.select_all_checkbox.value = False
             self.select_all_checkbox.tristate = False
@@ -492,10 +502,14 @@ class FileSelectionPage:
         else:
             self.select_all_checkbox.value = None
             self.select_all_checkbox.tristate = True
-        
+
         # 사전 생성 전체 선택 체크박스 상태 업데이트
-        glossary_selected_files = sum(1 for file_data in self.filtered_files_data if file_data.get("glossary_selected"))
-        
+        glossary_selected_files = sum(
+            1
+            for file_data in self.filtered_files_data
+            if file_data.get("glossary_selected")
+        )
+
         if glossary_selected_files == 0:
             self.select_all_glossary_checkbox.value = False
             self.select_all_glossary_checkbox.tristate = False

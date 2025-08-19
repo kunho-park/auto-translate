@@ -60,9 +60,10 @@ class TranslationController:
         self.ui_update_callback = None
         self.token_update_callback = None  # 토큰 사용량 업데이트 콜백
 
-    def set_modpack(self, modpack_info: Dict):
+    def set_modpack(self, modpack_info: Dict, target_language: str):
         """선택된 모드팩 설정"""
         self.selected_modpack = modpack_info
+        self.target_language = target_language
 
     def set_callbacks(
         self,
@@ -182,6 +183,7 @@ class TranslationController:
             max_concurrent_requests=self.settings["max_concurrent_requests"],
             delay_between_requests_ms=self.settings["delay_between_requests_ms"],
             progress_callback=self.progress_callback,  # 진행률 콜백 전달
+            target_language=self.target_language,
         )
 
         # 토큰 실시간 업데이트 콜백 연결

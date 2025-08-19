@@ -56,7 +56,7 @@ class TranslationPage:
     def set_modpack(self, modpack_info: Dict):
         """선택된 모드팩 설정"""
         self.selected_modpack = modpack_info
-        self.controller.set_modpack(modpack_info)
+        self.controller.set_modpack(modpack_info, target_language=self.current_language)
         logger.info(f"번역 대상 모드팩 설정: {modpack_info.get('name', 'Unknown')}")
 
     def set_back_callback(self, callback: Callable):

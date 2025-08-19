@@ -243,18 +243,6 @@ class ModpackTranslator:
 
         logger.info(f"통합 처리할 항목 수: {len(all_entries)}")
 
-        # # puffish_skills 관련 항목만 필터링
-        # puffish_entries = []
-        # for entry in all_entries:
-        #     if "kubejs" in entry.file_type.lower():
-        #         puffish_entries.append(entry)
-
-        # logger.info(
-        #     f"puffish_skills 관련 항목만 필터링: {len(puffish_entries)}/{len(all_entries)}개 항목"
-        # )
-        # all_entries = puffish_entries
-
-        # 통합 처리 실행
         # 통합 처리 실행 (번역 캐시 전달)
         self._integrate_translation_entries(all_entries, self.existing_translations)
 
@@ -676,17 +664,16 @@ class ModpackTranslator:
                 return 0
 
             # 원본 파일 파싱
-            source_parser = parser_class(Path(source_path))
-            original_data = await source_parser.parse()
+            # source_parser = parser_class(Path(source_path))
+            # original_data = await source_parser.parse()
 
             # 번역 데이터로 업데이트
-            updated_data = original_data.copy()
+            updated_data = {}
             update_count = 0
 
             for key, translated_text in translations.items():
-                if key in updated_data:
-                    updated_data[key] = translated_text
-                    update_count += 1
+                updated_data[key] = translated_text
+                update_count += 1
 
             # 업데이트된 데이터를 파일로 저장
             target_parser = parser_class(Path(target_path))
