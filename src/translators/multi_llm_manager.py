@@ -127,6 +127,13 @@ class MultiLLMManager:
 
     async def get_client(self, key_id: Optional[str] = None) -> Optional[Any]:
         """LLM 클라이언트를 가져옵니다."""
+        client_info = await self.get_client_with_id(key_id)
+        return client_info["client"] if client_info else None
+
+    async def get_client_with_id(
+        self, key_id: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
+        """LLM 클라이언트와 해당 키 ID를 함께 반환합니다."""
         if key_id is None:
             key_id = self.get_next_key()
 
@@ -149,7 +156,7 @@ class MultiLLMManager:
                 key_info.last_used = current_time
                 key_info.usage_count += 1
                 logger.debug(f"기존 클라이언트 재사용: {key_id}")
-                return client_info.client
+                return {"client": client_info.client, "key_id": key_id}
 
         # 새 클라이언트 생성
         try:
@@ -169,18 +176,11 @@ class MultiLLMManager:
             key_info.failed_count = 0  # 성공 시 실패 카운트 리셋
 
             logger.debug(f"새 클라이언트 생성: {key_id}")
-            return client
+            return {"client": client, "key_id": key_id}
 
         except Exception as e:
             logger.error(f"클라이언트 생성 실패: {key_id}, 오류: {e}")
-            key_info.failed_count += 1
-            key_info.error_message = str(e)
-
-            # 너무 많이 실패한 경우 비활성화
-            if key_info.failed_count >= self.max_failed_attempts:
-                key_info.is_active = False
-                logger.warning(f"API 키 비활성화 (실패 횟수 초과): {key_id}")
-
+            self.mark_key_failed(key_id, str(e))
             return None
 
     async def create_multiple_clients(self, count: int) -> List[Any]:

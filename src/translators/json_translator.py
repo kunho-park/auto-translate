@@ -39,14 +39,6 @@ __all__ = [
     "run_example",
 ]
 
-###############################################################################
-# 1. State and data-model definitions                                        #
-###############################################################################
-
-
-# ---------------------------------------------------------------------------
-# Externalised data models & utilities (moved to separate modules for clarity)
-# ---------------------------------------------------------------------------
 from .models import (
     Glossary,
     GlossaryEntry,
@@ -65,15 +57,6 @@ from .utils import (
     TokenOptimizer,
     is_korean_text,
 )
-
-###############################################################################
-# 2. Utility helpers                                                          #
-###############################################################################
-
-
-###############################################################################
-# 3. LangGraph node functions (async)                                         #
-###############################################################################
 
 
 async def invoke_with_structured_output_fallback(llm_client: BaseLLM, schema, prompt):
@@ -208,6 +191,17 @@ async def extract_terms_from_json_chunks_node(
 ) -> TranslatorState:
     """Extracts terms by analyzing the full JSON in chunks for contextual accuracy."""
     try:
+        # LLM 클라이언트가 설정되지 않은 경우, 다중 API 키 매니저에서 가져오기
+        if state.get("llm_client") is None and state.get("multi_llm_manager"):
+            multi_manager = state["multi_llm_manager"]
+            client_info = await multi_manager.get_client_with_id()
+            if client_info:
+                state["llm_client"] = client_info["client"]
+                logger.info(f"LLM 클라이언트 설정됨 (키: {client_info['key_id']})")
+            else:
+                state["error"] = "LLM 클라이언트를 설정할 수 없습니다."
+                return state
+
         # 여러 사전을 우선순위에 따라 병합
         vanilla_glossary = state.get("vanilla_glossary", [])
         primary_glossary = state.get("primary_glossary", [])
@@ -487,36 +481,38 @@ async def _extract_terms_from_chunk_worker_with_progress(
                     return Glossary(terms=[])
 
                 # 다중 API 키 사용 시 새로운 클라이언트 가져오기
-                current_llm = llm_client
+                client_info = None
                 if (
                     state
                     and state.get("use_multi_api_keys")
                     and state.get("multi_llm_manager")
                 ):
                     multi_manager = state["multi_llm_manager"]
-                    fresh_client = await multi_manager.get_client()
-                    if fresh_client:
+                    client_info = await multi_manager.get_client_with_id()
+                    if client_info:
+                        current_llm = client_info["client"]
                         # 토큰 카운터 콜백 추가
                         try:
                             token_counter = (
                                 state.get("token_counter") if state else None
                             )
-                            if token_counter and hasattr(fresh_client, "callbacks"):
-                                if fresh_client.callbacks is None:
-                                    fresh_client.callbacks = []
-                                if token_counter not in fresh_client.callbacks:
-                                    fresh_client.callbacks.append(token_counter)
+                            if token_counter and hasattr(current_llm, "callbacks"):
+                                if current_llm.callbacks is None:
+                                    current_llm.callbacks = []
+                                if token_counter not in current_llm.callbacks:
+                                    current_llm.callbacks.append(token_counter)
                         except Exception:
                             pass
-
-                        current_llm = fresh_client
                         logger.debug(
-                            f"용어 추출 청크 {chunk_idx + 1}: 다중 API 키에서 새 클라이언트 사용"
+                            f"용어 추출 청크 {chunk_idx + 1}: API 키 '{client_info['key_id']}' 사용"
                         )
                     else:
-                        logger.warning(
-                            f"용어 추출 청크 {chunk_idx + 1}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
+                        logger.error(
+                            f"용어 추출 청크 {chunk_idx + 1}: 사용 가능한 API 키가 없습니다."
                         )
+                        return Glossary(terms=[])
+                else:
+                    current_llm = llm_client
 
                 llm = current_llm
                 if attempt > 0:
@@ -597,13 +593,12 @@ async def _extract_terms_from_chunk_worker_with_progress(
                     f"⚠️ 청크 {chunk_idx + 1} 용어 추출 실패 (시도 {attempt + 1}/{max_retries + 1}): {exc}"
                 )
 
-                # 다중 API 키 사용 시 해당 키의 실패를 기록
-                if (
-                    state
-                    and state.get("use_multi_api_keys")
-                    and state.get("multi_llm_manager")
-                ):
-                    logger.debug(f"용어 추출 청크 {chunk_idx + 1}: API 키 실패 기록됨")
+                # 다중 API 키 사용 시 해당 키의 실패를 명시적으로 기록
+                if client_info and state.get("multi_llm_manager"):
+                    key_id = client_info["key_id"]
+                    multi_manager = state["multi_llm_manager"]
+                    multi_manager.mark_key_failed(key_id, str(exc))
+                    logger.warning(f"API 키 '{key_id}' 실패 기록됨 (오류: {exc})")
 
                 # 마지막 시도가 아니면 잠시 대기
                 if attempt < max_retries:
@@ -777,21 +772,24 @@ async def _translate_chunk_worker_with_progress(
                 state["target_language"], glossary_str, chunk_str
             )
 
+        client_info = None
         try:
-            # 다중 API 키 사용 시 새로운 클라이언트 가져오기
-            current_llm = llm
+            # 다중 API 키 사용 시 항상 새로운 클라이언트 가져오기
             if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
                 multi_manager = state["multi_llm_manager"]
-                fresh_client = await multi_manager.get_client()
-                if fresh_client:
-                    current_llm = fresh_client
+                client_info = (
+                    await multi_manager.get_client_with_id()
+                )  # 수정: get_client_with_id 호출
+                if client_info:
+                    current_llm = client_info["client"]
                     logger.debug(
-                        f"청크 {chunk_num}: 다중 API 키에서 새 클라이언트 사용"
+                        f"청크 {chunk_num}: API 키 '{client_info['key_id']}' 사용"
                     )
                 else:
-                    logger.warning(
-                        f"청크 {chunk_num}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
-                    )
+                    logger.error(f"청크 {chunk_num}: 사용 가능한 API 키가 없습니다.")
+                    return []
+            else:
+                current_llm = llm
 
             # TranslatedItem을 도구로 바인딩하여 LLM 호출
             configured_llm = current_llm.with_config(
@@ -834,10 +832,12 @@ async def _translate_chunk_worker_with_progress(
         except Exception as exc:
             logger.error(f"청크 {chunk_num} 번역 실패: {exc}")
 
-            # 다중 API 키 사용 시 해당 키의 실패를 기록
-            if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
-                # 실패한 키 정보는 MultiLLMManager에서 자동으로 처리됨
-                logger.debug(f"청크 {chunk_num}: API 키 실패 기록됨")
+            # 다중 API 키 사용 시 해당 키의 실패를 명시적으로 기록
+            if client_info and state.get("multi_llm_manager"):
+                key_id = client_info["key_id"]
+                multi_manager = state["multi_llm_manager"]
+                multi_manager.mark_key_failed(key_id, str(exc))
+                logger.warning(f"API 키 '{key_id}' 실패 기록됨 (오류: {exc})")
 
             return []
 
@@ -1212,19 +1212,21 @@ async def _translate_single_item_worker(
 
             try:
                 # 다중 API 키 사용 시 새로운 클라이언트 가져오기
-                current_llm = llm
+                client_info = None
                 if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
                     multi_manager = state["multi_llm_manager"]
-                    fresh_client = await multi_manager.get_client()
-                    if fresh_client:
-                        current_llm = fresh_client
+                    client_info = await multi_manager.get_client_with_id()
+                    if client_info:
+                        current_llm = client_info["client"]
                         logger.debug(
-                            f"최종 번역 {tid}: 다중 API 키에서 새 클라이언트 사용"
+                            f"최종 번역 {tid}: API 키 '{client_info['key_id']}' 사용"
                         )
                     else:
-                        logger.warning(
-                            f"최종 번역 {tid}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
-                        )
+                        logger.error(f"최종 번역 {tid}: 사용 가능한 API 키가 없습니다.")
+                        # 실패 시 재시도 로직으로 넘어감
+                        raise ValueError("사용 가능한 API 키 없음")
+                else:
+                    current_llm = llm
 
                 # 재시도 시 temperature를 약간 높여 다른 결과 유도
                 temperature = min(1.0, attempt * 0.1)
@@ -1274,9 +1276,12 @@ async def _translate_single_item_worker(
                     f"🚨 최종 번역 재시도({attempt + 1}) API 호출 오류 (항목: {tid}): {e}"
                 )
 
-                # 다중 API 키 사용 시 해당 키의 실패를 기록
-                if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
-                    logger.debug(f"최종 번역 {tid}: API 키 실패 기록됨")
+                # 다중 API 키 사용 시 해당 키의 실패를 명시적으로 기록
+                if client_info and state.get("multi_llm_manager"):
+                    key_id = client_info["key_id"]
+                    multi_manager = state["multi_llm_manager"]
+                    multi_manager.mark_key_failed(key_id, str(e))
+                    logger.warning(f"API 키 '{key_id}' 실패 기록됨 (오류: {e})")
 
             # 재시도 전 잠시 대기
             if attempt < max_retries:
@@ -1975,19 +1980,22 @@ async def _review_chunk_worker(
 
         try:
             # 다중 API 키 사용 시 새로운 클라이언트 가져오기
-            current_llm = llm
+            client_info = None
             if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
                 multi_manager = state["multi_llm_manager"]
-                fresh_client = await multi_manager.get_client()
-                if fresh_client:
-                    current_llm = fresh_client
+                client_info = await multi_manager.get_client_with_id()
+                if client_info:
+                    current_llm = client_info["client"]
                     logger.debug(
-                        f"품질 검토 청크 {chunk_idx + 1}: 다중 API 키에서 새 클라이언트 사용"
+                        f"품질 검토 청크 {chunk_idx + 1}: API 키 '{client_info['key_id']}' 사용"
                     )
                 else:
-                    logger.warning(
-                        f"품질 검토 청크 {chunk_idx + 1}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
+                    logger.error(
+                        f"품질 검토 청크 {chunk_idx + 1}: 사용 가능한 API 키가 없습니다."
                     )
+                    return []
+            else:
+                current_llm = llm
 
             # 검토용 텍스트 포맷팅
             review_text = _format_chunk_for_quality_review(chunk)
@@ -2025,9 +2033,12 @@ async def _review_chunk_worker(
         except Exception as exc:
             logger.error(f"청크 {chunk_idx + 1} 품질 검토 실패: {exc}")
 
-            # 다중 API 키 사용 시 해당 키의 실패를 기록
-            if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
-                logger.debug(f"품질 검토 청크 {chunk_idx + 1}: API 키 실패 기록됨")
+            # 다중 API 키 사용 시 해당 키의 실패를 명시적으로 기록
+            if client_info and state.get("multi_llm_manager"):
+                key_id = client_info["key_id"]
+                multi_manager = state["multi_llm_manager"]
+                multi_manager.mark_key_failed(key_id, str(exc))
+                logger.warning(f"API 키 '{key_id}' 실패 기록됨 (오류: {exc})")
 
             return []
 
@@ -2328,19 +2339,22 @@ async def _quality_retranslate_chunk_worker(
         for attempt in range(max_retries + 1):
             try:
                 # 다중 API 키 사용 시 새로운 클라이언트 가져오기
-                current_llm = llm
+                client_info = None
                 if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
                     multi_manager = state["multi_llm_manager"]
-                    fresh_client = await multi_manager.get_client()
-                    if fresh_client:
-                        current_llm = fresh_client
+                    client_info = await multi_manager.get_client_with_id()
+                    if client_info:
+                        current_llm = client_info["client"]
                         logger.debug(
-                            f"품질 재번역 청크 {chunk_idx + 1}: 다중 API 키에서 새 클라이언트 사용"
+                            f"품질 재번역 청크 {chunk_idx + 1}: API 키 '{client_info['key_id']}' 사용"
                         )
                     else:
-                        logger.warning(
-                            f"품질 재번역 청크 {chunk_idx + 1}: 다중 API 키 클라이언트 가져오기 실패, 기본 클라이언트 사용"
+                        logger.error(
+                            f"품질 재번역 청크 {chunk_idx + 1}: 사용 가능한 API 키가 없습니다."
                         )
+                        raise ValueError("사용 가능한 API 키 없음")
+                else:
+                    current_llm = llm
 
                 # 프롬프트 생성 (품질 문제를 고려한 상세한 프롬프트)
                 glossary_text = TokenOptimizer.format_glossary_for_llm(
@@ -2426,11 +2440,12 @@ async def _quality_retranslate_chunk_worker(
                     f"품질 재번역 청크 {chunk_idx + 1} 시도 {attempt + 1} 실패: {exc}"
                 )
 
-                # 다중 API 키 사용 시 해당 키의 실패를 기록
-                if state.get("use_multi_api_keys") and state.get("multi_llm_manager"):
-                    logger.debug(
-                        f"품질 재번역 청크 {chunk_idx + 1}: API 키 실패 기록됨"
-                    )
+                # 다중 API 키 사용 시 해당 키의 실패를 명시적으로 기록
+                if client_info and state.get("multi_llm_manager"):
+                    key_id = client_info["key_id"]
+                    multi_manager = state["multi_llm_manager"]
+                    multi_manager.mark_key_failed(key_id, str(exc))
+                    logger.warning(f"API 키 '{key_id}' 실패 기록됨 (오류: {exc})")
 
                 if attempt < max_retries:
                     await asyncio.sleep(min(2.0, (attempt + 1) * 0.5))
@@ -2641,21 +2656,7 @@ class JSONTranslator:
             )
         logger.info(f"다중 API 키 모드 활성화: {len(active_keys)}개 키 사용 가능")
 
-        # LLM 클라이언트 획득 (로테이션 적용)
-        llm_client = await multi_llm_manager.get_client()
-        if not llm_client:
-            raise RuntimeError("다중 API 키 클라이언트 생성에 실패했습니다.")
-
-        # 토큰 카운터를 LLM 클라이언트에 추가
-        if track_tokens:
-            if hasattr(llm_client, "callbacks"):
-                if llm_client.callbacks is None:
-                    llm_client.callbacks = []
-                llm_client.callbacks.append(self.token_counter)
-            else:
-                # 새로운 LLM 클라이언트 생성 시 콜백 추가
-                logger.warning("LLM 클라이언트에 콜백을 추가할 수 없습니다.")
-
+        # llm_client를 초기 상태에 저장하지 않고, 각 워커가 직접 가져오도록 함
         initial_state: TranslatorState = TranslatorState(
             parsed_json=json_dict,
             placeholders={},
@@ -2680,7 +2681,7 @@ class JSONTranslator:
             use_vanilla_glossary=use_vanilla_glossary,
             vanilla_glossary_path=vanilla_glossary_path or "vanilla_glossary.json",
             vanilla_glossary=[],
-            llm_client=llm_client,
+            llm_client=None,  # 초기 클라이언트를 None으로 설정
             final_fallback_max_retries=final_fallback_max_retries,
             enable_quality_review=enable_quality_review,
             quality_issues=[],
