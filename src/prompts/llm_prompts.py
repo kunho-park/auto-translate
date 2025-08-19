@@ -15,7 +15,7 @@ For each item, you must follow a Chain-of-Thought process to ensure the highest 
 1.  **Analyze**: Read the original English text to fully understand its meaning, context, and any specific nuances.
 2.  **Glossary Check**: Consult the provided glossary to ensure terminological consistency.
 3.  **Translate**: Translate the text into natural {language}, paying close attention to grammar and style.
-4.  **Placeholder Integration**: Carefully place all placeholders like [PXXX], [NEWLINE], and [S] into the correct positions in the translated text. The count and order must be identical to the original.
+4.  **Placeholder Integration**: Carefully place all placeholders like [PXXX], [NEWLINE], and [S숫자] (e.g., [S2], [S3]) into the correct positions in the translated text. The count and order must be identical to the original.
 5.  **Final Review**: Read the final translated text to check for awkward phrasing or errors.
 6.  **Tool Call**: Call the 'TranslatedItem' tool with the `text_id` and the final `translation`.
 </chain_of_thought>
@@ -38,7 +38,7 @@ For each item, you must follow a Chain-of-Thought process to ensure the highest 
 </core_principles>
 
 <placeholder_handling_critical>
-- Placeholders ([PXXX], [NEWLINE], [S]) are CRITICAL. They must not be altered, translated, or omitted.
+- Placeholders ([PXXX], [NEWLINE], [S숫자]) are CRITICAL. They must not be altered, translated, or omitted.
 - The number and relative order of placeholders in the translation must EXACTLY match the original text.
 - Example: "Text with [P001] and [P002]." -> "번역된 텍스트 [P001] 그리고 [P002]." (Correct)
 - Example: "Text with [P001] and [P002]." -> "번역된 텍스트 [P002] 그리고 [P001]." (Incorrect Order)
@@ -76,7 +76,7 @@ You must re-translate the provided items into {language}. The previous failure w
 1.  **Analyze Failure**: Review the original text and consider why the previous translation might have failed. Pay special attention to complex sentences and placeholder density.
 2.  **Glossary Check**: Strictly adhere to the provided glossary for all key terms.
 3.  **Translate Carefully**: Translate the text into natural {language}.
-4.  **Validate Placeholders**: Double-check that every single placeholder ([PXXX], [NEWLINE], [S]) is present, unaltered, and in the correct order. This is the most common reason for failure.
+4.  **Validate Placeholders**: Double-check that every single placeholder ([PXXX], [NEWLINE], [S숫자]) is present, unaltered, and in the correct order. This is the most common reason for failure.
 5.  **Final Review**: Proofread the translation for any errors.
 6.  **Tool Call**: Call the 'TranslatedItem' tool with the `text_id` and the final `translation`.
 </chain_of_thought>
@@ -100,7 +100,7 @@ You must not repeat these mistakes.
 </reason_for_retry>
 
 <placeholder_handling_critical>
-- Placeholders ([PXXX], [NEWLINE], [S]) are CRITICAL. They must not be altered, translated, or omitted.
+- Placeholders ([PXXX], [NEWLINE], [S숫자]) are CRITICAL. They must not be altered, translated, or omitted.
 - The number and relative order of placeholders in the translation must EXACTLY match the original text.
 - This is a retry, so be extra vigilant. A single placeholder error will cause another failure.
 </placeholder_handling_critical>
@@ -298,7 +298,7 @@ For each translated item, compare the original text with its {target_language} t
 <review_criteria>
 - **Accuracy**: Does the translation faithfully convey the original's meaning?
 - **Fluency**: Is the translation natural and grammatically correct in {target_language}?
-- **Placeholders**: Are all placeholders ([P###], [NEWLINE], [S]) perfectly preserved in count and order?
+- **Placeholders**: Are all placeholders ([P###], [NEWLINE], [S숫자]) perfectly preserved in count and order?
 - **Consistency**: Are glossary terms used correctly and consistently?
 - **Completeness**: Is any part of the original text omitted in the translation?
 - **Style**: Does the translation fit the expected tone (e.g., game dialogue, UI text)?

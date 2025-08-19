@@ -106,7 +106,7 @@ class PlaceholderManager:
     ]
     _INTERNAL_PLACEHOLDER_PATTERN = r"\[P\d{3,}\]"
     _INTERNAL_NEWLINE_PATTERN = r"\[NEWLINE\]"
-    _INTERNAL_SPACE_PATTERN = r"\[S\]"
+    _INTERNAL_SPACE_PATTERN = r"\[S\d*\]"
     _placeholder_counter = 0
 
     @staticmethod
@@ -167,11 +167,12 @@ class PlaceholderManager:
         if not isinstance(text, str):
             return text
 
-        space_placeholder = "[S]"
-
         def replace_space(match):
-            placeholders[space_placeholder] = " "
-            return space_placeholder * len(match.group(0))
+            original_spaces = match.group(0)
+            # 원본 공백 시퀀스의 길이를 저장
+            space_key = f"[S{len(original_spaces)}]"
+            placeholders[space_key] = original_spaces
+            return space_key
 
         text = re.sub(r" {2,}", replace_space, text)
         text = re.sub(r"^\s+", replace_space, text)
@@ -204,7 +205,7 @@ class PlaceholderManager:
             reverse=True,
         )
         for pid, original in sorted_placeholders:
-            if pid in ["[NEWLINE]", "[S]"]:
+            if pid in ["[NEWLINE]"] or (pid.startswith("[S") and pid.endswith("]")):
                 continue
             text = text.replace(pid, original)
         return text
@@ -221,8 +222,10 @@ class PlaceholderManager:
     def _restore_spaces(text: str, placeholders: Dict[str, str]) -> str:
         if not isinstance(text, str):
             return text
-        if "[S]" in placeholders:
-            text = text.replace("[S]", placeholders["[S]"])
+        # [S숫자] 형태의 모든 공백 플레이스홀더를 복원
+        for placeholder_key, original_spaces in placeholders.items():
+            if placeholder_key.startswith("[S") and placeholder_key.endswith("]"):
+                text = text.replace(placeholder_key, original_spaces)
         return text
 
     @staticmethod
@@ -233,8 +236,11 @@ class PlaceholderManager:
             return text
         if newline_value and "[NEWLINE]" in text:
             text = text.replace("[NEWLINE]", newline_value)
-        if "[S]" in text and "[S]" in sorted_placeholders:
-            text = text.replace("[S]", " ")
+        # [S숫자] 형태의 모든 공백 플레이스홀더를 복원
+        space_placeholders = {k: v for k, v in sorted_placeholders if k.startswith("[S") and k.endswith("]")}
+        for placeholder_key, original_spaces in space_placeholders:
+            if placeholder_key in text:
+                text = text.replace(placeholder_key, original_spaces)
         for pid, original in sorted_placeholders:
             if pid in text:
                 text = text.replace(pid, original)
@@ -335,10 +341,10 @@ class PlaceholderManager:
         if newline_count > 0:
             counts["[NEWLINE]"] = newline_count
 
-        # Count [S]
-        space_count = len(re.findall(PlaceholderManager._INTERNAL_SPACE_PATTERN, text))
-        if space_count > 0:
-            counts["[S]"] = space_count
+        # Count [S숫자] - 각 고유한 [S숫자] 플레이스홀더를 개별적으로 카운팅
+        space_placeholders = re.findall(PlaceholderManager._INTERNAL_SPACE_PATTERN, text)
+        for space_placeholder in space_placeholders:
+            counts[space_placeholder] = counts.get(space_placeholder, 0) + 1
 
         return counts
 
