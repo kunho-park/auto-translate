@@ -317,7 +317,7 @@ class ModpackTranslator:
         # 원본 텍스트를 기준으로 그룹화하여 중복 번역 방지
         text_groups = {}
         for entry in entries:
-            text = entry.original_text.strip() if entry.original_text else ""
+            text = entry.original_text if entry.original_text else ""
             if not text:
                 continue
 

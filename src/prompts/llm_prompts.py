@@ -235,9 +235,7 @@ This is a high-stakes final attempt. You must translate the text to {language} w
 </instructions>
 
 <input_text>
-```
 {original_text}
-```
 </input_text>
 
 <required_placeholders>

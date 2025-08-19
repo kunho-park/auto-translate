@@ -155,11 +155,11 @@ class PlaceholderManager:
             return text
 
         newline_placeholder = "[NEWLINE]"
-        text = text.replace("\\r\\n", newline_placeholder)
-        text = text.replace("\\n", newline_placeholder)
-        text = text.replace("\\r", newline_placeholder)
+        text = text.replace("\r\n", newline_placeholder)
+        text = text.replace("\n", newline_placeholder)
+        text = text.replace("\r", newline_placeholder)
         if newline_placeholder in text:
-            placeholders[newline_placeholder] = "\\n"
+            placeholders[newline_placeholder] = "\n"
         return text
 
     @staticmethod
@@ -401,31 +401,48 @@ class TokenOptimizer:
     @staticmethod
     def format_chunk_for_llm(chunk: List[Dict[str, str]]) -> str:
         if not chunk:
-            return "No items."
-        lines = [f"TEXTS ({len(chunk)}):"]
+            return "No translation items provided."
+
+        lines = [f"=== TRANSLATION TEXTS ({len(chunk)} items) ==="]
+        lines.append("")
+
         for i, item in enumerate(chunk, 1):
             text_id = item.get("id", f"item_{i}")
             original_text = item.get("original", "")
-            lines.append(f"{i}. [{text_id}]\n```\n{original_text}\n```")
-        return "\n\n".join(lines)
+
+            lines.append(f"Item {i}: ID [{text_id}]")
+            lines.append("Original text:")
+            lines.append(original_text)
+            lines.append("")
+
+        return "\n".join(lines)
 
     @staticmethod
     def format_glossary_for_llm(glossary_entries: List[GlossaryEntry]) -> str:
         if not glossary_entries:
-            return "No glossary."
-        lines = [f"GLOSSARY ({len(glossary_entries)}):"]
+            return "No glossary terms available."
+
+        lines = [f"=== GLOSSARY TERMS ({len(glossary_entries)} entries) ==="]
+        lines.append("Use these terms consistently in your translations:")
+        lines.append("")
+
         for i, entry in enumerate(glossary_entries, 1):
             original = entry.original
             meanings = []
+
             for meaning in entry.meanings:
                 translation = meaning.translation
                 context = meaning.context
                 if context and context != "기존 번역":
-                    meanings.append(f"{translation} (Context: {context})")
+                    meanings.append(f"'{translation}' (Context: {context})")
                 else:
-                    meanings.append(translation)
-            meanings_str = " / ".join(meanings)
-            lines.append(f"{i}. {original} -> {meanings_str}")
+                    meanings.append(f"'{translation}'")
+
+            meanings_str = " OR ".join(meanings)
+            lines.append(f"{i}. '{original}' → {meanings_str}")
+
+        lines.append("")
+        lines.append("Note: Choose the most appropriate translation based on context.")
         return "\n".join(lines)
 
     @staticmethod
