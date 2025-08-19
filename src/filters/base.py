@@ -244,10 +244,11 @@ class GenericJSONFilter(BaseFilter):
 
     name = "generic_json"
 
-    # en_us.json 언어 파일만 처리
     path_patterns = [
         r".*/lang/en_us\.json$",
         r".*/en_us\.json$",
+        r".*/lang/en_US\.lang$",
+        r".*/en_US\.lang$",
     ]
 
     def __init__(
@@ -296,7 +297,8 @@ class GenericJSONFilter(BaseFilter):
         """JSON 파일에서 번역 대상 추출"""
         try:
             # 파서를 통해 데이터 로드
-            parser_class = BaseParser.get_parser_by_extension(".json")
+            file_extension = Path(file_path).suffix
+            parser_class = BaseParser.get_parser_by_extension(file_extension)
             if not parser_class:
                 return []
 
