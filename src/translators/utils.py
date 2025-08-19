@@ -237,8 +237,12 @@ class PlaceholderManager:
         if newline_value and "[NEWLINE]" in text:
             text = text.replace("[NEWLINE]", newline_value)
         # [S숫자] 형태의 모든 공백 플레이스홀더를 복원
-        space_placeholders = {k: v for k, v in sorted_placeholders if k.startswith("[S") and k.endswith("]")}
-        for placeholder_key, original_spaces in space_placeholders:
+        space_placeholders = {
+            k: v
+            for k, v in sorted_placeholders
+            if k.startswith("[S") and k.endswith("]")
+        }
+        for placeholder_key, original_spaces in space_placeholders.items():
             if placeholder_key in text:
                 text = text.replace(placeholder_key, original_spaces)
         for pid, original in sorted_placeholders:
@@ -342,7 +346,9 @@ class PlaceholderManager:
             counts["[NEWLINE]"] = newline_count
 
         # Count [S숫자] - 각 고유한 [S숫자] 플레이스홀더를 개별적으로 카운팅
-        space_placeholders = re.findall(PlaceholderManager._INTERNAL_SPACE_PATTERN, text)
+        space_placeholders = re.findall(
+            PlaceholderManager._INTERNAL_SPACE_PATTERN, text
+        )
         for space_placeholder in space_placeholders:
             counts[space_placeholder] = counts.get(space_placeholder, 0) + 1
 

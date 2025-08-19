@@ -491,18 +491,6 @@ async def _extract_terms_from_chunk_worker_with_progress(
                     client_info = await multi_manager.get_client_with_id()
                     if client_info:
                         current_llm = client_info["client"]
-                        # 토큰 카운터 콜백 추가
-                        try:
-                            token_counter = (
-                                state.get("token_counter") if state else None
-                            )
-                            if token_counter and hasattr(current_llm, "callbacks"):
-                                if current_llm.callbacks is None:
-                                    current_llm.callbacks = []
-                                if token_counter not in current_llm.callbacks:
-                                    current_llm.callbacks.append(token_counter)
-                        except Exception:
-                            pass
                         logger.debug(
                             f"용어 추출 청크 {chunk_idx + 1}: API 키 '{client_info['key_id']}' 사용"
                         )
@@ -2646,8 +2634,6 @@ class JSONTranslator:
             )
         )
 
-        # 항상 다중 API 키 모드 사용
-        # multi_llm_manager가 전달되지 않았다면 새로 생성
         multi_llm_manager = multi_llm_manager or MultiLLMManager()
         active_keys = multi_llm_manager.get_active_keys()
         if not active_keys:
@@ -2655,6 +2641,8 @@ class JSONTranslator:
                 "사용 가능한 API 키가 없습니다. 다중 API 키를 등록해주세요."
             )
         logger.info(f"다중 API 키 모드 활성화: {len(active_keys)}개 키 사용 가능")
+
+        multi_llm_manager.set_token_counter(self.token_counter)
 
         # llm_client를 초기 상태에 저장하지 않고, 각 워커가 직접 가져오도록 함
         initial_state: TranslatorState = TranslatorState(

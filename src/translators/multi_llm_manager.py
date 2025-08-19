@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .llm_manager import LLMManager
+from .token_counter import TokenCountingHandler
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ class LLMClientInfo:
 class MultiLLMManager:
     """다중 API 키를 관리하는 클래스"""
 
-    def __init__(self):
+    def __init__(self, token_counter: Optional[Any] = None):
         self.llm_manager = LLMManager()
         self.api_keys: Dict[str, APIKeyInfo] = {}  # key_id -> APIKeyInfo
         self.clients: Dict[str, LLMClientInfo] = {}  # key_id -> LLMClientInfo
@@ -57,7 +58,12 @@ class MultiLLMManager:
         # Persisted storage
         self.storage_path = Path("multi_api_keys.json")
         # Load persisted API keys
+
+        self.token_counter = TokenCountingHandler()
         self.load_api_keys()
+
+    def set_token_counter(self, token_counter: TokenCountingHandler):
+        self.token_counter = token_counter
 
     def add_api_key(self, key_id: str, provider: str, model: str, api_key: str):
         """API 키를 추가합니다."""
@@ -176,6 +182,16 @@ class MultiLLMManager:
             key_info.failed_count = 0  # 성공 시 실패 카운트 리셋
 
             logger.debug(f"새 클라이언트 생성: {key_id}")
+
+            try:
+                if hasattr(client, "callbacks"):
+                    if client.callbacks is None:
+                        client.callbacks = []
+                    if self.token_counter not in client.callbacks:
+                        client.callbacks.append(self.token_counter)
+            except Exception:
+                pass
+
             return {"client": client, "key_id": key_id}
 
         except Exception as e:
