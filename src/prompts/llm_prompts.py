@@ -35,7 +35,7 @@ Items to translate:
 </glossary_usage>
 
 <critical_placeholders>
-- Never delete or modify placeholders in the format [PXXX] or [NEWLINE].
+- Never delete or modify placeholders in the format [PXXX] or [NEWLINE] or [S] (space).
 - These placeholders are important markers that will be restored to original content after translation.
 - Placeholders must remain in exactly the same position in the translated text.
 - Translating or replacing placeholders with other text is absolutely forbidden.
@@ -58,7 +58,7 @@ Items to translate:
 - Copying English original text as-is is absolutely forbidden
 - Empty translations or leaving original text unchanged is not allowed
 - Adding English original text or explanations in parentheses to translated text is forbidden
-- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] is absolutely forbidden.
+- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] or [S] (space) is absolutely forbidden.
 - Omitting some items or skipping 'TranslatedItem' tool calls is absolutely forbidden
 - Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
 - Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
@@ -104,7 +104,7 @@ Items to retry:
 </glossary_usage>
 
 <critical_placeholders>
-- Never delete or modify placeholders in the format [PXXX] or [NEWLINE].
+- Never delete or modify placeholders in the format [PXXX] or [NEWLINE] or [S] (space).
 - These placeholders are very important markers that will be restored to original content after translation.
 - Placeholders must remain in exactly the same position in the translated text.
 - Translating or replacing placeholders with other text is absolutely forbidden.
@@ -128,7 +128,7 @@ Items to retry:
 - Copying or maintaining English original text as-is is absolutely forbidden
 - Empty translations or leaving original text unchanged is not allowed
 - Adding English original text or explanations in parentheses to translated text is forbidden
-- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] is absolutely forbidden.
+- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] or [S] (space) is absolutely forbidden.
 - Omitting some items or skipping 'TranslatedItem' tool calls is absolutely forbidden
 - Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
 - Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden
@@ -383,7 +383,7 @@ For each completed translation item, call the 'TranslatedItem' tool to record th
 </glossary_usage>
 
 <critical_placeholders>
-- Never delete or modify placeholders in the format [PXXX] or [NEWLINE]
+- Never delete or modify placeholders in the format [PXXX] or [NEWLINE] or [S] (space)
 - These placeholders are important markers that will be restored to original content after translation
 - Placeholders must remain in exactly the same position in the translated text
 - Translating or replacing placeholders with other text is absolutely forbidden
@@ -414,7 +414,7 @@ For each completed translation item, call the 'TranslatedItem' tool to record th
 - Copying or maintaining English original text as-is is absolutely forbidden
 - Empty translations or leaving original text unchanged is not allowed
 - Adding English original text or explanations in parentheses to translated text is forbidden
-- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] is absolutely forbidden
+- Deleting or modifying placeholders in the format [PXXX] or [NEWLINE] or [S] (space) is absolutely forbidden
 - Omitting some items or skipping 'TranslatedItem' tool calls is absolutely forbidden
 - Including ID values (T### etc.) in translations or returning only IDs as translation results is absolutely forbidden
 - Including "(Context: ..." parts from the glossary in translation results is absolutely forbidden

@@ -82,6 +82,7 @@ class PlaceholderManager:
     )
     LEGACY_MINECRAFT_PATTERN = r"%[a-zA-Z_][a-zA-Z0-9_]*%"  # %username% 등
     NEWLINE_PATTERN = r"\\n|\\r\\n|\\r"  # \n, \r\n, \r 개행 문자들
+    LONG_SPACE_PATTERN = r" {2,}|^\s+"  # 2개 이상의 연속 공백 또는 시작 공백
     # 이미지 플레이스홀더 패턴: {image:...} 또는 {image:... width:... height:... align:...}
     IMAGE_PLACEHOLDER_PATTERN = r"\{image:[^}]+\}"
     # 페이지 구분자({@pagebreak}) 패턴 추가
@@ -92,6 +93,7 @@ class PlaceholderManager:
         PAGEBREAK_PATTERN,
         JSON_PLACEHOLDER_PATTERN,
         NEWLINE_PATTERN,
+        LONG_SPACE_PATTERN,
         C_PLACEHOLDER_PATTERN,
         FORMAT_CODE_PATTERN,
         ITEM_PLACEHOLDER_PATTERN,
@@ -104,6 +106,7 @@ class PlaceholderManager:
     ]
     _INTERNAL_PLACEHOLDER_PATTERN = r"\[P\d{3,}\]"
     _INTERNAL_NEWLINE_PATTERN = r"\[NEWLINE\]"
+    _INTERNAL_SPACE_PATTERN = r"\[S\]"
     _placeholder_counter = 0
 
     @staticmethod
@@ -118,10 +121,14 @@ class PlaceholderManager:
             return text
 
         text = PlaceholderManager._extract_newlines(text, placeholders)
+        text = PlaceholderManager._extract_spaces(text, placeholders)
 
         matches: List[str] = []
         for pattern in PlaceholderManager._PLACEHOLDER_PATTERNS:
-            if pattern == PlaceholderManager.NEWLINE_PATTERN:
+            if pattern in [
+                PlaceholderManager.NEWLINE_PATTERN,
+                PlaceholderManager.LONG_SPACE_PATTERN,
+            ]:
                 continue
             found_matches = re.findall(pattern, text)
             for match in found_matches:
@@ -156,6 +163,21 @@ class PlaceholderManager:
         return text
 
     @staticmethod
+    def _extract_spaces(text: str, placeholders: Dict[str, str]) -> str:
+        if not isinstance(text, str):
+            return text
+
+        space_placeholder = "[S]"
+
+        def replace_space(match):
+            placeholders[space_placeholder] = " "
+            return space_placeholder * len(match.group(0))
+
+        text = re.sub(r" {2,}", replace_space, text)
+        text = re.sub(r"^\s+", replace_space, text)
+        return text
+
+    @staticmethod
     def process_json_object(obj: Any, placeholders: Dict[str, str]) -> Any:
         if isinstance(obj, dict):
             return {
@@ -175,13 +197,14 @@ class PlaceholderManager:
     @staticmethod
     def restore_placeholders(text: str, placeholders: Dict[str, str]) -> str:  # noqa: D401
         text = PlaceholderManager._restore_newlines(text, placeholders)
+        text = PlaceholderManager._restore_spaces(text, placeholders)
         sorted_placeholders = sorted(
             placeholders.items(),
             key=lambda item: (int(item[0][2:-1]) if item[0].startswith("[P") else -1),
             reverse=True,
         )
         for pid, original in sorted_placeholders:
-            if pid == "[NEWLINE]":
+            if pid in ["[NEWLINE]", "[S]"]:
                 continue
             text = text.replace(pid, original)
         return text
@@ -195,6 +218,14 @@ class PlaceholderManager:
         return text
 
     @staticmethod
+    def _restore_spaces(text: str, placeholders: Dict[str, str]) -> str:
+        if not isinstance(text, str):
+            return text
+        if "[S]" in placeholders:
+            text = text.replace("[S]", placeholders["[S]"])
+        return text
+
+    @staticmethod
     def _restore_placeholders_in_string(
         text: str, sorted_placeholders: List[tuple[str, str]], newline_value: str | None
     ) -> str:
@@ -202,6 +233,8 @@ class PlaceholderManager:
             return text
         if newline_value and "[NEWLINE]" in text:
             text = text.replace("[NEWLINE]", newline_value)
+        if "[S]" in text and "[S]" in sorted_placeholders:
+            text = text.replace("[S]", " ")
         for pid, original in sorted_placeholders:
             if pid in text:
                 text = text.replace(pid, original)
@@ -256,26 +289,58 @@ class PlaceholderManager:
     def validate_placeholder_preservation(original: str, translated: str) -> bool:
         if not isinstance(original, str) or not isinstance(translated, str):
             return True
-        original_placeholders = sorted(
-            PlaceholderManager._extract_internal_placeholders(original)
-        )
-        translated_placeholders = sorted(
-            PlaceholderManager._extract_internal_placeholders(translated)
-        )
-        return original_placeholders == translated_placeholders
+
+        original_counts = PlaceholderManager._count_internal_placeholders(original)
+        translated_counts = PlaceholderManager._count_internal_placeholders(translated)
+
+        return original_counts == translated_counts
 
     @staticmethod
     def get_missing_placeholders(original: str, translated: str) -> List[str]:
         if not isinstance(original, str) or not isinstance(translated, str):
             return []
-        original_placeholders = set(
-            PlaceholderManager._extract_internal_placeholders(original)
-        )
-        translated_placeholders = set(
-            PlaceholderManager._extract_internal_placeholders(translated)
-        )
-        missing = list(original_placeholders - translated_placeholders)
+
+        original_counts = PlaceholderManager._count_internal_placeholders(original)
+        translated_counts = PlaceholderManager._count_internal_placeholders(translated)
+
+        missing = []
+        all_keys = set(original_counts.keys()) | set(translated_counts.keys())
+
+        for key in all_keys:
+            original_count = original_counts.get(key, 0)
+            translated_count = translated_counts.get(key, 0)
+            if original_count != translated_count:
+                missing.append(
+                    f"{key} (expected {original_count}, found {translated_count})"
+                )
         return missing
+
+    @staticmethod
+    def _count_internal_placeholders(text: str) -> Dict[str, int]:
+        if not isinstance(text, str):
+            return {}
+
+        counts = {}
+        # Count [P###] placeholders
+        p_placeholders = re.findall(
+            PlaceholderManager._INTERNAL_PLACEHOLDER_PATTERN, text
+        )
+        for p in p_placeholders:
+            counts[p] = counts.get(p, 0) + 1
+
+        # Count [NEWLINE]
+        newline_count = len(
+            re.findall(PlaceholderManager._INTERNAL_NEWLINE_PATTERN, text)
+        )
+        if newline_count > 0:
+            counts["[NEWLINE]"] = newline_count
+
+        # Count [S]
+        space_count = len(re.findall(PlaceholderManager._INTERNAL_SPACE_PATTERN, text))
+        if space_count > 0:
+            counts["[S]"] = space_count
+
+        return counts
 
     @staticmethod
     def _extract_internal_placeholders(text: str) -> List[str]:
@@ -285,7 +350,8 @@ class PlaceholderManager:
             PlaceholderManager._INTERNAL_PLACEHOLDER_PATTERN, text
         )
         newlines = re.findall(PlaceholderManager._INTERNAL_NEWLINE_PATTERN, text)
-        return placeholders + newlines
+        spaces = re.findall(PlaceholderManager._INTERNAL_SPACE_PATTERN, text)
+        return placeholders + newlines + spaces
 
     @staticmethod
     def is_placeholder_only(text: str) -> bool:
@@ -303,6 +369,7 @@ class PlaceholderManager:
             PlaceholderManager._INTERNAL_PLACEHOLDER_PATTERN, "", temp_text
         )
         temp_text = re.sub(PlaceholderManager._INTERNAL_NEWLINE_PATTERN, "", temp_text)
+        temp_text = re.sub(PlaceholderManager._INTERNAL_SPACE_PATTERN, "", temp_text)
 
         # 모든 placeholder가 제거된 후 남은 텍스트가 있는지 확인
         remaining_text = temp_text.strip()
