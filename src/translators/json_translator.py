@@ -516,43 +516,31 @@ async def _extract_terms_from_chunk_worker_with_progress(
                             f"청크 {chunk_idx + 1}/{total_chunks} 재시도 중 ({attempt}/{max_retries})",
                         )
 
-                # SimpleGlossaryTerm을 도구로 바인딩하여 LLM 호출
+                # Glossary를 도구로 바인딩하여 LLM 호출
                 configured_llm = llm.with_config(
                     configurable={"temperature": temperature}
                 )
                 llm_with_tools = configured_llm.bind_tools(
-                    [SimpleGlossaryTerm], tool_choice="any"
+                    [Glossary], tool_choice="any"
                 )
                 response = await llm_with_tools.ainvoke(prompt)
 
-                # LLM의 도구 호출에서 SimpleGlossaryTerm 추출
-                simple_terms: List[SimpleGlossaryTerm] = []
+                # LLM의 도구 호출에서 Glossary 추출
+                result = None
                 if response.tool_calls:
                     for tool_call in response.tool_calls:
-                        if tool_call["name"] == "SimpleGlossaryTerm":
+                        if tool_call["name"] == "Glossary":
                             try:
-                                term = SimpleGlossaryTerm(**tool_call["args"])
-                                simple_terms.append(term)
+                                result = Glossary(**tool_call["args"])
+                                break  # 첫 번째 Glossary 결과만 사용
                             except Exception as e:
                                 logger.warning(
-                                    f"SimpleGlossaryTerm 파싱 중 오류가 발생하여 재시도를 유발합니다: {e}, args: {tool_call['args']}"
+                                    f"Glossary 파싱 중 오류가 발생하여 재시도를 유발합니다: {e}, args: {tool_call['args']}"
                                 )
                                 raise
 
-                # SimpleGlossaryTerm 리스트를 GlossaryEntry 리스트로 변환 (집계)
-                aggregated_entries: Dict[str, GlossaryEntry] = {}
-                for term in simple_terms:
-                    key = term.original.lower()
-                    if key not in aggregated_entries:
-                        aggregated_entries[key] = GlossaryEntry(
-                            original=term.original, meanings=[]
-                        )
-
-                    aggregated_entries[key].meanings.append(
-                        TermMeaning(translation=term.translation, context=term.context)
-                    )
-
-                result = Glossary(terms=list(aggregated_entries.values()))
+                if result is None:
+                    result = Glossary(terms=[])
 
                 # 성공 시 진행률 콜백 호출
                 if progress_callback:
@@ -779,32 +767,33 @@ async def _translate_chunk_worker_with_progress(
             else:
                 current_llm = llm
 
-            # TranslatedItem을 도구로 바인딩하여 LLM 호출
+            # TranslationResult를 도구로 바인딩하여 LLM 호출
             configured_llm = current_llm.with_config(
                 configurable={"temperature": temperature}
             )
             llm_with_tools = configured_llm.bind_tools(
-                [TranslatedItem], tool_choice="any"
+                [TranslationResult], tool_choice="any"
             )
             response = await llm_with_tools.ainvoke(prompt)
 
-            # LLM의 도구 호출에서 TranslatedItem 추출
+            # LLM의 도구 호출에서 TranslationResult 추출
             translations = []
             if response.tool_calls:
                 for tool_call in response.tool_calls:
-                    if tool_call["name"] == "TranslatedItem":
+                    if tool_call["name"] == "TranslationResult":
                         try:
-                            item = TranslatedItem(**tool_call["args"])
-                            # ID 패턴(T###) 그대로 반환되는 경우 필터링
-                            if re.match(r"^T\d{3,}$", item.translated.strip()):
-                                logger.debug(
-                                    f"TranslatedItem returned ID unchanged for {item.id}, dropping."
-                                )
-                            else:
-                                translations.append(item)
+                            result = TranslationResult(**tool_call["args"])
+                            for item in result.translations:
+                                # ID 패턴(T###) 그대로 반환되는 경우 필터링
+                                if re.match(r"^T\d{3,}$", item.translated.strip()):
+                                    logger.debug(
+                                        f"TranslatedItem returned ID unchanged for {item.id}, dropping."
+                                    )
+                                else:
+                                    translations.append(item)
                         except Exception as e:
                             logger.warning(
-                                f"TranslatedItem 파싱 중 오류: {e}, args: {tool_call['args']}"
+                                f"TranslationResult 파싱 중 오류: {e}, args: {tool_call['args']}"
                             )
 
             # 진행률 콜백 호출 (청크 번역 완료)
@@ -1161,7 +1150,7 @@ async def _translate_single_item_worker(
     delay_manager: RequestDelayManager,
     semaphore: asyncio.Semaphore,
     max_retries: int = 2,
-) -> tuple[str, Optional[str]]:
+) -> List[TranslatedItem]:
     """개별 항목 번역을 위한 비동기 워커 (재시도 기능 포함)"""
     async with semaphore:
         id_map = state["id_to_text_map"]
@@ -1222,36 +1211,39 @@ async def _translate_single_item_worker(
                     configurable={"temperature": temperature}
                 )
                 llm_with_tools = configured_llm.bind_tools(
-                    [TranslatedItem], tool_choice="any"
+                    [TranslationResult], tool_choice="any"
                 )
 
                 response = await llm_with_tools.ainvoke(prompt)
 
                 if response.tool_calls:
                     for tool_call in response.tool_calls:
-                        if tool_call["name"] == "TranslatedItem":
-                            item = TranslatedItem(**tool_call["args"])
-                            # 최종 검증: ID 패턴이 아니고 플레이스홀더가 보존되었는지 확인
-                            is_id_pattern = re.match(
-                                r"^T\d{3,}$", item.translated.strip()
-                            )
-                            if is_id_pattern:
-                                last_error = "ID 그대로 반환"
-                                logger.info(
-                                    f"⚠️ 최종 번역 재시도({attempt + 1}) 후에도 ID 그대로 반환: {tid} -> {item.translated}"
+                        if tool_call["name"] == "TranslationResult":
+                            result = TranslationResult(**tool_call["args"])
+                            valid_translations = []
+                            for item in result.translations:
+                                # 최종 검증: ID 패턴이 아니고 플레이스홀더가 보존되었는지 확인
+                                is_id_pattern = re.match(
+                                    r"^T\d{3,}$", item.translated.strip()
                                 )
-                            elif PlaceholderManager.validate_placeholder_preservation(
-                                original_text, item.translated
-                            ):
-                                logger.info(
-                                    f"✅ 최종 번역 재시도 성공 (시도 {attempt + 1}): {tid} -> {item.translated[:50]}..."
-                                )
-                                return tid, item.translated
-                            else:
-                                last_error = "플레이스홀더 누락"
-                                logger.warning(
-                                    f"⚠️ 최종 번역 재시도({attempt + 1}) 후에도 플레이스홀더 누락: {tid} -> '{item.translated}'"
-                                )
+                                if is_id_pattern:
+                                    last_error = "ID 그대로 반환"
+                                    logger.info(
+                                        f"⚠️ 최종 번역 재시도({attempt + 1}) 후에도 ID 그대로 반환: {tid} -> {item.translated}"
+                                    )
+                                elif PlaceholderManager.validate_placeholder_preservation(
+                                    original_text, item.translated
+                                ):
+                                    logger.info(
+                                        f"✅ 최종 번역 재시도 성공 (시도 {attempt + 1}): {tid} -> {item.translated[:50]}..."
+                                    )
+                                    valid_translations.append(item)
+                                else:
+                                    last_error = "플레이스홀더 누락"
+                                    logger.warning(
+                                        f"⚠️ 최종 번역 재시도({attempt + 1}) 후에도 플레이스홀더 누락: {tid} -> '{item.translated}'"
+                                    )
+                            return valid_translations
                 else:
                     last_error = "응답 없음"
                     # logger.warning(
@@ -1278,7 +1270,7 @@ async def _translate_single_item_worker(
         logger.error(
             f"❌ 최종 번역 모든 재시도 실패 ({max_retries + 1}회): {tid}, 마지막 오류: {last_error}"
         )
-        return tid, None
+        return []
 
 
 async def final_fallback_translation_node(state: TranslatorState) -> TranslatorState:
@@ -1361,10 +1353,11 @@ async def final_fallback_translation_node(state: TranslatorState) -> TranslatorS
         results = await asyncio.gather(*tasks)
 
         count_success = 0
-        for i, (tid, new_translation) in enumerate(results):
-            if new_translation:
-                translation_map[tid] = new_translation
-                count_success += 1
+        for i, result_list in enumerate(results):
+            for item in result_list:
+                if item.translated:
+                    translation_map[item.id] = item.translated
+                    count_success += 1
 
             if progress_callback:
                 progress_callback(
@@ -1993,24 +1986,25 @@ async def _review_chunk_worker(
 
             prompt = quality_review_prompt(target_language, review_text)
 
-            # LLM 호출 - QualityIssue 도구 바인딩
-            llm_with_tools = current_llm.bind_tools([QualityIssue], tool_choice="any")
+            # LLM 호출 - QualityReview 도구 바인딩
+            llm_with_tools = current_llm.bind_tools([QualityReview], tool_choice="any")
             response = await llm_with_tools.ainvoke(prompt)
 
-            # 응답 파싱 - 개별 QualityIssue들 수집
+            # 응답 파싱 - QualityReview에서 개별 QualityIssue들 추출
             quality_issues = []
             if response.tool_calls:
                 for tool_call in response.tool_calls:
-                    if tool_call["name"] == "QualityIssue":
+                    if tool_call["name"] == "QualityReview":
                         try:
-                            issue = QualityIssue(**tool_call["args"])
-                            quality_issues.append(issue)
+                            review = QualityReview(**tool_call["args"])
+                            quality_issues.extend(review.issues)
                             logger.debug(
-                                f"품질 문제 발견: [{issue.text_id}] {issue.issue_type} ({issue.severity})"
+                                f"품질 검토 완료: {review.overall_quality}, {len(review.issues)}개 이슈"
                             )
+                            break  # 첫 번째 QualityReview 결과만 사용
                         except Exception as e:
                             logger.warning(
-                                f"QualityIssue 파싱 오류: {e}, args: {tool_call['args']}"
+                                f"QualityReview 파싱 오류: {e}, args: {tool_call['args']}"
                             )
 
             logger.debug(
@@ -2361,7 +2355,7 @@ async def _quality_retranslate_chunk_worker(
 
                 # LLM 호출
                 llm_with_tools = current_llm.bind_tools(
-                    [TranslatedItem], tool_choice="any"
+                    [TranslationResult], tool_choice="any"
                 )
                 response = await llm_with_tools.ainvoke(prompt)
 
@@ -2369,18 +2363,19 @@ async def _quality_retranslate_chunk_worker(
                 translations = []
                 if response.tool_calls:
                     for tool_call in response.tool_calls:
-                        if tool_call["name"] == "TranslatedItem":
+                        if tool_call["name"] == "TranslationResult":
                             try:
-                                item = TranslatedItem(**tool_call["args"])
-                                if re.match(r"^T\d{3,}$", item.translated.strip()):
-                                    logger.debug(
-                                        f"ID 그대로 반환된 항목 무시: {item.id}"
-                                    )
-                                    continue
+                                result = TranslationResult(**tool_call["args"])
+                                for item in result.translations:
+                                    if re.match(r"^T\d{3,}$", item.translated.strip()):
+                                        logger.debug(
+                                            f"ID 그대로 반환된 항목 무시: {item.id}"
+                                        )
+                                        continue
 
-                                translations.append(item)
+                                    translations.append(item)
                             except Exception as e:
-                                logger.warning(f"TranslatedItem 파싱 오류: {e}")
+                                logger.warning(f"TranslationResult 파싱 오류: {e}")
 
                 # 플레이스홀더 검증
                 valid_translations = []

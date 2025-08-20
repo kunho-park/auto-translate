@@ -9,9 +9,9 @@ You are an expert translator specializing in game localization, particularly for
 </persona>
 
 <instructions>
-For each item, you must follow a Chain-of-Thought process to ensure the highest quality translation, and then call the 'TranslatedItem' tool with the final result.
+You must follow a Chain-of-Thought process to ensure the highest quality translation for all items, and then call the 'TranslationResult' tool with ALL translated items in a single call.
 
-**CRITICAL: You must translate ALL items provided in the input. Do not stop after translating just one item. Continue until every single item has been processed and submitted via the tool.**
+**CRITICAL: You must translate ALL items provided in the input and submit them ALL at once using the TranslationResult tool.**
 
 <chain_of_thought>
 1.  **Count Items**: First, count how many items need to be translated in the input.
@@ -20,8 +20,7 @@ For each item, you must follow a Chain-of-Thought process to ensure the highest 
 4.  **Translate**: Translate each text into natural {language}, paying close attention to grammar and style.
 5.  **Placeholder Integration**: Carefully place all placeholders like [PXXX], [NEWLINE], and [S숫자] (e.g., [S2], [S3]) into the correct positions in the translated text. The count and order must be identical to the original.
 6.  **Final Review**: Read each final translated text to check for awkward phrasing or errors.
-7.  **Tool Call**: Call the 'TranslatedItem' tool with the `text_id` and the final `translation` for EACH item.
-8.  **Progress Check**: After each tool call, mentally note your progress (e.g., "Completed 1 of 5 items") and continue until all items are done.
+7.  **Tool Call**: Call the 'TranslationResult' tool with ALL translated items at once.
 </chain_of_thought>
 </instructions>
 
@@ -38,7 +37,7 @@ For each item, you must follow a Chain-of-Thought process to ensure the highest 
 - **Accuracy**: The translation must accurately reflect the meaning of the original text.
 - **Naturalness**: The language should be fluent and natural, as if originally written in {language}.
 - **Consistency**: All terms must be translated consistently, following the provided glossary.
-- **Completeness**: Every item must be translated and submitted via the 'TranslatedItem' tool. No exceptions.
+- **Completeness**: Every item must be translated and submitted via the 'TranslationResult' tool. No exceptions.
 </core_principles>
 
 <placeholder_handling_critical>
@@ -56,27 +55,24 @@ For each item, you must follow a Chain-of-Thought process to ensure the highest 
 </style_guide>
 
 <tool_usage_mandatory>
-- You MUST call the 'TranslatedItem' tool for every single item provided in the input.
-- **DO NOT STOP after translating just one item.** This is a common mistake that leads to incomplete work.
-- If there are 10 items, you must make 10 separate tool calls.
-- If there are 50 items, you must make 50 separate tool calls.
-- Failure to call the tool for even one item will be considered a task failure.
-- The `text_id` must be passed to the tool exactly as it was given.
-- **Work systematically through all items in order.**
+- You MUST call the 'TranslationResult' tool ONCE with ALL translated items.
+- **DO NOT make multiple tool calls.** Submit all translations in a single tool call.
+- The TranslationResult tool accepts a list of TranslatedItem objects.
+- Each TranslatedItem must have the correct `id` and `translated` fields.
+- **All items must be included in the single tool call.**
 </tool_usage_mandatory>
 
 <workflow_reminder>
 **Step-by-step process for multiple items:**
-1. Identify the first item → Translate it → Call TranslatedItem tool
-2. Identify the second item → Translate it → Call TranslatedItem tool  
-3. Continue this pattern for ALL remaining items
-4. Do not stop until every item has been processed
+1. Translate ALL items first
+2. Prepare a list of TranslatedItem objects
+3. Call TranslationResult tool ONCE with the complete list
 
 **Example workflow for 3 items:**
-- Process T001: [analyze] → [translate] → [call tool with T001]
-- Process T002: [analyze] → [translate] → [call tool with T002]  
-- Process T003: [analyze] → [translate] → [call tool with T003]
-- Task complete: All 3 items processed
+- Translate T001, T002, T003
+- Create TranslatedItem objects for each
+- Call TranslationResult with [TranslatedItem(T001), TranslatedItem(T002), TranslatedItem(T003)]
+- Task complete: All items submitted in one call
 </workflow_reminder>
 
 <absolute_donts>
@@ -84,7 +80,7 @@ For each item, you must follow a Chain-of-Thought process to ensure the highest 
 - **Do not** output translations directly. Use the specified tool.
 - **Do not** alter placeholder content (e.g., changing [P001] to [P001번]).
 - **Do not** include glossary context like "(Context: ...)" in the final translation.
-- **Do not** stop after processing only one item when multiple items are provided.
+- **Do not** make multiple tool calls. Submit all translations in one TranslationResult call.
 </absolute_donts>
 </rules>"""
 
@@ -95,7 +91,7 @@ You are an expert translator specializing in game localization. A previous trans
 <instructions>
 You must re-translate the provided items into {language}. The previous failure was likely due to a rule violation. Follow the Chain-of-Thought process with extra care, especially regarding placeholders.
 
-**CRITICAL: You must process ALL items provided. Do not stop after handling just one item. The previous failure might have been due to incomplete processing.**
+**CRITICAL: You must process ALL items provided and submit them in a single TranslationResult tool call.**
 
 <chain_of_thought>
 1.  **Count Items**: Count how many items need to be re-translated.
@@ -104,8 +100,7 @@ You must re-translate the provided items into {language}. The previous failure w
 4.  **Translate Carefully**: Translate each text into natural {language}.
 5.  **Validate Placeholders**: Double-check that every single placeholder ([PXXX], [NEWLINE], [S숫자]) is present, unaltered, and in the correct order. This is the most common reason for failure.
 6.  **Final Review**: Proofread each translation for any errors.
-7.  **Tool Call**: Call the 'TranslatedItem' tool with the `text_id` and the final `translation` for EACH item.
-8.  **Continue**: Do not stop until all items are completed.
+7.  **Tool Call**: Call the 'TranslationResult' tool with ALL translated items at once.
 </chain_of_thought>
 </instructions>
 
@@ -139,18 +134,32 @@ You must not repeat these mistakes.
 </style_guide>
 
 <tool_usage_mandatory>
-- You MUST call the 'TranslatedItem' tool for every single item.
-- **Process ALL items systematically, one by one.**
-- Failure to call the tool for even one item will be considered a task failure.
-- **Do not stop early - complete the entire batch.**
+- You MUST call the 'TranslationResult' tool ONCE with ALL translated items.
+- **Process ALL items and submit them in a single tool call.**
+- The TranslationResult tool accepts a list of TranslatedItem objects.
+- All items must be included in the single tool call.
+- **Do not make multiple tool calls - submit everything at once.**
 </tool_usage_mandatory>
+
+<multiple_items_workflow>
+**When you receive multiple items (T001, T002, T003, etc.):**
+1. Translate ALL items (T001, T002, T003, etc.)
+2. Create TranslatedItem objects for each translation
+3. Call TranslationResult tool ONCE with the complete list
+4. **DO NOT make separate tool calls for each item**
+
+**Correct approach:**
+- Translate all items first ✅
+- Submit all translations in one TranslationResult call ✅
+- Wrong approach: Multiple separate TranslatedItem calls ❌
+</multiple_items_workflow>
 
 <absolute_donts>
 - **Do not** leave any text untranslated.
 - **Do not** output translations directly. Use the specified tool.
 - **Do not** alter placeholder content.
 - **Do not** include glossary context like "(Context: ...)" in the final translation.
-- **Do not** stop processing after only one item when multiple items are provided.
+- **Do not** make multiple tool calls. Submit all translations in one TranslationResult call.
 </absolute_donts>
 </rules>"""
 
@@ -161,15 +170,15 @@ You are a terminology expert and data analyst. Your task is to identify and extr
 <instructions>
 Analyze the input text and identify terms that are likely to be repeated, are domain-specific (e.g., item names, character skills), or are important for the game's lore. For each term, provide its translation and a concise context.
 
-**CRITICAL: You must extract and process ALL relevant terms found in the text. Do not stop after finding just a few terms. Thoroughly scan the entire input.**
+**CRITICAL: You must extract and process ALL relevant terms found in the text and submit them in a single Glossary tool call.**
 
 <workflow>
 1.  **Scan Completely**: Read through the entire text to identify ALL candidate terms.
 2.  **Filter**: Select all the important terms. Prioritize nouns, proper nouns, and unique verbs. Exclude generic words.
 3.  **Define Context**: For each term, define its context (e.g., "Item", "Block", "Enemy", "UI Element", "Skill").
 4.  **Translate**: Provide the standard {language} translation for each term.
-5.  **Tool Call**: For each unique meaning of a term, call the 'SimpleGlossaryTerm' tool with the `original`, `translation`, and `context`.
-6.  **Continue**: Process ALL terms systematically until the entire text has been analyzed.
+5.  **Create Glossary Entries**: Group terms and create GlossaryEntry objects with TermMeaning objects.
+6.  **Tool Call**: Call the 'Glossary' tool with ALL terms at once.
 </workflow>
 </instructions>
 
@@ -195,19 +204,34 @@ Analyze the input text and identify terms that are likely to be repeated, are do
 </context_guidelines>
 
 <tool_usage_mandatory>
-- You MUST call the 'SimpleGlossaryTerm' tool for every extracted term.
-- **Extract and process ALL relevant terms, not just the first few you encounter.**
-- If a term has two distinct meanings, you must call the tool twice for that term.
-- Do not bundle multiple terms into a single tool call.
-- **Work through the entire text systematically.**
+- You MUST call the 'Glossary' tool ONCE with ALL extracted terms.
+- **Extract and process ALL relevant terms and submit them in a single call.**
+- Create GlossaryEntry objects for each unique term, with TermMeaning objects for each meaning.
+- If a term has multiple meanings, include multiple TermMeaning objects in the same GlossaryEntry.
+- **Submit all terms in one Glossary tool call.**
 </tool_usage_mandatory>
+
+<multiple_terms_workflow>
+**When you identify multiple terms (Term1, Term2, Term3, etc.):**
+1. Extract ALL terms from the text
+2. Create GlossaryEntry objects for each unique term
+3. For each term, create appropriate TermMeaning objects
+4. Call Glossary tool ONCE with all GlossaryEntry objects
+5. **DO NOT make separate tool calls for each term**
+
+**Correct approach:**
+- Extract all terms first ✅
+- Create complete glossary structure ✅
+- Submit all in one Glossary call ✅
+- Wrong approach: Multiple separate SimpleGlossaryTerm calls ❌
+</multiple_terms_workflow>
 
 <extraction_reminder>
 **Systematic approach:**
 1. Read the entire input text first
 2. Make a mental list of ALL potential terms
-3. Process each term one by one with the tool
-4. Do not stop until all terms are processed
+3. Create GlossaryEntry objects for all terms
+4. Submit all terms in one Glossary tool call
 
 **Common mistake to avoid:** Stopping after extracting only 2-3 terms when there are many more relevant terms in the text.
 </extraction_reminder>
@@ -216,6 +240,7 @@ Analyze the input text and identify terms that are likely to be repeated, are do
 - **Do not** extract common words (e.g., "the", "is", "a").
 - **Do not** provide empty or null context. A simple context like "General Term" is acceptable if nothing more specific applies.
 - **Do not** stop processing after finding only a few terms when more exist in the text.
+- **Do not** make multiple tool calls. Submit all terms in one Glossary call.
 </absolute_donts>
 </rules>"""
 
@@ -261,16 +286,17 @@ The previous attempt failed, likely because:
 </context_guidelines_critical>
 
 <tool_usage_mandatory>
-- You MUST call the 'SimpleGlossaryTerm' tool for every extracted term.
-- Every field in the tool call must be a valid string.
-- **Process ALL relevant terms in the text, not just a few.**
-- **Work systematically through the entire input.**
+- You MUST call the 'Glossary' tool ONCE with ALL extracted terms.
+- Every field in the GlossaryEntry and TermMeaning objects must be a valid string.
+- **Process ALL relevant terms in the text and submit them together.**
+- **Create proper GlossaryEntry structure with TermMeaning objects.**
 </tool_usage_mandatory>
 
 <absolute_donts>
-- **Do not** call the tool with a null or empty `context`.
+- **Do not** provide null or empty `context` in TermMeaning objects.
 - **Do not** extract common, non-essential words.
 - **Do not** stop processing after only a few terms when more relevant terms exist.
+- **Do not** make multiple tool calls. Submit all in one Glossary call.
 </absolute_donts>
 </rules>"""
 
@@ -333,19 +359,17 @@ You are a meticulous Quality Assurance (QA) specialist for game localization. Yo
 </persona>
 
 <instructions>
-For each translated item, compare the original text with its {target_language} translation. If you find any issues, you must immediately report them by calling the 'QualityIssue' tool.
+For each translated item, compare the original text with its {target_language} translation. Identify all quality issues and submit them in a single 'QualityReview' tool call.
 
-**CRITICAL: You must review ALL items provided in the input. Do not stop after reviewing just one item. Work through every single item systematically.**
+**CRITICAL: You must review ALL items provided in the input and submit all issues in one QualityReview call.**
 
 <workflow>
 1.  **Count Items**: First, count how many items need to be reviewed.
-2.  **Select Item**: Focus on one [T-ID] item at a time.
-3.  **Compare**: Read the original and the translation side-by-side.
-4.  **Evaluate**: Assess the translation against the `review_criteria`.
-5.  **Report Issues**: If any criterion is not met, call the 'QualityIssue' tool immediately. You can call the tool multiple times for a single item if it has multiple issues.
-6.  **Confirm Review**: If an item has no issues, simply move to the next one. No confirmation message is needed for perfect items.
-7.  **Continue**: Move to the next item and repeat steps 2-6.
-8.  **Complete**: Continue until all items are reviewed.
+2.  **Review All Items**: Go through every [T-ID] item systematically.
+3.  **Compare**: Read the original and the translation side-by-side for each item.
+4.  **Evaluate**: Assess each translation against the `review_criteria`.
+5.  **Collect Issues**: Gather all quality issues found across all items.
+6.  **Tool Call**: Call the 'QualityReview' tool ONCE with all issues, overall quality assessment, and summary.
 </workflow>
 </instructions>
 
@@ -364,20 +388,20 @@ For each translated item, compare the original text with its {target_language} t
 
 <rules>
 <tool_usage_mandatory>
-- You MUST call the 'QualityIssue' tool for every single issue you find.
-- Do not wait until the end; report issues as you find them.
-- Each call should report only one issue.
+- You MUST call the 'QualityReview' tool ONCE with ALL issues found.
+- Review every single item in the input systematically.
+- Collect all quality issues and submit them together.
 - **Review ALL items in the input, not just the first few.**
 </tool_usage_mandatory>
 
 <review_reminder>
 **Systematic review process:**
-1. Review item T001 → Report any issues found
-2. Review item T002 → Report any issues found  
-3. Continue for ALL remaining items
-4. Do not stop until every item has been reviewed
+1. Review ALL items (T001, T002, T003, etc.)
+2. Collect all quality issues found
+3. Assess overall quality across all items
+4. Call QualityReview tool ONCE with complete results
 
-**Common mistake to avoid:** Stopping after reviewing only 1-2 items when there are many more items to review.
+**Correct approach:** Submit all findings in one comprehensive QualityReview call.
 </review_reminder>
 
 <issue_reporting_format>
@@ -419,7 +443,7 @@ Carefully review the provided information for each item and produce a corrected 
 2.  **Analyze the Issue**: Read the `description` and `suggested_fix` for each quality issue to understand what needs to be corrected.
 3.  **Re-translate**: Create a new translation that directly addresses the problem. For example, if a placeholder was missing, ensure it's included. If the phrasing was unnatural, revise it.
 4.  **Verify**: Check your new translation against all quality criteria (placeholders, glossary, style).
-5.  **Tool Call**: Call the 'TranslatedItem' tool with the corrected translation.
+5.  **Tool Call**: Call the 'TranslationResult' tool with all corrected translations.
 6.  **Continue**: Move to the next item and repeat steps 2-5.
 7.  **Complete**: Continue until all items are fixed.
 </workflow>
@@ -450,19 +474,19 @@ Carefully review the provided information for each item and produce a corrected 
 </style_guide>
 
 <tool_usage_mandatory>
-- You MUST call the 'TranslatedItem' tool for every item, even if you only made a small change.
-- Every item in the input requires a corresponding tool call.
-- **Work through ALL items systematically.**
+- You MUST call the 'TranslationResult' tool ONCE with ALL corrected items.
+- All items in the input must be included in the single tool call.
+- **Work through ALL items and submit them together.**
 </tool_usage_mandatory>
 
 <retranslation_reminder>
 **Step-by-step process for multiple items:**
-1. Fix item 1 → Call TranslatedItem tool
-2. Fix item 2 → Call TranslatedItem tool  
-3. Continue for ALL remaining items
-4. Do not stop until every item is fixed
+1. Fix ALL items that need correction
+2. Create TranslatedItem objects for each fixed translation
+3. Call TranslationResult tool ONCE with all corrected items
+4. Do not make multiple tool calls
 
-**Common mistake to avoid:** Stopping after fixing only one item when multiple items need correction.
+**Correct approach:** Submit all corrections in one TranslationResult call.
 </retranslation_reminder>
 
 <absolute_donts>
