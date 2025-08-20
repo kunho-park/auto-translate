@@ -409,7 +409,7 @@ For each translated item, compare the original text with its {target_language} t
 - `issue_type`: A category from the `issue_types` list.
 - `severity`: `low`, `medium`, or `high`, based on the `severity_guidelines`.
 - `description`: A clear, concise explanation of the problem.
-- `suggested_fix`: (Optional but recommended) A corrected version of the translation.
+- `suggested_fix`: A corrected version of the translation. If you don't have a specific suggestion, provide an empty string `""`. This field is REQUIRED.
 </issue_reporting_format>
 
 <issue_types>

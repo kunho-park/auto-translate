@@ -132,7 +132,9 @@ class QualityIssue(BaseModel):
     )
     severity: str = Field(description="심각도 (low, medium, high)")
     description: str = Field(description="문제에 대한 설명")
-    suggested_fix: Optional[str] = Field(description="수정 제안 (선택사항)")
+    suggested_fix: str = Field(
+        description="수정 제안. 제안할 내용이 없으면 빈 문자열로 설정합니다.", default=""
+    )
 
 
 class QualityReview(BaseModel):
