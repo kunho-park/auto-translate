@@ -9,6 +9,7 @@ import logging
 from pathlib import Path
 from typing import Dict, Optional
 
+from ..parsers.base import BaseParser
 from .base import BasePackager, PackagingResult
 
 logger = logging.getLogger(__name__)
@@ -165,16 +166,16 @@ class ResourcePackBuilder(BasePackager):
             logger.info(f"모드 '{mod_id}' 처리 중... ({len(file_list)}개 파일)")
 
             # 같은 모드 ID의 파일들을 합치기
-            merged_content = await self._merge_mod_files(file_list)
+            merged_content, file_extension = await self._merge_mod_files(file_list)
             if merged_content and await self._save_merged_mod_file(
-                mod_id, merged_content, resourcepack_dir
+                mod_id, merged_content, resourcepack_dir, file_extension
             ):
                 file_count += 1
 
         logger.info(f"총 {len(mod_assets)}개 모드, {file_count}개 파일 처리 완료")
         return file_count
 
-    async def _merge_mod_files(self, file_list: list) -> Optional[Dict]:
+    async def _merge_mod_files(self, file_list: list) -> tuple[Optional[Dict], str]:
         """같은 모드 ID의 여러 파일들을 하나로 합칩니다."""
         merged_content = {}
 
@@ -185,9 +186,16 @@ class ResourcePackBuilder(BasePackager):
                     logger.warning(f"번역 파일이 존재하지 않음: {translated_path}")
                     continue
 
-                # JSON 파일 읽기
-                with open(src_path, "r", encoding="utf-8") as f:
-                    file_content = json.load(f)
+                # 파서를 사용하여 파일 읽기
+                file_extension = src_path.suffix.lower()
+                parser_class = BaseParser.get_parser_by_extension(file_extension)
+
+                if not parser_class:
+                    logger.warning(f"지원하지 않는 파일 형식: {file_extension}")
+                    continue
+
+                parser = parser_class(src_path)
+                file_content = await parser.parse()
 
                 # 내용 병합 (중복 키가 있으면 나중 파일이 우선)
                 if isinstance(file_content, dict):
@@ -205,27 +213,41 @@ class ResourcePackBuilder(BasePackager):
 
         if merged_content:
             logger.info(f"병합 완료: 총 {len(merged_content)}개 번역 키")
-            return merged_content
+            return merged_content, file_extension
         else:
             logger.warning("병합할 유효한 내용이 없습니다")
-            return None
+            return None, None
 
     async def _save_merged_mod_file(
-        self, mod_id: str, merged_content: Dict, resourcepack_dir: Path
+        self,
+        mod_id: str,
+        merged_content: Dict,
+        resourcepack_dir: Path,
+        file_extension: str,
     ) -> bool:
         """병합된 모드 파일을 리소스팩 구조로 저장합니다."""
         try:
-            # 대상 경로 생성: assets/mod_id/lang/ko_kr.json
             assets_dir = resourcepack_dir / "assets" / mod_id / "lang"
             self._ensure_directory(assets_dir)
-
-            # 언어 파일명 변환
-            target_filename = f"{self.target_lang}.json"
+            # 언어 파일명 변환 (파서 확장자 기반)
+            # .lang 파일의 경우 언어 코드 형식을 ko_KR, en_US 형태로 변환
+            if file_extension == ".lang":
+                lang_parts = self.target_lang.split("_")
+                if len(lang_parts) == 2:
+                    formatted_lang = f"{lang_parts[0]}_{lang_parts[1].upper()}"
+                else:
+                    formatted_lang = self.target_lang
+                target_filename = f"{formatted_lang}{file_extension}"
+            else:
+                target_filename = f"{self.target_lang}{file_extension}"
             target_path = assets_dir / target_filename
 
-            # 병합된 내용을 JSON 파일로 저장
-            with open(target_path, "w", encoding="utf-8") as f:
-                json.dump(merged_content, f, indent=2, ensure_ascii=False)
+            # 파서를 사용하여 병합된 내용을 파일로 저장
+            parser_class = BaseParser.get_parser_by_extension(file_extension)
+
+            if parser_class:
+                parser = parser_class(target_path)
+                await parser.dump(merged_content)
 
             logger.info(
                 f"병합된 모드 파일 저장: {target_path} ({len(merged_content)}개 키)"
