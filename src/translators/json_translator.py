@@ -1271,7 +1271,8 @@ async def _translate_single_item_worker(
                                         logger.warning(
                                             f"⚠️ 최종 번역 재시도({attempt + 1}) 후에도 플레이스홀더 누락: {tid} -> '{item.translated}'"
                                         )
-                                return valid_translations
+                                if valid_translations:
+                                    return valid_translations
                             except Exception as e:
                                 last_error = str(e)
                                 logger.warning(f"TranslationResult 파싱 오류 (시도 {attempt + 1}): {e}")
