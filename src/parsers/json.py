@@ -100,27 +100,32 @@ class JSONParser(BaseParser):
         self, original: Dict[str, Any], flat_data: Mapping[str, str]
     ) -> Dict[str, Any]:
         """평면화된 데이터를 원본 JSON 구조에 맞게 복원합니다."""
-        result = json.loads(json.dumps(original))  # Deepcopy
-        self._update_nested_values(result, flat_data)
+        original = json.loads(json.dumps(original))  # Deepcopy
+        result = {} if isinstance(original, dict) else []
+        self._update_nested_values(original, flat_data, result=result)
         return result
 
     def _update_nested_values(
-        self, data: Any, flat_data: Mapping[str, str], prefix: str = ""
+        self,
+        original: dict | list[dict],
+        flat_data: Mapping[str, str],
+        result: dict | list[dict],
+        prefix: str = "",
     ) -> None:
         """재귀적으로 중첩된 구조의 값을 평면화된 데이터로 업데이트합니다."""
-        if isinstance(data, dict):
-            for key, value in list(data.items()):
+        if isinstance(original, dict):
+            for key, value in list(original.items()):
                 new_key = f"{prefix}.{key}" if prefix else key
                 if isinstance(value, str):
                     if new_key in flat_data:
-                        data[key] = flat_data[new_key]
+                        result[key] = flat_data[new_key]
                 elif isinstance(value, (dict, list)):
-                    self._update_nested_values(value, flat_data, new_key)
-        elif isinstance(data, list):
-            for i, item in enumerate(data):
+                    self._update_nested_values(value, flat_data, result, new_key)
+        elif isinstance(original, list):
+            for i, item in enumerate(original):
                 new_key = f"{prefix}[{i}]" if prefix else f"[{i}]"
                 if isinstance(item, str):
                     if new_key in flat_data:
-                        data[i] = flat_data[new_key]
+                        result[i] = flat_data[new_key]
                 elif isinstance(item, (dict, list)):
-                    self._update_nested_values(item, flat_data, new_key)
+                    self._update_nested_values(item, flat_data, result, new_key)
