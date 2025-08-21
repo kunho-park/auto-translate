@@ -47,7 +47,7 @@ class JSONParser(BaseParser):
         try:
             original_data = self._load_json_content(original_content)
         except:
-            original_data = {}
+            original_data = data.copy()
             no_filter = True
         # 번역된 값으로 원본 구조 업데이트
         updated_data = self._unflatten_json(
