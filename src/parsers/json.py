@@ -42,11 +42,19 @@ class JSONParser(BaseParser):
         # 원본 JSON 구조를 복원
         async with aiofiles.open(self.path, encoding="utf-8", errors="replace") as f:
             original_content = await f.read()
+        no_filter = False
 
-        original_data = self._load_json_content(original_content)
-
+        try:
+            original_data = self._load_json_content(original_content)
+        except:
+            original_data = {}
+            no_filter = True
         # 번역된 값으로 원본 구조 업데이트
-        updated_data = self._unflatten_json(original_data, data)
+        updated_data = self._unflatten_json(
+            original_data,
+            data,
+            no_filter=no_filter,
+        )
 
         # JSON 파일로 저장
         json_content = json.dumps(updated_data, ensure_ascii=False, indent=4)
@@ -97,12 +105,17 @@ class JSONParser(BaseParser):
         return result
 
     def _unflatten_json(
-        self, original: Dict[str, Any], flat_data: Mapping[str, str]
+        self,
+        original: Dict[str, Any],
+        flat_data: Mapping[str, str],
+        no_filter: bool = False,
     ) -> Dict[str, Any]:
         """평면화된 데이터를 원본 JSON 구조에 맞게 복원합니다."""
         original = json.loads(json.dumps(original))  # Deepcopy
         result = {} if isinstance(original, dict) else []
-        self._update_nested_values(original, flat_data, result=result)
+        self._update_nested_values(
+            original, flat_data, result=result, no_filter=no_filter
+        )
         return result
 
     def _update_nested_values(
@@ -111,21 +124,26 @@ class JSONParser(BaseParser):
         flat_data: Mapping[str, str],
         result: dict | list[dict],
         prefix: str = "",
+        no_filter: bool = False,
     ) -> None:
         """재귀적으로 중첩된 구조의 값을 평면화된 데이터로 업데이트합니다."""
         if isinstance(original, dict):
             for key, value in list(original.items()):
                 new_key = f"{prefix}.{key}" if prefix else key
                 if isinstance(value, str):
-                    if new_key in flat_data:
+                    if new_key in flat_data and not no_filter:
                         result[key] = flat_data[new_key]
                 elif isinstance(value, (dict, list)):
-                    self._update_nested_values(value, flat_data, result, new_key)
+                    self._update_nested_values(
+                        value, flat_data, result, new_key, no_filter
+                    )
         elif isinstance(original, list):
             for i, item in enumerate(original):
                 new_key = f"{prefix}[{i}]" if prefix else f"[{i}]"
                 if isinstance(item, str):
-                    if new_key in flat_data:
+                    if new_key in flat_data and not no_filter:
                         result[i] = flat_data[new_key]
                 elif isinstance(item, (dict, list)):
-                    self._update_nested_values(item, flat_data, result, new_key)
+                    self._update_nested_values(
+                        item, flat_data, result, new_key, no_filter
+                    )

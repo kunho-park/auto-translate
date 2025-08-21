@@ -244,8 +244,11 @@ class ResourcePackBuilder(BasePackager):
 
             # 파서를 사용하여 병합된 내용을 파일로 저장
             parser_class = BaseParser.get_parser_by_extension(file_extension)
-
             if parser_class:
+                # 파일이 존재하지 않을 경우 빈 파일 생성
+                if not target_path.exists():
+                    target_path.touch()
+
                 parser = parser_class(target_path)
                 await parser.dump(merged_content)
 
