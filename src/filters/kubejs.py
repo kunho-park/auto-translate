@@ -104,6 +104,18 @@ class KubeJSFilter(BaseFilter):
         # .js.converted 파일은 이 로더가 처리 (다른 로더가 주석 등을 번역하지 못하도록)
         return True
 
+    def _should_skip_translation(self, text: str) -> bool:
+        """번역을 건너뛸지 판단하는 메서드"""
+        # 텍스트가 비어있거나 공백만 있는 경우
+        if not text or not text.strip():
+            return True
+
+        # ${...} 형태의 포맷 텍스트가 포함된 경우 건너뛰기
+        if "${" in text and "}" in text:
+            return True
+
+        return False
+
     async def extract_translations(self, file_path: str) -> List[TranslationEntry]:
         """KubeJS JavaScript 파일에서 번역 대상 추출"""
         try:
@@ -150,6 +162,10 @@ class KubeJSFilter(BaseFilter):
             quote_char = match.group(2)
             text_content = match.group(3)
 
+            # 포맷 텍스트가 포함된 경우 건너뛰기
+            if self._should_skip_translation(text_content):
+                continue
+
             if text_content.strip():
                 entry = TranslationEntry(
                     key=f"{chunk_key}.{method_name}_{match.start()}",
@@ -174,6 +190,10 @@ class KubeJSFilter(BaseFilter):
             color_name = match.group(2)
             quote_char = match.group(3)
             text_content = match.group(4)
+
+            # 포맷 텍스트가 포함된 경우 건너뛰기
+            if self._should_skip_translation(text_content):
+                continue
 
             if text_content.strip():
                 entry = TranslationEntry(
@@ -200,6 +220,10 @@ class KubeJSFilter(BaseFilter):
             first_arg = match.group(2)
             quote_char = match.group(3)
             text_content = match.group(4)
+
+            # 포맷 텍스트가 포함된 경우 건너뛰기
+            if self._should_skip_translation(text_content):
+                continue
 
             if text_content.strip():
                 # 첫 번째 인자에서 따옴표 제거하고 정리하여 고유 키 생성
@@ -279,6 +303,10 @@ class KubeJSFilter(BaseFilter):
             quote_char = match.group(2)
             original_text = match.group(3)
 
+            # 포맷 텍스트가 포함된 경우 원본 반환
+            if self._should_skip_translation(original_text):
+                return match.group(0)
+
             # 번역된 텍스트 찾기 (위치 정보 포함)
             translation_key = f"{chunk_key}.{method_name}_{match.start()}"
             if translation_key in translations:
@@ -296,6 +324,10 @@ class KubeJSFilter(BaseFilter):
             color_name = match.group(2)
             quote_char = match.group(3)
             original_text = match.group(4)
+
+            # 포맷 텍스트가 포함된 경우 원본 반환
+            if self._should_skip_translation(original_text):
+                return match.group(0)
 
             # 번역된 텍스트 찾기 (위치 정보 포함)
             translation_key = f"{chunk_key}.{full_method}_{match.start()}"
@@ -315,6 +347,10 @@ class KubeJSFilter(BaseFilter):
             quote_char = match.group(3)
             original_text = match.group(4)
             remaining_args = match.group(5) if match.group(5) else ""
+
+            # 포맷 텍스트가 포함된 경우 원본 반환
+            if self._should_skip_translation(original_text):
+                return match.group(0)
 
             # 첫 번째 인자에서 따옴표 제거하고 정리하여 고유 키 생성 (위치 정보 포함)
             first_arg_clean = first_arg.strip().strip("'\"")
