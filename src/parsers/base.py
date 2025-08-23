@@ -16,8 +16,9 @@ class BaseParser(abc.ABC):
     #: 지원되는 파일 이름 접미사 목록 (점 포함)
     file_extensions: tuple[str, ...] = ()
 
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, original_path: Path = None):
         self.path = path
+        self.original_path = original_path
 
     # ------------------------------------------------------------------
     # 공개 API

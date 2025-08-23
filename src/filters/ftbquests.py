@@ -391,106 +391,192 @@ class FTBQuestsRewardTableFilter(FTBQuestsFilter):
         return 12
 
 
-class FTBQuestsLangFilter(BaseFilter):
-    """FTBQuests 언어 파일(.snbt) 전용 필터"""
+class FTBQuestsEnUsFilter(BaseFilter):
+    """FTBQuests en_us 번역 파일 전용 필터 (ko_kr과 비교하여 처리)"""
 
-    name = "ftbquests_lang"
-    path_patterns = [r".*/ftbquests/quests/lang/.*\.snbt$"]
+    name = "ftbquests_en_us"
+    path_patterns = [
+        r".*/ftbquests/quests/lang/en_us/.*\.snbt$",
+        r".*/config/ftbquests/quests/lang/en_us/.*\.snbt$",
+    ]
 
     def get_priority(self) -> int:
-        """언어 파일 전용 필터는 다른 FTBQuests 필터보다 높은 우선순위를 가집니다."""
-        return 20
+        """en_us 번역 파일 전용 필터는 높은 우선순위를 가집니다."""
+        return 25
+
+    def _get_ko_kr_path(self, en_us_path: str) -> str:
+        """en_us 경로를 ko_kr 경로로 변환합니다."""
+
+        return en_us_path.replace("\\", "/").replace("/en_us/", "/ko_kr/")
+
+    async def _load_existing_ko_kr(self, ko_kr_path: str) -> Dict[str, str]:
+        """기존 ko_kr 파일이 있으면 로드합니다."""
+        try:
+            if not Path(ko_kr_path).exists():
+                return {}
+
+            parser_class = BaseParser.get_parser_by_extension(".snbt")
+            if not parser_class:
+                return {}
+
+            parser = parser_class(Path(ko_kr_path))
+            data = await parser.parse()
+
+            if isinstance(data, dict):
+                return data
+            return {}
+
+        except Exception as e:
+            logger.debug(f"기존 ko_kr 파일 로드 실패 ({ko_kr_path}): {e}")
+            return {}
 
     async def extract_translations(self, file_path: str) -> List[TranslationEntry]:
-        """FTBQuests 언어 파일에서 번역 대상을 추출합니다."""
+        """en_us 파일에서 번역 대상을 추출하되, ko_kr에 이미 있는 것은 제외합니다."""
         try:
+            # en_us 파일 로드
             parser_class = BaseParser.get_parser_by_extension(".snbt")
             if not parser_class:
                 logger.warning(f"SNBT 파서를 찾을 수 없음: {file_path}")
                 return []
 
+            file_path = file_path.replace("\\", "/")
             parser = parser_class(Path(file_path))
-            data = await parser.parse()
-            entries = []
+            en_us_data = await parser.parse()
 
-            if not isinstance(data, dict):
-                logger.warning(
-                    f"FTBQuests 언어 파일이 딕셔너리 형식이 아님: {file_path}"
-                )
+            if not isinstance(en_us_data, dict):
+                logger.warning(f"en_us 파일이 딕셔너리 형식이 아님: {file_path}")
                 return []
 
-            for key, value in data.items():
+            # 대응하는 ko_kr 파일 확인
+            ko_kr_path = self._get_ko_kr_path(file_path)
+            if ko_kr_path == file_path:
+                ko_kr_data = {}
+            else:
+                ko_kr_data = await self._load_existing_ko_kr(ko_kr_path)
+
+            entries = []
+
+            # en_us의 각 항목을 확인하여 ko_kr에 없는 것만 번역 대상으로 추가
+            for key, value in en_us_data.items():
                 if isinstance(value, str) and value.strip():
+                    # ko_kr에 이미 번역이 있고 빈 문자열이 아니면 건너뛰기
+                    if key in ko_kr_data and ko_kr_data[key].strip():
+                        logger.debug(f"이미 번역됨, 건너뛰기: {key}")
+                        continue
+
                     entries.append(
                         TranslationEntry(
                             key=key,
                             original_text=value,
                             file_path=file_path,
                             file_type=self.name,
-                            context={"file_type": "ftbquests_lang", "key": key},
-                            priority=10,
+                            context={
+                                "file_type": "ftbquests_en_us",
+                                "key": key,
+                                "ko_kr_path": ko_kr_path,
+                            },
+                            priority=15,
                         )
                     )
+
                 elif isinstance(value, list):
                     for i, item in enumerate(value):
                         if isinstance(item, str) and item.strip():
+                            list_key = f"{key}[{i}]"
+
+                            # ko_kr에서 해당 리스트 항목 확인
+                            ko_kr_list_value = ""
+                            if key in ko_kr_data and isinstance(ko_kr_data[key], list):
+                                if i < len(ko_kr_data[key]):
+                                    ko_kr_list_value = ko_kr_data[key][i]
+
+                            # 이미 번역되어 있으면 건너뛰기
+                            if ko_kr_list_value and ko_kr_list_value.strip():
+                                logger.debug(f"이미 번역됨, 건너뛰기: {list_key}")
+                                continue
+
                             entries.append(
                                 TranslationEntry(
-                                    key=f"{key}[{i}]",
+                                    key=list_key,
                                     original_text=item,
                                     file_path=file_path,
                                     file_type=self.name,
                                     context={
-                                        "file_type": "ftbquests_lang",
+                                        "file_type": "ftbquests_en_us",
                                         "key": key,
                                         "list_index": i,
+                                        "ko_kr_path": ko_kr_path,
                                     },
-                                    priority=10,
+                                    priority=15,
                                 )
                             )
+
             logger.debug(
-                f"FTBQuests 언어 파일에서 {len(entries)}개 번역 항목 발견: {Path(file_path).name}"
+                f"FTBQuests en_us 파일에서 {len(entries)}개 신규 번역 항목 발견: {Path(file_path).name}"
             )
             return entries
 
         except Exception as e:
-            logger.error(f"FTBQuests 언어 파일 처리 실패 ({file_path}): {e}")
+            logger.error(f"FTBQuests en_us 파일 처리 실패 ({file_path}): {e}")
             return []
 
     async def apply_translations(
         self, file_path: str, translations: Dict[str, str]
     ) -> bool:
-        """번역된 텍스트를 SNBT 언어 파일에 적용합니다."""
+        """번역된 텍스트를 ko_kr 파일에 적용합니다."""
         try:
+            if not translations:
+                return False
+
+            # 첫 번째 번역 항목에서 ko_kr 경로 추출
+            first_key = next(iter(translations.keys()))
+            ko_kr_path = self._get_ko_kr_path(file_path)
+
+            # 기존 ko_kr 데이터 로드
+            ko_kr_data = await self._load_existing_ko_kr(ko_kr_path)
+
+            # en_us 원본 데이터도 로드 (구조 참조용)
             parser_class = BaseParser.get_parser_by_extension(".snbt")
             if not parser_class:
                 logger.warning(f"SNBT 파서를 찾을 수 없음: {file_path}")
                 return False
 
             parser = parser_class(Path(file_path))
-            flat_data = await parser.parse()
+            en_us_data = await parser.parse()
 
-            if not isinstance(flat_data, dict):
+            if not isinstance(en_us_data, dict):
                 return False
 
             updated = False
+
+            # 번역 적용
             for key, translated_text in translations.items():
-                if key in flat_data and flat_data[key] != translated_text:
-                    flat_data[key] = translated_text
+                # 일반 키 처리
+                if ko_kr_data.get(key) != translated_text:
+                    ko_kr_data[key] = translated_text
                     updated = True
 
             if updated:
-                await parser.dump(flat_data)
+                # ko_kr 디렉토리 생성
+                ko_kr_dir = Path(ko_kr_path).parent
+                ko_kr_dir.mkdir(parents=True, exist_ok=True)
+
+                # ko_kr 파일 저장
+                ko_kr_parser = parser_class(
+                    Path(ko_kr_path), original_path=Path(file_path)
+                )
+                await ko_kr_parser.dump(ko_kr_data)
+
                 logger.debug(
-                    f"FTBQuests 언어 파일 번역 적용 완료: {Path(file_path).name}"
+                    f"FTBQuests ko_kr 파일 번역 적용 완료: {Path(ko_kr_path).name}"
                 )
                 return True
 
             logger.debug(
-                f"FTBQuests 언어 파일에 적용할 번역 변경 사항 없음: {Path(file_path).name}"
+                f"FTBQuests ko_kr 파일에 적용할 번역 변경 사항 없음: {Path(ko_kr_path).name}"
             )
             return False
 
         except Exception as e:
-            logger.error(f"FTBQuests 언어 파일 번역 적용 실패 ({file_path}): {e}")
+            logger.error(f"FTBQuests ko_kr 파일 번역 적용 실패: {e}")
             return False

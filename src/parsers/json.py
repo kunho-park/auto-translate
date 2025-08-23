@@ -40,7 +40,11 @@ class JSONParser(BaseParser):
     async def dump(self, data: Mapping[str, str]) -> None:
         """번역된 데이터를 JSON 형식으로 저장합니다."""
         # 원본 JSON 구조를 복원
-        async with aiofiles.open(self.path, encoding="utf-8", errors="replace") as f:
+        async with aiofiles.open(
+            self.original_path if self.original_path else self.path,
+            encoding="utf-8",
+            errors="replace",
+        ) as f:
             original_content = await f.read()
 
         try:

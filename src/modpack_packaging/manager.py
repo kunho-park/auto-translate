@@ -7,7 +7,7 @@
 import asyncio
 import logging
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict
 
 from .base import PackagingResult
 from .jar_modifier import JarModifierPackager
@@ -156,9 +156,6 @@ class PackageManager:
         """리소스팩 패키징 작업"""
         logger.info("리소스팩 패키징 시작")
 
-        # ZIP 생성 옵션 전달
-        create_zip = kwargs.get("create_zips", True)
-
         result = await self.resourcepack_builder.package(
             translated_files, output_dir, **kwargs
         )
@@ -169,9 +166,6 @@ class PackageManager:
     ) -> tuple[str, PackagingResult]:
         """모드팩 패키징 작업"""
         logger.info("모드팩 패키징 시작")
-
-        # ZIP 생성 옵션 전달
-        create_zip = kwargs.get("create_zips", True)
 
         result = await self.modpack_packager.package(
             translated_files, output_dir, **kwargs
@@ -184,9 +178,7 @@ class PackageManager:
         """JAR 파일 수정 패키징 작업"""
         logger.info("JAR 파일 수정 패키징 시작")
 
-        result = await self.jar_modifier.package(
-            translated_files, output_dir, **kwargs
-        )
+        result = await self.jar_modifier.package(translated_files, output_dir, **kwargs)
         return "jar_mods", result
 
     def _analyze_translated_files(

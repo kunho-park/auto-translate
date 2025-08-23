@@ -38,14 +38,16 @@ class SNBTParser(BaseParser):
         try:
             # 원본 SNBT 구조를 복원
             async with aiofiles.open(
-                self.path, encoding="utf-8", errors="replace"
+                self.original_path if self.original_path else self.path,
+                encoding="utf-8",
+                errors="replace",
             ) as f:
                 original_content = await f.read()
 
             original_data = slib.loads(original_content)
 
             # 번역된 값으로 원본 구조 업데이트
-            updated_data = self._unflatten_snbt(original_data, data)
+            updated_data = self._unflatten_snbt(original_data, flat_data=data)
 
             # & 문자 치환 적용
             processed_data = self._replace_ampersand(updated_data)

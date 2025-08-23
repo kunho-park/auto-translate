@@ -510,15 +510,15 @@ class ExtendedFilterManager(FilterManager):
         try:
             from .ftbquests import (
                 FTBQuestsChapterFilter,
+                FTBQuestsEnUsFilter,
                 FTBQuestsFilter,
-                FTBQuestsLangFilter,
                 FTBQuestsRewardTableFilter,
             )
 
             self.register_filter(FTBQuestsFilter())
             self.register_filter(FTBQuestsChapterFilter())
             self.register_filter(FTBQuestsRewardTableFilter())
-            self.register_filter(FTBQuestsLangFilter())
+            self.register_filter(FTBQuestsEnUsFilter())
         except ImportError:
             logger.warning("FTBQuests 필터를 로드할 수 없습니다.")
 

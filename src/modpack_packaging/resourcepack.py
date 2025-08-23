@@ -166,9 +166,11 @@ class ResourcePackBuilder(BasePackager):
             logger.info(f"모드 '{mod_id}' 처리 중... ({len(file_list)}개 파일)")
 
             # 같은 모드 ID의 파일들을 합치기
-            merged_content, file_extension = await self._merge_mod_files(file_list)
+            merged_content, file_extension, src_path = await self._merge_mod_files(
+                file_list
+            )
             if merged_content and await self._save_merged_mod_file(
-                mod_id, merged_content, resourcepack_dir, file_extension
+                mod_id, merged_content, resourcepack_dir, file_extension, src_path
             ):
                 file_count += 1
 
@@ -213,7 +215,7 @@ class ResourcePackBuilder(BasePackager):
 
         if merged_content:
             logger.info(f"병합 완료: 총 {len(merged_content)}개 번역 키")
-            return merged_content, file_extension
+            return merged_content, file_extension, src_path
         else:
             logger.warning("병합할 유효한 내용이 없습니다")
             return None, None
@@ -224,6 +226,7 @@ class ResourcePackBuilder(BasePackager):
         merged_content: Dict,
         resourcepack_dir: Path,
         file_extension: str,
+        src_path: Path,
     ) -> bool:
         """병합된 모드 파일을 리소스팩 구조로 저장합니다."""
         try:
@@ -249,7 +252,7 @@ class ResourcePackBuilder(BasePackager):
                 if not target_path.exists():
                     target_path.touch()
 
-                parser = parser_class(target_path)
+                parser = parser_class(target_path, original_path=src_path)
                 await parser.dump(merged_content)
 
             logger.info(
