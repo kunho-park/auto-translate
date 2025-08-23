@@ -225,7 +225,7 @@ class TranslationCompletionDialog:
         if packaging_output.exists():
             actions.append(
                 ft.TextButton(
-                    "결과 폴더",
+                    "결과 보기",
                     icon=ft.Icons.ARCHIVE,
                     on_click=lambda e,
                     path=output_dir_fixed: self._open_packaging_folder_and_close(path),
