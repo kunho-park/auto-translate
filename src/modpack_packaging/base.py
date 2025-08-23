@@ -73,11 +73,7 @@ class BasePackager(ABC):
             if part == f"{self.source_lang}.json":
                 parts[i] = f"{self.target_lang}.json"
                 break
-            elif (
-                part == self.source_lang
-                and i + 1 < len(parts)
-                and parts[i + 1].endswith(".json")
-            ):
+            elif part == self.source_lang:
                 parts[i] = self.target_lang
                 break
 

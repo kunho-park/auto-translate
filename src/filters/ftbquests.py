@@ -407,7 +407,7 @@ class FTBQuestsEnUsFilter(BaseFilter):
     def _get_ko_kr_path(self, en_us_path: str) -> str:
         """en_us 경로를 ko_kr 경로로 변환합니다."""
 
-        return en_us_path.replace("\\", "/").replace("/en_us/", "/ko_kr/")
+        return en_us_path.replace("\\", "/").replace("en_us", "ko_kr")
 
     async def _load_existing_ko_kr(self, ko_kr_path: str) -> Dict[str, str]:
         """기존 ko_kr 파일이 있으면 로드합니다."""
@@ -529,7 +529,6 @@ class FTBQuestsEnUsFilter(BaseFilter):
                 return False
 
             # 첫 번째 번역 항목에서 ko_kr 경로 추출
-            first_key = next(iter(translations.keys()))
             ko_kr_path = self._get_ko_kr_path(file_path)
 
             # 기존 ko_kr 데이터 로드
@@ -562,9 +561,7 @@ class FTBQuestsEnUsFilter(BaseFilter):
                 ko_kr_dir.mkdir(parents=True, exist_ok=True)
 
                 # ko_kr 파일 저장
-                ko_kr_parser = parser_class(
-                    Path(ko_kr_path), original_path=Path(file_path)
-                )
+                ko_kr_parser = parser_class(Path(file_path))
                 await ko_kr_parser.dump(ko_kr_data)
 
                 logger.debug(
