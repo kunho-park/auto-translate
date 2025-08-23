@@ -144,7 +144,12 @@ class JarModifierPackager(BasePackager):
     def _is_data_file(self, file_path: str) -> bool:
         """파일이 /data 폴더에 포함되는지 확인합니다."""
         path_parts = Path(file_path).parts
-        return "data" in [part.lower() for part in path_parts]
+        path_parts_lower = [part.lower() for part in path_parts]
+
+        # kubejs가 경로에 없는 경우에만 data 폴더 확인
+        if "kubejs" not in path_parts_lower:
+            return "data" in path_parts_lower
+        return False
 
     def _group_files_by_mod(
         self, data_files: Dict[str, str], mods_path: Path

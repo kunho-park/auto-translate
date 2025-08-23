@@ -676,7 +676,9 @@ class ModpackTranslator:
                 update_count += 1
 
             # 업데이트된 데이터를 파일로 저장
-            target_parser = parser_class(Path(target_path))
+            target_parser = parser_class(
+                Path(target_path), original_path=Path(source_path)
+            )
 
             # 출력 디렉토리 생성
             Path(target_path).parent.mkdir(parents=True, exist_ok=True)
