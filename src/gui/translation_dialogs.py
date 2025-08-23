@@ -225,22 +225,12 @@ class TranslationCompletionDialog:
         if packaging_output.exists():
             actions.append(
                 ft.TextButton(
-                    "패키징 결과 폴더",
+                    "결과 폴더",
                     icon=ft.Icons.ARCHIVE,
                     on_click=lambda e,
                     path=output_dir_fixed: self._open_packaging_folder_and_close(path),
                 )
             )
-
-        # 번역 파일 폴더 열기 버튼
-        actions.append(
-            ft.TextButton(
-                "번역 파일 폴더",
-                icon=ft.Icons.FOLDER_OPEN,
-                on_click=lambda e,
-                path=output_dir_fixed: self._open_output_folder_and_close(path),
-            )
-        )
 
         # 확인 버튼
         actions.append(
