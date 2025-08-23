@@ -214,7 +214,7 @@ class ResourcePackBuilder(BasePackager):
             return merged_content, file_extension, src_path
         else:
             logger.warning("병합할 유효한 내용이 없습니다")
-            return None, None
+            return None, None, None
 
     async def _save_merged_mod_file(
         self,
