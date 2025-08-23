@@ -130,13 +130,13 @@ class PackageManager:
                         logger.error(f"알 수 없는 결과 타입: {result}")
         else:
             # 순차 처리
-            if create_resourcepack and stats.get("mod_files", 0) > 0:
-                _, results["resourcepack"] = await self._package_resourcepack(
+            if create_modpack and stats.get("modpack_files", 0) > 0:
+                _, results["modpack"] = await self._package_modpack(
                     translated_files, output_dir, **kwargs
                 )
 
-            if create_modpack and stats.get("modpack_files", 0) > 0:
-                _, results["modpack"] = await self._package_modpack(
+            if create_resourcepack and stats.get("mod_files", 0) > 0:
+                _, results["resourcepack"] = await self._package_resourcepack(
                     translated_files, output_dir, **kwargs
                 )
 

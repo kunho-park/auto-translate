@@ -4,12 +4,19 @@
 Config, KubeJS 등의 파일들을 모드팩 형태로 패키징합니다.
 """
 
+import json
 import logging
 import zipfile
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import aiofiles
+
 from .base import BasePackager, PackagingResult
+from .ftb_quests_convert import (
+    check_ftbquests_translation_key_coverage,
+    convert_ftbquests_chapters,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -61,13 +68,97 @@ class ModpackPackager(BasePackager):
             # 모드팩 이름 기반 디렉토리명 생성
             modpack_name = kwargs.get("modpack_name", "Unknown")
             lang_name = self._get_language_name(self.target_lang)
+            resourcepack_dirname = f"{modpack_name}_{lang_name}_리소스팩"
             modpack_dirname = f"{modpack_name}_{lang_name}_덮어쓰기"
+
             modpack_dir = output_dir / modpack_dirname
             self._ensure_directory(modpack_dir)
+
+            resourcepack_dir = output_dir / resourcepack_dirname
+            self._ensure_directory(resourcepack_dir)
+
+            # ftbquests 파일 경로에서 ftbquests 폴더 경로 추출
+            source_ftbquests_folder = None
+            for file_path in translated_files.keys():
+                if "ftbquests" in Path(file_path).parts:
+                    # ftbquests로 split해서 경로 가져오기
+                    path_parts = Path(file_path).parts
+                    ftbquests_index = path_parts.index("ftbquests")
+                    source_ftbquests_folder = (
+                        Path(*path_parts[: ftbquests_index + 1]) / "quests" / "chapters"
+                    )
+                    break
 
             # 모드팩 파일들 분류 및 복사
             modpack_files = self._filter_modpack_files(translated_files)
             file_count = await self._copy_modpack_files(modpack_files, modpack_dir)
+
+            ftbquests_folder = (
+                modpack_dir / "config" / "ftbquests" / "quests" / "chapters"
+            )
+            ftbquests_lang_folder = (
+                modpack_dir / "config" / "ftbquests" / "quests" / "lang"
+            )
+
+            logger.debug(f"FTBQuests 폴더 확인: {ftbquests_folder}")
+            logger.debug(f"FTBQuests 언어 폴더 확인: {ftbquests_lang_folder}")
+
+            if ftbquests_folder.exists() and not ftbquests_lang_folder.exists():
+                logger.info("FTBQuests 번역키 변환 처리 시작")
+
+                if not await check_ftbquests_translation_key_coverage(ftbquests_folder):
+                    logger.info("FTBQuests 번역키 변환이 필요함")
+
+                    logger.debug(
+                        f"원본 FTBQuests 폴더에서 데이터 추출: {source_ftbquests_folder}"
+                    )
+                    source_ftbquests_data = await convert_ftbquests_chapters(
+                        source_ftbquests_folder, save=False
+                    )
+
+                    logger.debug(
+                        f"번역된 FTBQuests 폴더에서 데이터 추출: {ftbquests_folder}"
+                    )
+                    translated_ftbquests_data = await convert_ftbquests_chapters(
+                        ftbquests_folder
+                    )
+
+                    autotranslate_dir = (
+                        resourcepack_dir / "assets" / "autotranslate" / "lang"
+                    )
+                    logger.debug(f"자동번역 디렉토리 생성: {autotranslate_dir}")
+                    self._ensure_directory(autotranslate_dir)
+
+                    logger.debug("원본 텍스트 JSON 파일 생성 중")
+                    async with aiofiles.open(
+                        autotranslate_dir / "en_us.json", "w", encoding="utf-8"
+                    ) as f:
+                        await f.write(
+                            json.dumps(
+                                source_ftbquests_data, ensure_ascii=False, indent=2
+                            )
+                        )
+
+                    logger.debug("번역된 텍스트 JSON 파일 생성 중")
+                    async with aiofiles.open(
+                        autotranslate_dir / "ko_kr.json", "w", encoding="utf-8"
+                    ) as f:
+                        await f.write(
+                            json.dumps(
+                                translated_ftbquests_data,
+                                ensure_ascii=False,
+                                indent=2,
+                            )
+                        )
+
+                    logger.info("FTBQuests 리소스팩 생성 완료")
+                else:
+                    logger.info("FTBQuests는 이미 번역키로 변환되어 있음")
+            else:
+                if not ftbquests_folder.exists():
+                    logger.debug("FTBQuests 폴더가 존재하지 않음")
+                if ftbquests_lang_folder.exists():
+                    logger.debug("FTBQuests 언어 폴더가 이미 존재함")
 
             if file_count > 0:
                 result.success = True
