@@ -558,7 +558,12 @@ class ModpackTranslator:
             target_path = self._get_target_path(file_path, output_dir)
             korean_path = file_path.replace("en_us", "ko_kr").replace("en_US", "ko_KR")
 
-            if korean_path != target_path and Path(korean_path).exists():
+            if (
+                korean_path != file_path
+                and Path(korean_path).exists()
+                and "lang" in korean_path
+                and korean_path.endswith(".json")
+            ):
                 logger.debug(f"한국어 파일 경로: {korean_path}")
                 parser_class = BaseParser.get_parser_by_extension(
                     Path(korean_path).suffix.lower()
