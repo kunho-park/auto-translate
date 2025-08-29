@@ -116,6 +116,19 @@ class KubeJSFilter(BaseFilter):
 
         return False
 
+    def _escape_quotes_in_text(self, text: str, quote_char: str) -> str:
+        """텍스트 내부의 따옴표를 적절히 이스케이프합니다."""
+        if quote_char == '"':
+            # 큰따옴표 내부의 큰따옴표를 이스케이프
+            return text.replace('"', '\\"')
+        elif quote_char == "'":
+            # 작은따옴표 내부의 작은따옴표를 이스케이프
+            return text.replace("'", "\\'")
+        elif quote_char == "`":
+            # 백틱 내부의 백틱을 이스케이프
+            return text.replace("`", "\\`")
+        return text
+
     async def extract_translations(self, file_path: str) -> List[TranslationEntry]:
         """KubeJS JavaScript 파일에서 번역 대상 추출"""
         try:
@@ -311,7 +324,9 @@ class KubeJSFilter(BaseFilter):
             translation_key = f"{chunk_key}.{method_name}_{match.start()}"
             if translation_key in translations:
                 translated_text = translations[translation_key]
-                return f".{method_name}({quote_char}{translated_text}{quote_char})"
+                # 번역된 텍스트의 따옴표 이스케이프
+                escaped_text = self._escape_quotes_in_text(translated_text, quote_char)
+                return f".{method_name}({quote_char}{escaped_text}{quote_char})"
             return match.group(0)  # 번역이 없으면 원본 반환
 
         updated_content = self._display_pattern.sub(
@@ -333,7 +348,9 @@ class KubeJSFilter(BaseFilter):
             translation_key = f"{chunk_key}.{full_method}_{match.start()}"
             if translation_key in translations:
                 translated_text = translations[translation_key]
-                return f"{full_method}({quote_char}{translated_text}{quote_char})"
+                # 번역된 텍스트의 따옴표 이스케이프
+                escaped_text = self._escape_quotes_in_text(translated_text, quote_char)
+                return f"{full_method}({quote_char}{escaped_text}{quote_char})"
             return match.group(0)  # 번역이 없으면 원본 반환
 
         updated_content = self._text_component_pattern.sub(
@@ -360,7 +377,9 @@ class KubeJSFilter(BaseFilter):
 
             if translation_key in translations:
                 translated_text = translations[translation_key]
-                return f"{func_name}({first_arg}, {quote_char}{translated_text}{quote_char}{remaining_args})"
+                # 번역된 텍스트의 따옴표 이스케이프
+                escaped_text = self._escape_quotes_in_text(translated_text, quote_char)
+                return f"{func_name}({first_arg}, {quote_char}{escaped_text}{quote_char}{remaining_args})"
             return match.group(0)  # 번역이 없으면 원본 반환
 
         updated_content = self._second_arg_pattern.sub(

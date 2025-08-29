@@ -556,6 +556,18 @@ class ModpackTranslator:
 
             # 출력 경로 결정
             target_path = self._get_target_path(file_path, output_dir)
+            korean_path = file_path.replace("en_us", "ko_kr").replace("en_US", "ko_KR")
+
+            if korean_path != target_path and Path(korean_path).exists():
+                logger.debug(f"한국어 파일 경로: {korean_path}")
+                parser_class = BaseParser.get_parser_by_extension(
+                    Path(korean_path).suffix.lower()
+                )
+                if parser_class:
+                    parser = parser_class(Path(korean_path))
+                    data = await parser.parse()
+                    for key, value in data.items():
+                        file_translations[key] = value
 
             # 파일 업데이트 (출력 디렉토리가 지정된 경우 타겟 파일에서 읽기)
             if output_dir:
