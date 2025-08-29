@@ -80,8 +80,9 @@ class TermMeaning(BaseModel):
     """A single meaning for a term, with context."""
 
     translation: str = Field(description="Translated term")
-    context: str = Field(
-        description="A very concise snippet of the surrounding text (under 10 words) to differentiate its meaning"
+    context: Optional[str] = Field(
+        default="Translation",
+        description="A very concise snippet of the surrounding text (under 10 words) to differentiate its meaning",
     )
 
 
@@ -133,7 +134,8 @@ class QualityIssue(BaseModel):
     severity: str = Field(description="심각도 (low, medium, high)")
     description: str = Field(description="문제에 대한 설명")
     suggested_fix: str = Field(
-        description="수정 제안. 제안할 내용이 없으면 빈 문자열로 설정합니다.", default=""
+        description="수정 제안. 제안할 내용이 없으면 빈 문자열로 설정합니다.",
+        default="",
     )
 
 
