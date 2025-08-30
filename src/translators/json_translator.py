@@ -44,7 +44,6 @@ from .models import (
     GlossaryEntry,
     QualityIssue,
     QualityReview,
-    SimpleGlossaryTerm,
     TermMeaning,
     TranslatedItem,
     TranslationPair,
@@ -536,12 +535,12 @@ async def _extract_terms_from_chunk_worker_with_progress(
                                 result = Glossary(**tool_call["args"])
                                 # 성공 시 진행률 콜백 호출
                                 if progress_callback:
-                                    success_msg = f"청크 {chunk_idx + 1}/{total_chunks} 완료"
+                                    success_msg = (
+                                        f"청크 {chunk_idx + 1}/{total_chunks} 완료"
+                                    )
                                     if attempt > 0:
                                         success_msg += f" (재시도 {attempt}회 후 성공)"
-                                    success_msg += (
-                                        f" - {len(result.terms) if result else 0}개 용어 발견"
-                                    )
+                                    success_msg += f" - {len(result.terms) if result else 0}개 용어 발견"
 
                                     progress_callback(
                                         "🔍 JSON 청크 분석 중",
@@ -551,7 +550,9 @@ async def _extract_terms_from_chunk_worker_with_progress(
                                     )
 
                                 if attempt > 0:
-                                    logger.info(f"✅ 청크 {chunk_idx + 1} 용어 추출 재시도 성공")
+                                    logger.info(
+                                        f"✅ 청크 {chunk_idx + 1} 용어 추출 재시도 성공"
+                                    )
 
                                 return result or Glossary(terms=[])
                             except Exception as e:
@@ -766,7 +767,9 @@ async def _translate_chunk_worker_with_progress(
                             f"청크 {chunk_num}: API 키 '{client_info['key_id']}' 사용"
                         )
                     else:
-                        logger.error(f"청크 {chunk_num}: 사용 가능한 API 키가 없습니다.")
+                        logger.error(
+                            f"청크 {chunk_num}: 사용 가능한 API 키가 없습니다."
+                        )
                         return []
                 else:
                     current_llm = llm
@@ -1275,7 +1278,9 @@ async def _translate_single_item_worker(
                                     return valid_translations
                             except Exception as e:
                                 last_error = str(e)
-                                logger.warning(f"TranslationResult 파싱 오류 (시도 {attempt + 1}): {e}")
+                                logger.warning(
+                                    f"TranslationResult 파싱 오류 (시도 {attempt + 1}): {e}"
+                                )
                                 # 재시도를 위해 루프 계속
                 else:
                     last_error = "응답 없음"
@@ -2021,10 +2026,12 @@ async def _review_chunk_worker(
 
                 prompt = quality_review_prompt(target_language, review_text)
                 if attempt > 0 and last_error:
-                    prompt += f"\n\n<retry_instruction>\nPrevious attempt failed with a parsing error: {last_error}\nPlease ensure your response strictly adheres to the QualityReview schema, especially the `suggested_fix` field which must be a string (use an empty string `\"\"` if you have no suggestion).\n</retry_instruction>"
+                    prompt += f'\n\n<retry_instruction>\nPrevious attempt failed with a parsing error: {last_error}\nPlease ensure your response strictly adheres to the QualityReview schema, especially the `suggested_fix` field which must be a string (use an empty string `""` if you have no suggestion).\n</retry_instruction>'
 
                 # LLM 호출 - QualityReview 도구 바인딩
-                llm_with_tools = current_llm.bind_tools([QualityReview], tool_choice="any")
+                llm_with_tools = current_llm.bind_tools(
+                    [QualityReview], tool_choice="any"
+                )
                 response = await llm_with_tools.ainvoke(prompt)
 
                 # 응답 파싱 - QualityReview에서 개별 QualityIssue들 추출
@@ -2053,7 +2060,9 @@ async def _review_chunk_worker(
 
             except Exception as exc:
                 last_error = str(exc)
-                logger.error(f"청크 {chunk_idx + 1} 품질 검토 실패 (시도 {attempt + 1}): {exc}")
+                logger.error(
+                    f"청크 {chunk_idx + 1} 품질 검토 실패 (시도 {attempt + 1}): {exc}"
+                )
 
                 # 다중 API 키 사용 시 해당 키의 실패를 명시적으로 기록
                 if client_info and state.get("multi_llm_manager"):
@@ -2275,19 +2284,15 @@ async def quality_based_retranslation_node(state: TranslatorState) -> Translator
                             logger.warning(
                                 f"번역 결과가 ID 패턴인 항목 발견: {obj} -> {translated_text}"
                             )
-                            original_text = state["id_to_text_map"].get(obj, obj)
-                            logger.warning(
-                                f"원본 텍스트로 복원: {obj} -> {original_text}"
-                            )
-                            return original_text
+                            logger.warning(f"기존 텍스트 유지: {obj}")
+                            return obj
                         return translated_text
                     # ID 패턴이지만 번역이 없는 경우 경고
                     elif re.match(r"^T\d{3,}$", obj):
                         logger.warning(f"번역되지 않은 ID 발견: {obj}")
-                        # 원본 텍스트로 복원 시도
-                        original_text = state["id_to_text_map"].get(obj, obj)
-                        logger.warning(f"원본 텍스트로 복원: {obj} -> {original_text}")
-                        return original_text
+                        # 기존 텍스트 유지
+                        logger.warning(f"기존 텍스트 유지: {obj}")
+                        return obj
                 return obj
 
             state["translated_json"] = replace(state["processed_json"])
@@ -2420,7 +2425,7 @@ async def _quality_retranslate_chunk_worker(
                                         continue
 
                                     translations.append(item)
-                                
+
                                 # 플레이스홀더 검증
                                 valid_translations = []
                                 for translation in translations:
@@ -2438,7 +2443,9 @@ async def _quality_retranslate_chunk_worker(
                                     ):
                                         valid_translations.append(translation)
                                     else:
-                                        logger.debug(f"플레이스홀더 검증 실패: {translation.id}")
+                                        logger.debug(
+                                            f"플레이스홀더 검증 실패: {translation.id}"
+                                        )
 
                                 # 모든 번역이 유효하면 성공
                                 if len(valid_translations) == len(chunk):
@@ -2456,7 +2463,9 @@ async def _quality_retranslate_chunk_worker(
                                         return valid_translations
                             except Exception as e:
                                 last_error = str(e)
-                                logger.warning(f"TranslationResult 파싱 오류 (시도 {attempt + 1}): {e}")
+                                logger.warning(
+                                    f"TranslationResult 파싱 오류 (시도 {attempt + 1}): {e}"
+                                )
 
             except Exception as exc:
                 last_error = str(exc)

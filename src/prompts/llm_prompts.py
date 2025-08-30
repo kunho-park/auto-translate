@@ -475,30 +475,52 @@ Carefully review the provided information for each item and produce a corrected 
 - **Process ALL items that need fixing, not just the first one.**
 </primary_objective>
 
+<text_id_preservation_critical>
+- **ABSOLUTELY CRITICAL**: Never lose, omit, or incorrectly input any text ID.
+- **MANDATORY**: Each corrected translation MUST include the exact text ID from the input (e.g., "T001", etc).
+- **ID VERIFICATION**: Before submitting, double-check that every input ID has a corresponding output with the EXACT same ID.
+- **ZERO TOLERANCE**: Missing or incorrect IDs will cause complete system failure.
+- **STRICT MATCHING**: The ID in your TranslatedItem must match the input ID character-for-character.
+</text_id_preservation_critical>
+
 <placeholder_handling_critical>
 - Placeholder errors are common. Double-check that your corrected translation has the perfect count and order of all placeholders ([PXXX], [NEWLINE], [S]).
 </placeholder_handling_critical>
+
+<anti_regression_measures>
+- **MANDATORY**: Every corrected translation MUST be in {target_language}, not the original language.
+- **NEVER revert to untranslated text**: If the issue is with translation quality, improve the translation, don't revert to the original English.
+- **Quality over regression**: A slightly awkward but translated text is better than reverting to untranslated English.
+- **Translation verification**: Before submitting, verify each corrected item is properly translated into {target_language}.
+- **Common regression scenarios to avoid**:
+  - Reverting "Untranslated" issues back to English instead of providing proper translation
+  - Fixing placeholder issues by removing translation and keeping original text
+  - Addressing consistency issues by reverting to English terms instead of using correct translated terms
+</anti_regression_measures>
 
 <style_guide>
 - The corrected translation must be fluent and natural in {target_language}.
 - Do not add English in parentheses.
 - **Minimize keeping English text as-is**: Only preserve English for Minecraft usernames. All other terms should be translated.
+- **When fixing "Untranslated" issues**: Provide a proper translation in {target_language}, do not keep the English text.
+- **When fixing "Unnecessary_English" issues**: Replace English terms with appropriate {target_language} translations.
 </style_guide>
 
 <tool_usage_mandatory>
 - You MUST call the 'TranslationResult' tool ONCE with ALL corrected items.
 - All items in the input must be included in the single tool call.
 - **Work through ALL items and submit them together.**
+- **CRITICAL**: Ensure every TranslatedItem has the correct ID that exactly matches the input.
 </tool_usage_mandatory>
 
 <retranslation_reminder>
 **Step-by-step process for multiple items:**
 1. Fix ALL items that need correction
-2. Create TranslatedItem objects for each fixed translation
+2. Create TranslatedItem objects for each fixed translation with the EXACT original ID
 3. Call TranslationResult tool ONCE with all corrected items
 4. Do not make multiple tool calls
 
-**Correct approach:** Submit all corrections in one TranslationResult call.
+**Correct approach:** Submit all corrections in one TranslationResult call with precise ID matching.
 </retranslation_reminder>
 
 <absolute_donts>
@@ -507,7 +529,21 @@ Carefully review the provided information for each item and produce a corrected 
 - **Do not** alter placeholders.
 - **Do not** stop processing after only one item when multiple items need fixing.
 - **Do not** keep English terms as-is unless they are specifically Minecraft usernames.
+- **Do not** revert translations back to English text when fixing quality issues.
+- **Do not** provide untranslated content as a "fix" for translation problems.
+- **ABSOLUTELY DO NOT** lose, omit, or incorrectly input any text ID.
+- **ABSOLUTELY DO NOT** change or modify any text ID from the input.
 </absolute_donts>
+
+<final_check>
+Before calling the TranslationResult tool, verify:
+1. All corrected translations are in {target_language}
+2. No item has been reverted to its original English text
+3. All specified quality issues have been addressed
+4. No new translation errors have been introduced
+5. **CRITICAL**: Every input ID is present in the output with exact matching
+6. **CRITICAL**: No IDs have been lost, omitted, or incorrectly typed
+</final_check>
 </rules>"""
 
 
