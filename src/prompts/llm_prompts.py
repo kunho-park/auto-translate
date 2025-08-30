@@ -323,6 +323,10 @@ This is a high-stakes final attempt. You must translate the text to {language} w
 </chain_of_thought>
 </instructions>
 
+<text_id>
+{text_id}
+</text_id>
+
 <input_text>
 {original_text}
 </input_text>

@@ -1265,6 +1265,7 @@ async def _translate_single_item_worker(
                                     elif PlaceholderManager.validate_placeholder_preservation(
                                         original_text, item.translated
                                     ):
+                                        item.id = tid
                                         logger.info(
                                             f"✅ 최종 번역 재시도 성공 (시도 {attempt + 1}): {tid} -> {item.translated[:50]}..."
                                         )
@@ -1443,7 +1444,7 @@ def rebuild_json_node(state: TranslatorState) -> TranslatorState:  # noqa: D401
                     return translated_text
                 # ID 패턴이지만 번역이 없는 경우 경고
                 elif re.match(r"^T\d{3,}$", obj):
-                    logger.warning(f"번역되지 않은 ID 발견: {obj}")
+                    logger.warning(f"번역되지 않은 ID 발견 (번역 실패한것들): {obj}")
                     # 원본 텍스트로 복원 시도
                     original_text = state["id_to_text_map"].get(obj, obj)
                     logger.warning(f"원본 텍스트로 복원: {obj} -> {original_text}")
@@ -1518,11 +1519,11 @@ def should_retry(state: TranslatorState) -> str:  # noqa: D401
             item["reason"] == "동일한 결과" for item in untranslated_items_with_reasons
         )
 
-        if all_same_result:
-            logger.warning(
-                f"모든 재시도({len(untranslated_items)})가 '동일한 결과'이므로 재시도를 건너뜁니다."
-            )
-            return "complete"  # 재시도 대신 완료로
+        # if all_same_result:
+        #     logger.warning(
+        #         f"모든 재시도({len(untranslated_items)})가 '동일한 결과'이므로 재시도를 건너뜁니다."
+        #     )
+        #     return "complete"  # 재시도 대신 완료로
 
         logger.info(
             _m(
@@ -2284,15 +2285,19 @@ async def quality_based_retranslation_node(state: TranslatorState) -> Translator
                             logger.warning(
                                 f"번역 결과가 ID 패턴인 항목 발견: {obj} -> {translated_text}"
                             )
-                            logger.warning(f"기존 텍스트 유지: {obj}")
-                            return obj
+                            original_text = state["id_to_text_map"].get(obj, obj)
+                            logger.warning(
+                                f"원본 텍스트로 복원: {obj} -> {original_text}"
+                            )
+                            return original_text
                         return translated_text
                     # ID 패턴이지만 번역이 없는 경우 경고
                     elif re.match(r"^T\d{3,}$", obj):
                         logger.warning(f"번역되지 않은 ID 발견: {obj}")
-                        # 기존 텍스트 유지
-                        logger.warning(f"기존 텍스트 유지: {obj}")
-                        return obj
+                        # 원본 텍스트로 복원 시도
+                        original_text = state["id_to_text_map"].get(obj, obj)
+                        logger.warning(f"원본 텍스트로 복원: {obj} -> {original_text}")
+                        return original_text
                 return obj
 
             state["translated_json"] = replace(state["processed_json"])
