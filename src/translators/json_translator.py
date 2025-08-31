@@ -1250,7 +1250,13 @@ async def _translate_single_item_worker(
                     for tool_call in response.tool_calls:
                         if tool_call["name"] == "TranslationResult":
                             try:
-                                result = TranslationResult(**tool_call["args"])
+                                # args에서 id 인자가 없다면 강제로 추가
+                                args = tool_call["args"]
+                                if "translations" in args:
+                                    for translation in args["translations"]:
+                                        if "id" not in translation:
+                                            translation["id"] = tid
+                                result = TranslationResult(**args)
                                 valid_translations = []
                                 for item in result.translations:
                                     # 최종 검증: ID 패턴이 아니고 플레이스홀더가 보존되었는지 확인

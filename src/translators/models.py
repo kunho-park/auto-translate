@@ -72,7 +72,7 @@ class TranslatorState(TypedDict):
 class TranslatedItem(BaseModel):
     """Translation result item (ID based)."""
 
-    id: str = Field(description="Unique ID of the text to translate", default="")
+    id: str = Field(description="Unique ID of the text to translate")
     translated: str = Field(description="Translated text (Do not return ID)")
 
 
