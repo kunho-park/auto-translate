@@ -52,8 +52,8 @@ You must follow a Chain-of-Thought process to ensure the highest quality transla
 - Integrate translated terms smoothly into the sentence structure.
 - Bad example: "[리바이어던 블레이드]로 [좀비 주민]에게 [나약함]을(를) 부여하세요."
 - Good example: "리바이어던 블레이드로 좀비 주민에게 나약함을 부여하세요."
-- **Minimize keeping English text as-is**: Only preserve English for Minecraft usernames. All other terms, including item names, block names, mob names, and technical terms should be translated into {language}.
-- **Translate everything possible**: Even technical terms, mod names, and game mechanics should be translated unless they are specifically Minecraft usernames.
+- **Translate everything**: All terms including proper nouns, item names, block names, mob names, mod names, and technical terms should be translated into {language}. Only preserve English for actual Minecraft player usernames (e.g., "Steve", "Alex").
+- **Proper noun translation**: Even proper nouns should be translated when they have clear meaning or can be naturally adapted to {language}. For example, "Iron Sword" should become "철검", "Fire Dragon" should become "화염 드래곤".
 </style_guide>
 
 <tool_usage_mandatory>
@@ -78,12 +78,12 @@ You must follow a Chain-of-Thought process to ensure the highest quality transla
 </workflow_reminder>
 
 <absolute_donts>
-- **Do not** leave any text untranslated except for Minecraft usernames.
+- **Do not** leave any text untranslated except for actual Minecraft player usernames.
 - **Do not** output translations directly. Use the specified tool.
 - **Do not** alter placeholder content (e.g., changing [P001] to [P001번]).
 - **Do not** include glossary context like "(Context: ...)" in the final translation.
 - **Do not** make multiple tool calls. Submit all translations in one TranslationResult call.
-- **Do not** keep English terms as-is unless they are specifically Minecraft usernames.
+- **Do not** keep English proper nouns as-is unless they are specifically Minecraft player usernames.
 </absolute_donts>
 </rules>"""
 
@@ -134,8 +134,8 @@ You must not repeat these mistakes.
 <style_guide>
 - Do not add the original English text in parentheses. E.g., "마법사" is correct, "마법사 (Wizard)" is incorrect.
 - Integrate translated terms smoothly into the sentence structure.
-- **Minimize keeping English text as-is**: Only preserve English for Minecraft usernames. All other terms should be translated into {language}.
-- **Translate everything possible**: Item names, block names, mob names, technical terms, and mod names should all be translated unless they are Minecraft usernames.
+- **Translate everything**: All terms including proper nouns, item names, block names, mob names, mod names, and technical terms should be translated into {language}. Only preserve English for actual Minecraft player usernames.
+- **Proper noun translation**: Even proper nouns should be translated when they have clear meaning or can be naturally adapted to {language}.
 </style_guide>
 
 <tool_usage_mandatory>
@@ -160,12 +160,12 @@ You must not repeat these mistakes.
 </multiple_items_workflow>
 
 <absolute_donts>
-- **Do not** leave any text untranslated except for Minecraft usernames.
+- **Do not** leave any text untranslated except for actual Minecraft player usernames.
 - **Do not** output translations directly. Use the specified tool.
 - **Do not** alter placeholder content.
 - **Do not** include glossary context like "(Context: ...)" in the final translation.
 - **Do not** make multiple tool calls. Submit all translations in one TranslationResult call.
-- **Do not** keep English terms as-is unless they are specifically Minecraft usernames.
+- **Do not** keep English proper nouns as-is unless they are specifically Minecraft player usernames.
 </absolute_donts>
 </rules>"""
 
@@ -182,7 +182,7 @@ Analyze the input text and identify terms that are likely to be repeated, are do
 1.  **Scan Completely**: Read through the entire text to identify ALL candidate terms.
 2.  **Filter**: Select all the important terms. Prioritize nouns, proper nouns, and unique verbs. Exclude generic words.
 3.  **Define Context**: For each term, define its context (e.g., "Item", "Block", "Enemy", "UI Element", "Skill").
-4.  **Translate**: Provide the standard {language} translation for each term.
+4.  **Translate**: Provide the standard {language} translation for each term, including proper nouns.
 5.  **Create Glossary Entries**: Group terms and create GlossaryEntry objects with TermMeaning objects.
 6.  **Tool Call**: Call the 'Glossary' tool with ALL terms at once.
 </workflow>
@@ -201,7 +201,7 @@ Analyze the input text and identify terms that are likely to be repeated, are do
 - **Importance**: Is the term central to gameplay or understanding?
 - **Reusability**: Is the term likely to appear in other parts of the mod?
 - **Specificity**: Is it a specific name (e.g., "Netherite Sword") rather than a generic category (e.g., "Sword")?
-- **Translation Priority**: Focus on terms that should be consistently translated rather than kept in English (except Minecraft usernames).
+- **Translation Priority**: Focus on terms that should be consistently translated, including proper nouns, rather than kept in English (except actual Minecraft player usernames).
 </term_selection_criteria>
 
 <context_guidelines>
@@ -264,7 +264,7 @@ Re-analyze the input text to extract key terms. The most critical part of this r
 1.  **Scan Completely**: Read through the entire text to identify ALL candidate terms.
 2.  **Filter**: Select all the important terms.
 3.  **Define Context**: For each term, define its context. THIS IS A CRITICAL STEP.
-4.  **Translate**: Provide the standard {language} translation.
+4.  **Translate**: Provide the standard {language} translation, including proper nouns.
 5.  **Tool Call**: For each term, call the 'SimpleGlossaryTerm' tool. Ensure all fields (`original`, `translation`, `context`) are non-empty strings.
 6.  **Continue**: Process every single relevant term found in the text.
 </workflow>
@@ -316,7 +316,7 @@ This is a high-stakes final attempt. You must translate the text to {language} w
 
 <chain_of_thought>
 1.  **Analyze Source**: Scrutinize the original text and the list of required placeholders. Note the exact sequence and number of placeholders.
-2.  **Translate Core Text**: Translate the non-placeholder parts of the text into natural {language}.
+2.  **Translate Core Text**: Translate the non-placeholder parts of the text into natural {language}, including all proper nouns.
 3.  **Reconstruct with Placeholders**: Meticulously reconstruct the translated sentence, inserting each placeholder from the `<required_placeholders>` list into its semantically correct position.
 4.  **Verify**: Cross-check the final translation against the `<required_placeholders>` list one last time to confirm that every placeholder is present and correctly ordered.
 5.  **Tool Call**: Call the 'TranslatedItem' tool with the result.
@@ -350,7 +350,7 @@ This is the ground truth. The final translation's placeholders must match this l
 <style_guide>
 - Translate naturally, making the final text read fluently in {language}.
 - Do not add English in parentheses.
-- **Minimize keeping English text as-is**: Only preserve English for Minecraft usernames. All other terms should be translated.
+- **Translate everything**: All terms including proper nouns should be translated into {language}. Only preserve English for actual Minecraft player usernames.
 </style_guide>
 
 <tool_usage_mandatory>
@@ -361,8 +361,8 @@ This is the ground truth. The final translation's placeholders must match this l
 <absolute_donts>
 - **Do not** deviate from the `<required_placeholders>` list.
 - **Do not** translate the content of placeholders.
-- **Do not** leave the text untranslated except for Minecraft usernames.
-- **Do not** keep English terms as-is unless they are specifically Minecraft usernames.
+- **Do not** leave the text untranslated except for actual Minecraft player usernames.
+- **Do not** keep English proper nouns as-is unless they are specifically Minecraft player usernames.
 </absolute_donts>
 </rules>
 """
@@ -397,7 +397,7 @@ For each translated item, compare the original text with its {target_language} t
 - **Consistency**: Are glossary terms used correctly and consistently?
 - **Completeness**: Is any part of the original text omitted in the translation?
 - **Style**: Does the translation fit the expected tone (e.g., game dialogue, UI text)?
-- **Translation Coverage**: Are English terms unnecessarily kept as-is when they should be translated (except for Minecraft usernames)?
+- **Translation Coverage**: Are English terms unnecessarily kept as-is when they should be translated (including proper nouns, except for actual Minecraft player usernames)?
 </review_criteria>
 
 <rules>
@@ -433,13 +433,13 @@ For each translated item, compare the original text with its {target_language} t
 - `Consistency`: A glossary term is translated incorrectly.
 - `Omission`: Content from the original is missing.
 - `Grammar`: Spelling or grammar errors.
-- `Untranslated`: The text is still in the original language (except for Minecraft usernames).
-- `Unnecessary_English`: English terms are kept as-is when they should be translated.
+- `Untranslated`: The text is still in the original language (except for actual Minecraft player usernames).
+- `Unnecessary_English`: English terms (including proper nouns) are kept as-is when they should be translated.
 </issue_types>
 
 <severity_guidelines>
 - `high`: Critical error that breaks the game or severely alters meaning (e.g., placeholder error, major mistranslation).
-- `medium`: Noticeable error that makes the text awkward or slightly incorrect (e.g., unnatural phrasing, inconsistency, unnecessary English).
+- `medium`: Noticeable error that makes the text awkward or slightly incorrect (e.g., unnatural phrasing, inconsistency, unnecessary English including proper nouns).
 - `low`: Minor error that doesn't impact understanding (e.g., typo, minor punctuation issue).
 </severity_guidelines>
 </rules>"""
@@ -505,9 +505,9 @@ Carefully review the provided information for each item and produce a corrected 
 <style_guide>
 - The corrected translation must be fluent and natural in {target_language}.
 - Do not add English in parentheses.
-- **Minimize keeping English text as-is**: Only preserve English for Minecraft usernames. All other terms should be translated.
+- **Translate everything**: All terms including proper nouns should be translated into {target_language}. Only preserve English for actual Minecraft player usernames.
 - **When fixing "Untranslated" issues**: Provide a proper translation in {target_language}, do not keep the English text.
-- **When fixing "Unnecessary_English" issues**: Replace English terms with appropriate {target_language} translations.
+- **When fixing "Unnecessary_English" issues**: Replace English terms (including proper nouns) with appropriate {target_language} translations.
 </style_guide>
 
 <tool_usage_mandatory>
@@ -532,7 +532,7 @@ Carefully review the provided information for each item and produce a corrected 
 - **Do not** introduce new errors.
 - **Do not** alter placeholders.
 - **Do not** stop processing after only one item when multiple items need fixing.
-- **Do not** keep English terms as-is unless they are specifically Minecraft usernames.
+- **Do not** keep English terms (including proper nouns) as-is unless they are specifically actual Minecraft player usernames.
 - **Do not** revert translations back to English text when fixing quality issues.
 - **Do not** provide untranslated content as a "fix" for translation problems.
 - **ABSOLUTELY DO NOT** lose, omit, or incorrectly input any text ID.

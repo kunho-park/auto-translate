@@ -308,54 +308,37 @@ class ModpackTranslator:
         self, entries: List, translation_cache: Dict[str, str]
     ):
         """
-        번역 항목들을 통합하고, 번역 캐시를 사용해 이미 번역된 항목을 제외합니다.
+        번역 항목들을 통합합니다.
         """
         logger.info(
             f"통합 처리 시작: {len(entries)}개 항목, 캐시 크기: {len(translation_cache)}개"
         )
 
-        # 원본 텍스트를 기준으로 그룹화하여 중복 번역 방지
-        text_groups = {}
+        # 캐시를 확인하며 번역 대상 데이터 생성
+        skipped_count = 0
         for entry in entries:
             text = entry.original_text if entry.original_text else ""
             if not text:
                 continue
 
-            if text not in text_groups:
-                text_groups[text] = []
-            text_groups[text].append(entry)
-
-        logger.info(f"고유한 원본 텍스트 {len(text_groups)}개로 그룹화 완료")
-
-        # 캐시를 확인하며 번역 대상 데이터 생성
-        skipped_count = 0
-        for text, group in text_groups.items():
-            # 번역 캐시에 있는지 확인
-            if text in translation_cache:
-                skipped_count += 1
-                continue  # 캐시에 있으면 건너뛰기
-
-            # 우선순위가 가장 높은 항목을 대표로 선택
-            group.sort(key=lambda x: x.priority, reverse=True)
-            best_entry = group[0]
-
-            # 파일 경로와 원본 키를 조합하여 고유 ID 생성
-            # (나중에 번역 결과를 다시 파일에 적용하기 위해 필요)
             try:
-                relative_path = Path(best_entry.file_path).relative_to(
+                relative_path = Path(entry.file_path).relative_to(
                     Path(self.modpack_path)
                 )
                 file_identifier = str(relative_path).replace("\\", "/")
             except ValueError:
-                file_identifier = str(Path(best_entry.file_path)).replace("\\", "/")
+                file_identifier = str(Path(entry.file_path)).replace("\\", "/")
 
-            unique_id = f"{file_identifier}|{best_entry.key}"
+            unique_id = f"{file_identifier}|{entry.key}"
 
             # 번역 대상 데이터에 추가
             self.integrated_data[unique_id] = text
 
-            # 원본 위치 추적 정보 저장 (해당 텍스트를 사용하는 모든 위치)
-            self.translation_map[unique_id] = [
+            # 원본 위치 추적 정보 저장
+            if unique_id not in self.translation_map:
+                self.translation_map[unique_id] = []
+
+            self.translation_map[unique_id].append(
                 {
                     "file_path": entry.file_path,
                     "file_type": entry.file_type,
@@ -363,8 +346,7 @@ class ModpackTranslator:
                     "priority": entry.priority,
                     "original_key": entry.key,
                 }
-                for entry in group
-            ]
+            )
 
         logger.info(
             f"통합 완료: {len(self.integrated_data)}개 항목 번역 필요 (캐시로 인해 {skipped_count}개 건너뜀)"
@@ -428,7 +410,6 @@ class ModpackTranslator:
             final_fallback_max_retries=final_fallback_max_retries,
             max_quality_retries=max_quality_retries,
         )
-
         # 결과가 문자열인 경우 JSON으로 파싱
         if isinstance(translated_result, str):
             translated_result = json.loads(translated_result)
