@@ -118,7 +118,9 @@ class ResourcePackBuilder(BasePackager):
             return True
 
         # JAR 파일에서 추출된 assets 파일들
-        if "assets" in path_lower and "lang" in path_lower:
+        if "assets" in path_lower and (
+            "lang" in path_lower or "patchouli_books" in path_lower
+        ):
             return True
 
         return False
@@ -143,7 +145,7 @@ class ResourcePackBuilder(BasePackager):
     ) -> int:
         """모드 파일들을 리소스팩 구조로 복사합니다."""
         file_count = 0
-        mod_assets = {}  # {mod_id: [파일들]}
+        mod_assets = {}  # {mod_id: {'lang': [파일들], 'patchouli_books': [파일들]}}
 
         # 모드별로 파일들 그룹화
         for original_path, translated_path in mod_files.items():
@@ -153,29 +155,57 @@ class ResourcePackBuilder(BasePackager):
                 continue
 
             if mod_id not in mod_assets:
-                mod_assets[mod_id] = []
+                mod_assets[mod_id] = {"lang": [], "patchouli_books": []}
 
-            mod_assets[mod_id].append((original_path, translated_path))
+            # 파일 타입에 따라 분류
+            if "patchouli_books" in original_path.lower():
+                mod_assets[mod_id]["patchouli_books"].append(
+                    (original_path, translated_path)
+                )
+            else:
+                mod_assets[mod_id]["lang"].append((original_path, translated_path))
 
         # 각 모드별로 assets 구조 생성
-        for mod_id, file_list in mod_assets.items():
-            logger.info(f"모드 '{mod_id}' 처리 중... ({len(file_list)}개 파일)")
+        for mod_id, file_groups in mod_assets.items():
+            logger.info(f"모드 '{mod_id}' 처리 중...")
 
-            # 같은 모드 ID의 파일들을 합치기
-            merged_content, file_extension, src_path = await self._merge_mod_files(
-                file_list
-            )
-            if merged_content and await self._save_merged_mod_file(
-                mod_id, merged_content, resourcepack_dir, file_extension, src_path
-            ):
-                file_count += 1
+            # lang 파일들 처리
+            if file_groups["lang"]:
+                logger.info(f"  - lang 파일 {len(file_groups['lang'])}개 처리")
+                merged_content, file_extension, src_path = await self._merge_mod_files(
+                    file_groups["lang"]
+                )
+                if merged_content and await self._save_merged_mod_file(
+                    mod_id,
+                    merged_content,
+                    resourcepack_dir,
+                    file_extension,
+                    src_path,
+                    "lang",
+                ):
+                    file_count += 1
+
+            # patchouli_books 파일들 처리
+            if file_groups["patchouli_books"]:
+                logger.info(
+                    f"  - patchouli_books 파일 {len(file_groups['patchouli_books'])}개 처리"
+                )
+                for original_path, translated_path in file_groups["patchouli_books"]:
+                    if await self._copy_patchouli_file(
+                        original_path, translated_path, mod_id, resourcepack_dir
+                    ):
+                        file_count += 1
 
         logger.info(f"총 {len(mod_assets)}개 모드, {file_count}개 파일 처리 완료")
         return file_count
 
-    async def _merge_mod_files(self, file_list: list) -> tuple[Optional[Dict], str]:
+    async def _merge_mod_files(
+        self, file_list: list
+    ) -> tuple[Optional[Dict], str, Path]:
         """같은 모드 ID의 여러 파일들을 하나로 합칩니다."""
         merged_content = {}
+        file_extension = None
+        src_path = None
 
         for original_path, translated_path in file_list:
             try:
@@ -223,11 +253,13 @@ class ResourcePackBuilder(BasePackager):
         resourcepack_dir: Path,
         file_extension: str,
         src_path: Path,
+        file_type: str = "lang",
     ) -> bool:
         """병합된 모드 파일을 리소스팩 구조로 저장합니다."""
         try:
-            assets_dir = resourcepack_dir / "assets" / mod_id / "lang"
+            assets_dir = resourcepack_dir / "assets" / mod_id / file_type
             self._ensure_directory(assets_dir)
+
             # 언어 파일명 변환 (파서 확장자 기반)
             # .lang 파일의 경우 언어 코드 형식을 ko_KR, en_US 형태로 변환
             if file_extension == ".lang":
@@ -258,6 +290,57 @@ class ResourcePackBuilder(BasePackager):
 
         except Exception as e:
             logger.error(f"병합된 모드 파일 저장 실패 ({mod_id}): {e}")
+            return False
+
+    async def _copy_patchouli_file(
+        self,
+        original_path: str,
+        translated_path: str,
+        mod_id: str,
+        resourcepack_dir: Path,
+    ) -> bool:
+        """patchouli_books 파일을 리소스팩 구조로 복사합니다."""
+        try:
+            # 원본 경로에서 patchouli_books 이후의 상대 경로 추출
+            original_path_obj = Path(original_path)
+            path_parts = original_path_obj.parts
+
+            # assets/mod_id/patchouli_books 이후의 경로 찾기
+            patchouli_index = -1
+            for i, part in enumerate(path_parts):
+                if part == "patchouli_books":
+                    patchouli_index = i
+                    break
+
+            if patchouli_index == -1:
+                logger.warning(f"patchouli_books 경로를 찾을 수 없음: {original_path}")
+                return False
+
+            # patchouli_books 이후의 상대 경로
+            relative_path = Path(*path_parts[patchouli_index + 1 :])
+            
+            # 경로에서 언어 코드 변환 (en_us -> ko_kr)
+            relative_path_str = str(relative_path)
+            if self.source_lang in relative_path_str:
+                relative_path_str = relative_path_str.replace(self.source_lang, self.target_lang)
+                relative_path = Path(relative_path_str)
+
+            # 대상 경로 생성: assets/mod_id/patchouli_books/...
+            target_path = (
+                resourcepack_dir / "assets" / mod_id / "patchouli_books" / relative_path
+            )
+            self._ensure_directory(target_path.parent)
+
+            # 파일 복사
+            src_path = Path(translated_path)
+            if src_path.exists():
+                return self._copy_file_with_conversion(src_path, target_path)
+            else:
+                logger.warning(f"번역 파일이 존재하지 않음: {translated_path}")
+                return False
+
+        except Exception as e:
+            logger.error(f"patchouli 파일 복사 실패 ({original_path}): {e}")
             return False
 
     async def _copy_mod_file(

@@ -1525,11 +1525,11 @@ def should_retry(state: TranslatorState) -> str:  # noqa: D401
             item["reason"] == "동일한 결과" for item in untranslated_items_with_reasons
         )
 
-        # if all_same_result:
-        #     logger.warning(
-        #         f"모든 재시도({len(untranslated_items)})가 '동일한 결과'이므로 재시도를 건너뜁니다."
-        #     )
-        #     return "complete"  # 재시도 대신 완료로
+        if all_same_result:
+            logger.warning(
+                f"모든 재시도({len(untranslated_items)})가 '동일한 결과'이므로 재시도를 건너뜁니다."
+            )
+            return "complete"  # 재시도 대신 완료로
 
         logger.info(
             _m(
