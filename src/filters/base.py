@@ -550,6 +550,7 @@ class ExtendedFilterManager(FilterManager):
         # Patchouli 필터들
         try:
             from .patchouli import (
+                PatchouliBookFilter,
                 PatchouliCategoryFilter,
                 PatchouliEntryFilter,
                 PatchouliFilter,
@@ -558,6 +559,7 @@ class ExtendedFilterManager(FilterManager):
             self.register_filter(PatchouliFilter())
             self.register_filter(PatchouliCategoryFilter())
             self.register_filter(PatchouliEntryFilter())
+            self.register_filter(PatchouliBookFilter())
         except ImportError:
             logger.warning("Patchouli 필터를 로드할 수 없습니다.")
 

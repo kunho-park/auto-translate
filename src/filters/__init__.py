@@ -27,7 +27,12 @@ from .kubejs import (
     KubeJSStartupFilter,
 )
 from .origins import GlobalPacksOriginFilter, OriginsFilter
-from .patchouli import PatchouliCategoryFilter, PatchouliEntryFilter, PatchouliFilter
+from .patchouli import (
+    PatchouliBookFilter,
+    PatchouliCategoryFilter,
+    PatchouliEntryFilter,
+    PatchouliFilter,
+)
 from .paxi import PaxiDatapackFilter, PaxiFilter, PaxiResourcepackFilter
 from .puffish_skills import (
     PuffishSkillsCategoryFilter,
@@ -60,6 +65,7 @@ __all__ = [
     "PatchouliFilter",
     "PatchouliCategoryFilter",
     "PatchouliEntryFilter",
+    "PatchouliBookFilter",
     # TConstruct 필터들
     "TConstructFilter",
     # PuffishSkills 필터들

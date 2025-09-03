@@ -191,3 +191,54 @@ class PatchouliEntryFilter(PatchouliFilter):
     def get_priority(self) -> int:
         """엔트리는 높은 우선순위"""
         return 10
+
+
+class PatchouliBookFilter(PatchouliFilter):
+    """Patchouli 책 설정 파일 전용 필터"""
+
+    name = "patchouli_book"
+
+    path_patterns = [
+        r".*/patchouli_books/book.json$",
+    ]
+
+    def get_priority(self) -> int:
+        """책 설정은 가장 높은 우선순위"""
+        return 12
+
+    def _extract_entries_from_dict(
+        self, data: dict, file_path: str, key_path: str = ""
+    ) -> List[TranslationEntry]:
+        """딕셔너리에서 번역 가능한 항목들을 추출합니다."""
+        entries = []
+
+        # 책 설정에서 번역 가능한 키들
+        translatable_keys = ["name", "landing_text"]
+
+        for key, value in data.items():
+            if key in translatable_keys and isinstance(value, str) and value.strip():
+                full_key = f"{key_path}.{key}" if key_path else key
+                entry = TranslationEntry(
+                    key=full_key,
+                    original_text=value,
+                    file_path=file_path,
+                    file_type=self.name,
+                    context={
+                        "file_type": "patchouli_book",
+                        "category": "book_config",
+                        "key_path": full_key,
+                    },
+                    priority=self._get_key_priority(key),
+                )
+                entries.append(entry)
+
+        return entries
+
+    def _get_key_priority(self, key: str) -> int:
+        """키에 따른 우선순위 설정"""
+        if key == "name":
+            return 10  # 책 이름은 높은 우선순위
+        elif key == "landing_text":
+            return 8  # 소개 텍스트는 높은 우선순위
+        else:
+            return 3  # 기타는 낮은 우선순위
