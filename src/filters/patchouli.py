@@ -25,7 +25,15 @@ class PatchouliFilter(BaseFilter):
     ]
 
     # 번역 대상 키들 (old 로더 참고)
-    key_whitelist = {"pages", "text", "title", "subtitle", "description", "name"}
+    key_whitelist = {
+        "pages",
+        "text",
+        "title",
+        "subtitle",
+        "description",
+        "name",
+        "landing_text",
+    }
 
     def get_priority(self) -> int:
         """Patchouli는 특화 필터이므로 높은 우선순위"""
@@ -199,7 +207,8 @@ class PatchouliBookFilter(PatchouliFilter):
     name = "patchouli_book"
 
     path_patterns = [
-        r".*/patchouli_books/book.json$",
+        r".*/patchouli_books/.*/book\.json$",
+        r".*/patchouli_books/book\.json$",
     ]
 
     def get_priority(self) -> int:
@@ -213,7 +222,15 @@ class PatchouliBookFilter(PatchouliFilter):
         entries = []
 
         # 책 설정에서 번역 가능한 키들
-        translatable_keys = ["name", "landing_text"]
+        translatable_keys = [
+            "pages",
+            "text",
+            "title",
+            "subtitle",
+            "description",
+            "name",
+            "landing_text",
+        ]
 
         for key, value in data.items():
             if key in translatable_keys and isinstance(value, str) and value.strip():
