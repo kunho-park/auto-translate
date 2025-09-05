@@ -67,7 +67,7 @@ class PlaceholderManager:
     """Extraction and restoration of special placeholder patterns."""
 
     FORMAT_CODE_PATTERN = r"[§&][0-9a-fk-or]"
-    C_PLACEHOLDER_PATTERN = r"%(?:[0-9]+\$[sd]|[sd])"  # %1$s, %2$d, %s, %d 등
+    C_PLACEHOLDER_PATTERN = r"%(?:[0-9]+\$[sd]|[sd]|s)"  # %1$s, %2$d, %s, %d 등
     ITEM_PLACEHOLDER_PATTERN = r"\$\([^)]*\)"
     JSON_PLACEHOLDER_PATTERN = r"([{\[]{1}([,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]|\".*?\")+[}\]]{1})"  # JSON 객체와 배열 모두 지원
     HTML_TAG_PATTERN = r"<[^>]*>"
