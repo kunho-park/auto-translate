@@ -4,6 +4,7 @@ FTBQuests 챕터 파일을 번역키로 변환하고 리소스팩 JSON을 생성
 특정 폴더의 FTBQuests 챕터들을 스캔하여:
 1. 번역 가능한 텍스트를 {autotranslate.key.path} 형태의 번역키로 변환
 2. 원본 텍스트와 번역키를 매핑하는 리소스팩 JSON 파일 생성
+3. Java 번역 시스템의 % 문자 이스케이프 처리
 """
 
 import logging
@@ -28,6 +29,34 @@ class FTBQuestsConverter:
         self.filter = FTBQuestsFilter()
         self.translation_keys: Dict[str, str] = {}  # 번역키 -> 원본 텍스트
         self.used_keys: Set[str] = set()  # 중복 방지용
+
+    def _escape_percent_characters(self, text: str) -> str:
+        """
+        Java 번역 시스템에서 % 문자를 이스케이프 처리합니다.
+        
+        Java의 번역 처리에서 '%' 문자는 특별한 의미를 가지므로 (예: %s는 문자열 매개변수 대체)
+        리터럴 '%'는 '%%'로 이스케이프해야 합니다.
+        
+        Args:
+            text: 처리할 텍스트
+            
+        Returns:
+            % 문자가 이스케이프된 텍스트
+        """
+        if not isinstance(text, str):
+            return text
+            
+        # 이미 이스케이프된 %% 는 임시로 플레이스홀더로 변경
+        placeholder = "___ESCAPED_PERCENT___"
+        text = text.replace("%%", placeholder)
+        
+        # 홀로 있는 % 를 %% 로 변경
+        text = text.replace("%", "%%")
+        
+        # 플레이스홀더를 다시 %% 로 복원
+        text = text.replace(placeholder, "%%")
+        
+        return text
 
     async def convert_all_chapters(self, save=True) -> bool:
         """모든 챕터 파일을 변환합니다"""
@@ -179,10 +208,12 @@ class FTBQuestsConverter:
                     if self.filter._is_json_text(value):
                         json_text = self.filter._extract_json_text(value)
                         if json_text.strip():
+                            # % 문자 이스케이프 처리
+                            escaped_text = self._escape_percent_characters(json_text)
                             translation_key = self._generate_translation_key(
                                 chapter_name, full_key
                             )
-                            self.translation_keys[translation_key] = json_text
+                            self.translation_keys[translation_key] = escaped_text
                             # JSON에서 text 필드를 번역키로 교체
                             translated_json = self.filter._reconstruct_json_text(
                                 value, f"{{{translation_key}}}"
@@ -191,11 +222,12 @@ class FTBQuestsConverter:
                         else:
                             result[key] = value
                     else:
-                        # 일반 텍스트
+                        # 일반 텍스트 - % 문자 이스케이프 처리
+                        escaped_text = self._escape_percent_characters(value)
                         translation_key = self._generate_translation_key(
                             chapter_name, full_key
                         )
-                        self.translation_keys[translation_key] = value
+                        self.translation_keys[translation_key] = escaped_text
                         result[key] = f"{{{translation_key}}}"
                 else:
                     result[key] = value
@@ -224,10 +256,12 @@ class FTBQuestsConverter:
                             if self.filter._is_json_text(item):
                                 json_text = self.filter._extract_json_text(item)
                                 if json_text.strip():
+                                    # % 문자 이스케이프 처리
+                                    escaped_text = self._escape_percent_characters(json_text)
                                     translation_key = self._generate_translation_key(
                                         chapter_name, f"{full_key}[{i}]"
                                     )
-                                    self.translation_keys[translation_key] = json_text
+                                    self.translation_keys[translation_key] = escaped_text
                                     translated_json = (
                                         self.filter._reconstruct_json_text(
                                             item, f"{{{translation_key}}}"
@@ -237,11 +271,12 @@ class FTBQuestsConverter:
                                 else:
                                     result_list.append(item)
                             else:
-                                # 일반 텍스트
+                                # 일반 텍스트 - % 문자 이스케이프 처리
+                                escaped_text = self._escape_percent_characters(item)
                                 translation_key = self._generate_translation_key(
                                     chapter_name, f"{full_key}[{i}]"
                                 )
-                                self.translation_keys[translation_key] = item
+                                self.translation_keys[translation_key] = escaped_text
                                 result_list.append(f"{{{translation_key}}}")
                         else:
                             result_list.append(item)

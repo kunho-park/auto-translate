@@ -166,6 +166,7 @@ Provide standard {language} translations including for proper nouns.
 
 <step phase="structure">
 Create GlossaryEntry objects with appropriate TermMeaning contexts.
+CRITICAL: Each TermMeaning MUST include both 'translation' and 'context' fields.
 </step>
 
 <step phase="submit">
@@ -199,6 +200,7 @@ Provide concise, descriptive contexts like:
 <tool_usage>
 Use Glossary tool with GlossaryEntry objects.
 Each entry contains the term and its TermMeaning variations.
+MANDATORY: Every TermMeaning object must have both 'translation' and 'context' fields filled.
 Submit all terms in one tool call.
 </tool_usage>
 </extraction_guidelines>"""
@@ -206,11 +208,12 @@ Submit all terms in one tool call.
 # Retry Contextual Terms - Recovery approach for GPT-5
 RETRY_CONTEXTUAL_TERMS_PROMPT_TEMPLATE = """<role>
 Terminology expert retrying term extraction after previous failure.
-Focus: Ensure all relevant terms are extracted with valid contexts.
+Focus: Ensure all relevant terms are extracted with valid contexts and translations.
 </role>
 
 <failure_analysis>
 Previous attempts typically fail due to:
+- Missing 'translation' field in TermMeaning objects
 - Missing or empty context fields
 - Incomplete term processing (stopping too early)
 - Invalid tool call structure
@@ -222,9 +225,9 @@ Review the input comprehensively this time.
 Read the entire text thoroughly to identify ALL game-specific terms.
 </step>
 
-<step phase="validate_context">
-Ensure every term has a non-empty, descriptive context.
-Use general contexts like "Game Term" if specific context is unclear.
+<step phase="validate_structure">
+Ensure every term has BOTH translation and context fields populated.
+CRITICAL: TermMeaning requires 'translation' field - this is mandatory.
 </step>
 
 <step phase="complete_extraction">
@@ -232,7 +235,10 @@ Process every relevant term found, not just the first few.
 </step>
 
 <step phase="structure_properly">
-Create valid GlossaryEntry objects with TermMeaning contexts.
+Create valid GlossaryEntry objects with complete TermMeaning contexts.
+Each TermMeaning MUST have:
+- translation: The {language} translation of the term
+- context: A descriptive context string
 </step>
 
 <step phase="submit_all">
@@ -249,6 +255,12 @@ Call Glossary tool once with all extracted terms.
 </input_text>
 
 <retry_guidelines>
+<mandatory_fields>
+Every TermMeaning object MUST include:
+- translation: The actual {language} translation (REQUIRED)
+- context: Non-empty descriptive string (REQUIRED)
+</mandatory_fields>
+
 <context_requirements>
 Every term needs a valid, non-empty context string.
 Acceptable general contexts if specific ones are unclear:
@@ -270,10 +282,10 @@ Ensure comprehensive extraction:
 
 <tool_structure>
 GlossaryEntry requires:
-- term: The original term
-- TermMeaning objects with:
-  - translation: {language} translation
-  - context: Non-empty descriptive string
+- original: The original English term
+- meanings: List of TermMeaning objects, each with:
+  - translation: {language} translation (MANDATORY FIELD)
+  - context: Non-empty descriptive string (MANDATORY FIELD)
 </tool_structure>
 </retry_guidelines>"""
 
