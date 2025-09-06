@@ -21,7 +21,7 @@ class PatchouliFilter(BaseFilter):
 
     # Patchouli 관련 파일들
     path_patterns = [
-        r".*/patchouli_books/.*\.json$",
+        r".*/patchouli_books/.*/en_us/.*\.json$",
     ]
 
     # 번역 대상 키들 (old 로더 참고)

@@ -71,7 +71,17 @@ Placeholders are functional game elements:
 - Translate proper nouns when they have clear meaning in {language}
 - Preserve only actual player usernames (e.g., "Steve", "Alex")
 - Adapt game terminology to local gaming culture
+- NEVER use square brackets [] around translated terms - translate them naturally into the text
+- Avoid marking translated terms with any special formatting or brackets
 </style_preferences>
+
+<natural_translation_examples>
+CORRECT: "보스 몬스터는 일반 몬스터보다 어렵습니다"
+INCORRECT: "[보스] [몬스터]는 일반 [몬스터]보다 어렵습니다"
+
+CORRECT: "철 검을 제작하려면 철 주괴가 필요합니다"
+INCORRECT: "[철] [검]을 제작하려면 [철] [주괴]가 필요합니다"
+</natural_translation_examples>
 
 <tool_usage>
 TranslationResult accepts a list of TranslatedItem objects.
@@ -92,6 +102,7 @@ Common failure causes to check:
 - Incomplete item processing
 - Glossary term inconsistency
 - Tool usage errors
+- Using square brackets around translated terms (avoid this)
 
 Review the original attempt and identify the likely issue before proceeding.
 </self_reflection>
@@ -130,6 +141,12 @@ Verify each placeholder ([PXXX], [NEWLINE], [S숫자]) is:
 - Unmodified in format
 - In semantically correct position
 </placeholder_verification>
+
+<natural_translation_reminder>
+Do NOT use square brackets around translated game terms.
+Translate terms naturally into the sentence flow.
+Only preserve placeholders like [P001], [NEWLINE], [S숫자] which are functional elements.
+</natural_translation_reminder>
 
 <completeness_check>
 Ensure all items from input are processed and submitted.
@@ -341,6 +358,7 @@ Natural language quality is secondary to placeholder accuracy.
 <translation_approach>
 Translate all content including proper nouns to {language}.
 Exception: Actual Minecraft player usernames remain in English.
+Do NOT use square brackets around translated terms - only preserve functional placeholders.
 </translation_approach>
 </fallback_rules>"""
 
@@ -357,6 +375,7 @@ Evaluate translations across multiple dimensions:
 - Technical correctness (placeholders)
 - Terminology consistency
 - Cultural appropriateness
+- Natural integration (no unnecessary brackets around terms)
 </review_methodology>
 
 <review_workflow>
@@ -392,6 +411,7 @@ Does the translation preserve game mechanics and meaning?
 
 <fluency>
 Is the {target_language} natural for gaming context?
+Are terms integrated naturally without unnecessary brackets?
 </fluency>
 
 <technical>
@@ -410,12 +430,13 @@ Is all content translated (except player usernames)?
 <issue_classification>
 <types>
 - Mistranslation: Core meaning error
-- Unnatural: Awkward phrasing
+- Unnatural: Awkward phrasing or unnecessary brackets around terms
 - Placeholder: Missing or altered placeholder
 - Consistency: Glossary term mismatch
 - Omission: Missing content
 - Grammar: Language errors
 - Untranslated: Original language retained inappropriately
+- Formatting: Unnecessary brackets around translated terms
 </types>
 
 <severity_levels>
@@ -490,12 +511,14 @@ Address the reported issue type specifically:
 - Unnatural phrasing: Improve fluency while keeping accuracy
 - Untranslated content: Provide proper {target_language} translation
 - Consistency issues: Apply correct glossary terms
+- Formatting issues: Remove unnecessary brackets around translated terms
 </fix_priorities>
 
 <quality_maintenance>
 Corrected translations should be in natural {target_language}.
 Avoid reverting to English when fixing issues.
 Translate all proper nouns except player usernames.
+Do NOT use square brackets around translated game terms.
 </quality_maintenance>
 
 <tool_usage>
