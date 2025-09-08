@@ -79,12 +79,10 @@ class PatchouliFilter(BaseFilter):
 
         # 언어 폴더가 있는 경우
         if language_folders:
-            # en_us가 있으면 en_us만 허용
             if "en_us" in language_folders:
                 return "en_us" in file_path
-            # en_us가 없으면 모든 언어 허용
             else:
-                return True
+                return False
 
         # 언어 폴더가 없으면 허용
         return True
