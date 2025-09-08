@@ -28,7 +28,6 @@ from .kubejs import (
 )
 from .origins import GlobalPacksOriginFilter, OriginsFilter
 from .patchouli import (
-    PatchouliBookFilter,
     PatchouliCategoryFilter,
     PatchouliEntryFilter,
     PatchouliFilter,
@@ -65,7 +64,6 @@ __all__ = [
     "PatchouliFilter",
     "PatchouliCategoryFilter",
     "PatchouliEntryFilter",
-    "PatchouliBookFilter",
     # TConstruct 필터들
     "TConstructFilter",
     # PuffishSkills 필터들

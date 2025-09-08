@@ -5,6 +5,7 @@ Patchouli 책의 페이지들에서 번역 대상 텍스트를 추출합니다.
 """
 
 import logging
+import re
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -21,7 +22,7 @@ class PatchouliFilter(BaseFilter):
 
     # Patchouli 관련 파일들
     path_patterns = [
-        r".*/patchouli_books/.*/en_us/.*\.json$",
+        r".*/patchouli_books/.*\.json$",
     ]
 
     # 번역 대상 키들 (old 로더 참고)
@@ -46,8 +47,47 @@ class PatchouliFilter(BaseFilter):
         return last_key in self.key_whitelist
 
     def can_handle_file(self, file_path: str) -> bool:
-        """Patchouli 경로의 JSON 파일인지 확인"""
-        return super().can_handle_file(file_path)
+        """Patchouli 경로의 JSON 파일인지 확인하고 언어 필터링 적용"""
+        if not super().can_handle_file(file_path):
+            return False
+
+        # 경로에서 언어 폴더 확인
+        path_parts = file_path.replace("\\", "/").split("/")
+
+        # patchouli_books 인덱스 찾기
+        try:
+            patchouli_idx = next(
+                i for i, part in enumerate(path_parts) if part == "patchouli_books"
+            )
+        except StopIteration:
+            return False
+
+        # patchouli_books 이후 구조 분석
+        remaining_parts = path_parts[patchouli_idx + 1 :]
+
+        if len(remaining_parts) < 2:
+            return False
+
+        # 언어 코드 패턴 (en_us, ko_kr 등)
+        language_pattern = r"^[a-z]{2}_[a-z]{2}$"
+
+        # 가능한 언어 폴더 위치들 확인
+        language_folders = []
+        for i, part in enumerate(remaining_parts):
+            if re.match(language_pattern, part):
+                language_folders.append(part)
+
+        # 언어 폴더가 있는 경우
+        if language_folders:
+            # en_us가 있으면 en_us만 허용
+            if "en_us" in language_folders:
+                return "en_us" in file_path
+            # en_us가 없으면 모든 언어 허용
+            else:
+                return True
+
+        # 언어 폴더가 없으면 허용
+        return True
 
     async def extract_translations(self, file_path: str) -> List[TranslationEntry]:
         """Patchouli 파일에서 번역 대상 추출"""
@@ -199,63 +239,3 @@ class PatchouliEntryFilter(PatchouliFilter):
     def get_priority(self) -> int:
         """엔트리는 높은 우선순위"""
         return 10
-
-
-class PatchouliBookFilter(PatchouliFilter):
-    """Patchouli 책 설정 파일 전용 필터"""
-
-    name = "patchouli_book"
-
-    path_patterns = [
-        r".*/patchouli_books/.*/book\.json$",
-        r".*/patchouli_books/book\.json$",
-    ]
-
-    def get_priority(self) -> int:
-        """책 설정은 가장 높은 우선순위"""
-        return 12
-
-    def _extract_entries_from_dict(
-        self, data: dict, file_path: str, key_path: str = ""
-    ) -> List[TranslationEntry]:
-        """딕셔너리에서 번역 가능한 항목들을 추출합니다."""
-        entries = []
-
-        # 책 설정에서 번역 가능한 키들
-        translatable_keys = [
-            "pages",
-            "text",
-            "title",
-            "subtitle",
-            "description",
-            "name",
-            "landing_text",
-        ]
-
-        for key, value in data.items():
-            if key in translatable_keys and isinstance(value, str) and value.strip():
-                full_key = f"{key_path}.{key}" if key_path else key
-                entry = TranslationEntry(
-                    key=full_key,
-                    original_text=value,
-                    file_path=file_path,
-                    file_type=self.name,
-                    context={
-                        "file_type": "patchouli_book",
-                        "category": "book_config",
-                        "key_path": full_key,
-                    },
-                    priority=self._get_key_priority(key),
-                )
-                entries.append(entry)
-
-        return entries
-
-    def _get_key_priority(self, key: str) -> int:
-        """키에 따른 우선순위 설정"""
-        if key == "name":
-            return 10  # 책 이름은 높은 우선순위
-        elif key == "landing_text":
-            return 8  # 소개 텍스트는 높은 우선순위
-        else:
-            return 3  # 기타는 낮은 우선순위
