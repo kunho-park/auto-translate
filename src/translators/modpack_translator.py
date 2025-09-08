@@ -89,7 +89,7 @@ class ModpackTranslator:
         logger.info(f"{len(selected_files)}개의 선택된 파일에 대한 번역 대상 수집 시작")
         if not self.loader.translation_files:
             logger.info("초기 파일 목록이 없습니다. 전체 파일을 먼저 스캔합니다.")
-            self.loader.load_translation_files()
+            await self.loader.load_translation_files()
 
         all_files_map = {
             f["input"].replace("\\", "/"): f for f in self.loader.translation_files

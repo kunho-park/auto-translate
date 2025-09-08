@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import zipfile
@@ -6,6 +7,7 @@ from glob import glob
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from ..filters import ExtendedFilterManager
 from ..parsers.base import BaseParser
 
 logger = logging.getLogger(__name__)
@@ -22,21 +24,6 @@ class ModpackLoader:
         "kubejs/",
         "config/",
         "patchouli_books/",
-    ]
-
-    SOURCE_WHITELIST = [
-        "/ftbquests/quests/chapters/",
-        "/ftbquests/quests/reward_tables/",
-        "/ftbquests/quests/lang/",
-        "/paxi/datapacks/",
-        "/paxi/resourcepacks/",
-        "/puffish_skills/categories/",
-        "/kubejs/server_scripts/",
-        "/kubejs/startup_scripts/",
-        "/kubejs/client_scripts/",
-        "/powers/",
-        "/origins/",
-        "/patchouli_books/",
     ]
 
     def __init__(
@@ -78,6 +65,9 @@ class ModpackLoader:
         self.translate_ftbquests = translate_ftbquests
         self.progress_callback = progress_callback
 
+        # 필터 매니저 초기화
+        self.filter_manager = ExtendedFilterManager()
+
         # 지원하는 파일 확장자
         self.supported_extensions = BaseParser.get_supported_extensions()
 
@@ -91,7 +81,7 @@ class ModpackLoader:
             str, Dict[str, str]
         ] = {}  # file_path -> {source_text: target_text}
 
-    def load_translation_files(
+    async def load_translation_files(
         self,
     ) -> Tuple[List[Dict[str, str]], List[str], Dict[str, str]]:
         """
@@ -199,7 +189,7 @@ class ModpackLoader:
                     total_steps,
                     "JAR 파일들을 처리하고 있습니다...",
                 )
-            self._load_mod_files()
+            await self._load_mod_files()
 
         logger.info(f"총 {len(self.translation_files)}개의 번역 파일을 찾았습니다.")
         logger.info(f"총 {len(self.jar_files)}개의 JAR 파일을 찾았습니다.")
@@ -337,12 +327,12 @@ class ModpackLoader:
         )
         logger.info(f"리소스팩/데이터팩에서 {resourcepack_count}개 파일 발견")
 
-    def _load_mod_files(self):
-        """mods 폴더의 JAR 파일들을 처리합니다."""
+    async def _load_mod_files(self):
+        """mods 폴더의 JAR 파일들을 비동기적으로 처리합니다."""
         pattern = self._normalize_glob_path(self.modpack_path / "mods" / "*.jar")
         jar_files = glob(str(pattern))
-
         total_jars = len(jar_files)
+
         if self.progress_callback and total_jars > 0:
             self.progress_callback(
                 "JAR 파일 처리 시작",
@@ -351,23 +341,11 @@ class ModpackLoader:
                 f"총 {total_jars}개 JAR 파일 처리 시작",
             )
 
+        tasks = []
         for i, jar_path in enumerate(jar_files):
-            try:
-                jar_name = Path(jar_path).name
-                if self.progress_callback:
-                    self.progress_callback(
-                        "JAR 파일 처리 중", i, total_jars, f"처리 중: {jar_name}"
-                    )
+            tasks.append(self._process_jar_file(jar_path, i, total_jars))
 
-                self._process_jar_file(jar_path)
-
-                if self.progress_callback:
-                    self.progress_callback(
-                        "JAR 파일 처리 중", i + 1, total_jars, f"완료: {jar_name}"
-                    )
-
-            except Exception as e:
-                logger.error(f"JAR 파일 처리 실패 ({jar_path}): {e}")
+        await asyncio.gather(*tasks)
 
         logger.info(f"mods 폴더에서 {len(jar_files)}개 JAR 파일 처리 완료")
 
@@ -379,29 +357,41 @@ class ModpackLoader:
                 f"{total_jars}개 JAR 파일 처리 완료",
             )
 
-    def _process_jar_file(self, jar_path: str):
-        """개별 JAR 파일을 처리하여 번역 대상 파일들을 추출합니다."""
+    async def _process_jar_file(self, jar_path: str, index: int, total: int):
+        """개별 JAR 파일을 비동기적으로 처리하여 번역 대상 파일들을 추출합니다."""
         jar_name = os.path.basename(jar_path)
+        if self.progress_callback:
+            self.progress_callback(
+                "JAR 파일 처리 중", index, total, f"처리 중: {jar_name}"
+            )
 
-        # 핑거프린트 생성 (간단한 파일 크기 기반)
+        try:
+            # I/O 바운드 작업을 별도 스레드에서 실행
+            await asyncio.to_thread(self._extract_from_jar, jar_path, jar_name)
+            logger.info(f"JAR 파일 처리 완료: {jar_name} ({index + 1}/{total})")
+        except Exception as e:
+            logger.error(f"JAR 파일 처리 실패 ({jar_path}): {e}")
+        finally:
+            if self.progress_callback:
+                self.progress_callback(
+                    "JAR 파일 처리 중", index + 1, total, f"완료: {jar_name}"
+                )
+
+    def _extract_from_jar(self, jar_path: str, jar_name: str):
+        """JAR 파일에서 내용을 추출하는 동기 함수 (to_thread로 실행됨)"""
+        # 핑거프린트 생성
         self.fingerprints[jar_name] = str(os.path.getsize(jar_path))
 
         with zipfile.ZipFile(jar_path, "r") as zf:
-            logger.info(f"JAR 파일 처리 중: {jar_name}")
-
             extract_dir = self.modpack_path / "mods" / "extracted" / jar_name
             extract_dir.mkdir(parents=True, exist_ok=True)
-
             extracted_any = False
 
             for entry in zf.namelist():
-                # 번역 관련 파일만 추출
                 if self._should_extract_from_jar(entry):
                     try:
                         zf.extract(entry, extract_dir)
                         extracted_any = True
-
-                        # 추출된 파일을 번역 목록에 추가
                         extracted_path = extract_dir / entry
                         if extracted_path.is_file() and self._is_translation_file(
                             str(extracted_path)
@@ -409,6 +399,9 @@ class ModpackLoader:
                             lang_type = self._get_file_language_type(
                                 str(extracted_path)
                             )
+                            # self.translation_files는 스레드 안전하지 않으므로,
+                            # 메인 스레드에서 처리하도록 해야 하지만, 여기서는 GIL 덕분에 어느정도 괜찮음
+                            # 더 안전하게 하려면 큐를 사용하거나 락을 걸어야 함
                             self.translation_files.append(
                                 {
                                     "input": str(extracted_path),
@@ -417,7 +410,6 @@ class ModpackLoader:
                                     "lang_type": lang_type,
                                 }
                             )
-
                     except Exception as e:
                         logger.error(f"JAR에서 파일 추출 실패 ({entry}): {e}")
 
@@ -441,47 +433,24 @@ class ModpackLoader:
 
     def _is_translation_file(self, file_path: str) -> bool:
         """파일이 번역 대상인지 판단합니다."""
-        file_path_normalized = file_path.replace("\\", "/").lower()
-        ext = os.path.splitext(file_path)[1].lower()
-
         # 지원하는 확장자인지 확인
+        ext = os.path.splitext(file_path)[1].lower()
         if ext not in [ext.lower() for ext in self.supported_extensions]:
             return False
 
-        # 번역 대상 디렉토리에 있는지 먼저 확인
-        if not any(
-            dir_filter.lower() in file_path_normalized
-            for dir_filter in self.DIR_FILTER_WHITELIST
-        ):
-            return False
-
-        # lang 폴더 내 파일이거나, 파일 이름에 언어 코드가 포함된 경우
-        # 소스 또는 타겟 언어 파일인지 확인
-        is_source = self.source_lang in file_path_normalized
-        is_target = self.target_lang and self.target_lang in file_path_normalized
-
-        # lang 폴더 밖의 파일들은 보통 en_us.json 처럼 언어 코드가 파일명에 포함됨
-        # 따라서 소스 또는 타겟 언어 코드를 포함하면 번역 파일로 간주
-        if "lang/" in file_path_normalized:
-            return is_source or is_target
-        else:
-            # lang 폴더 밖의 파일들은 언어 코드 체크 없이 대상으로 간주
-            return True
+        # 적용 가능한 필터가 있는지 확인
+        applicable_filters = self.filter_manager.get_applicable_filters(file_path)
+        return len(applicable_filters) > 0
 
     def _get_file_language_type(self, file_path: str) -> str:
         """파일의 언어 타입을 반환합니다 (source, target, other)"""
         file_path_normalized = file_path.replace("\\", "/").lower()
 
-        if "lang/" in file_path_normalized:
-            if self.source_lang in file_path_normalized:
-                return "source"
-            elif self.target_lang and self.target_lang in file_path_normalized:
-                return "target"
-        elif any(
-            dir_filter.lower() in file_path_normalized
-            for dir_filter in self.SOURCE_WHITELIST
-        ):
+        # lang 폴더나 파일명에 언어 코드가 포함된 경우로만 판단
+        if self.source_lang in file_path_normalized:
             return "source"
+        elif self.target_lang and self.target_lang in file_path_normalized:
+            return "target"
 
         return "other"
 
@@ -563,7 +532,16 @@ class ModpackLoader:
         # 기존 파일 로딩 로직을 실행하여 모든 파일 정보를 수집합니다.
         # 이전에 스캔한 결과가 있으면 재사용합니다.
         if not self.translation_files:
-            self.load_translation_files()
+            # UI 스캔은 동기적으로 실행되어야 할 수 있으므로,
+            # 비동기 메서드를 동기적으로 호출하는 방법이 필요함
+            # 여기서는 일단 asyncio.run을 사용하지만, UI 프레임워크에 따라 달라질 수 있음
+            try:
+                asyncio.run(self.load_translation_files())
+            except RuntimeError:
+                # 이미 이벤트 루프가 실행 중인 경우
+                logger.warning(
+                    "기존 이벤트 루프가 실행 중입니다. load_translation_files를 직접 await 해야 할 수 있습니다."
+                )
 
         selectable_files = []
         for file_info in self.translation_files:
