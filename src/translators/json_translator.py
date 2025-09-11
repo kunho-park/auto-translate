@@ -969,9 +969,9 @@ async def validation_and_retry_node(state: TranslatorState) -> TranslatorState: 
                 elif translated == original and len(original) > 3:
                     should_retry = True
                     retry_reason = "동일한 결과"
-                    logger.info(
-                        f"번역 누락 감지: '{original}' -> '{translated}' (동일한 결과)"
-                    )
+                    # logger.info(
+                    #     f"번역 누락 감지: '{original}' -> '{translated}' (동일한 결과)"
+                    # )
             if should_retry:
                 to_retry.append({"id": tid, "original": orig, "reason": retry_reason})
 
