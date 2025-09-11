@@ -33,7 +33,6 @@ class FTBQuestsConverter:
     def _is_already_translation_key(self, text: str) -> bool:
         """
         텍스트가 이미 번역키 형태인지 확인합니다.
-        {로 시작하고 }로 끝나는 텍스트는 번역키로 간주하여 변환하지 않습니다.
 
         Args:
             text: 확인할 텍스트
@@ -45,7 +44,9 @@ class FTBQuestsConverter:
             return False
 
         text = text.strip()
-        return text.startswith("{") and text.endswith("}")
+        return (text.startswith("{") and text.endswith("}")) or (
+            text.startswith("[") and text.endswith("]")
+        )
 
     def _escape_percent_characters(self, text: str) -> str:
         """
