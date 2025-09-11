@@ -30,32 +30,49 @@ class FTBQuestsConverter:
         self.translation_keys: Dict[str, str] = {}  # 번역키 -> 원본 텍스트
         self.used_keys: Set[str] = set()  # 중복 방지용
 
+    def _is_already_translation_key(self, text: str) -> bool:
+        """
+        텍스트가 이미 번역키 형태인지 확인합니다.
+        {로 시작하고 }로 끝나는 텍스트는 번역키로 간주하여 변환하지 않습니다.
+
+        Args:
+            text: 확인할 텍스트
+
+        Returns:
+            bool: 이미 번역키 형태이면 True
+        """
+        if not isinstance(text, str):
+            return False
+
+        text = text.strip()
+        return text.startswith("{") and text.endswith("}")
+
     def _escape_percent_characters(self, text: str) -> str:
         """
         Java 번역 시스템에서 % 문자를 이스케이프 처리합니다.
-        
+
         Java의 번역 처리에서 '%' 문자는 특별한 의미를 가지므로 (예: %s는 문자열 매개변수 대체)
         리터럴 '%'는 '%%'로 이스케이프해야 합니다.
-        
+
         Args:
             text: 처리할 텍스트
-            
+
         Returns:
             % 문자가 이스케이프된 텍스트
         """
         if not isinstance(text, str):
             return text
-            
+
         # 이미 이스케이프된 %% 는 임시로 플레이스홀더로 변경
         placeholder = "___ESCAPED_PERCENT___"
         text = text.replace("%%", placeholder)
-        
+
         # 홀로 있는 % 를 %% 로 변경
         text = text.replace("%", "%%")
-        
+
         # 플레이스홀더를 다시 %% 로 복원
         text = text.replace(placeholder, "%%")
-        
+
         return text
 
     async def convert_all_chapters(self, save=True) -> bool:
@@ -171,7 +188,7 @@ class FTBQuestsConverter:
                     if isinstance(value, str) and value.strip():
                         total_texts += 1
                         # 번역키 형태인지 확인 ({autotranslate.~~~} 패턴)
-                        if value.startswith("{") and value.endswith("}"):
+                        if self._is_already_translation_key(value):
                             translated_texts += 1
                 # 재귀적으로 하위 데이터 확인
                 elif isinstance(value, (dict, list)):
@@ -204,21 +221,30 @@ class FTBQuestsConverter:
             if isinstance(value, str):
                 # 문자열이고 번역 대상인 경우
                 if self.filter.should_translate_key(full_key) and value.strip():
+                    # 이미 번역키 형태인 경우 그대로 유지
+                    if self._is_already_translation_key(value):
+                        result[key] = value
                     # JSON 형태 텍스트 처리
-                    if self.filter._is_json_text(value):
+                    elif self.filter._is_json_text(value):
                         json_text = self.filter._extract_json_text(value)
                         if json_text.strip():
-                            # % 문자 이스케이프 처리
-                            escaped_text = self._escape_percent_characters(json_text)
-                            translation_key = self._generate_translation_key(
-                                chapter_name, full_key
-                            )
-                            self.translation_keys[translation_key] = escaped_text
-                            # JSON에서 text 필드를 번역키로 교체
-                            translated_json = self.filter._reconstruct_json_text(
-                                value, f"{{{translation_key}}}"
-                            )
-                            result[key] = translated_json
+                            # JSON 텍스트가 이미 번역키 형태인지 확인
+                            if self._is_already_translation_key(json_text):
+                                result[key] = value
+                            else:
+                                # % 문자 이스케이프 처리
+                                escaped_text = self._escape_percent_characters(
+                                    json_text
+                                )
+                                translation_key = self._generate_translation_key(
+                                    chapter_name, full_key
+                                )
+                                self.translation_keys[translation_key] = escaped_text
+                                # JSON에서 text 필드를 번역키로 교체
+                                translated_json = self.filter._reconstruct_json_text(
+                                    value, f"{{{translation_key}}}"
+                                )
+                                result[key] = translated_json
                         else:
                             result[key] = value
                     else:
@@ -252,22 +278,35 @@ class FTBQuestsConverter:
                         full_key
                     ):
                         if item.strip():
+                            # 이미 번역키 형태인 경우 그대로 유지
+                            if self._is_already_translation_key(item):
+                                result_list.append(item)
                             # JSON 형태 텍스트 처리
-                            if self.filter._is_json_text(item):
+                            elif self.filter._is_json_text(item):
                                 json_text = self.filter._extract_json_text(item)
                                 if json_text.strip():
-                                    # % 문자 이스케이프 처리
-                                    escaped_text = self._escape_percent_characters(json_text)
-                                    translation_key = self._generate_translation_key(
-                                        chapter_name, f"{full_key}[{i}]"
-                                    )
-                                    self.translation_keys[translation_key] = escaped_text
-                                    translated_json = (
-                                        self.filter._reconstruct_json_text(
-                                            item, f"{{{translation_key}}}"
+                                    # JSON 텍스트가 이미 번역키 형태인지 확인
+                                    if self._is_already_translation_key(json_text):
+                                        result_list.append(item)
+                                    else:
+                                        # % 문자 이스케이프 처리
+                                        escaped_text = self._escape_percent_characters(
+                                            json_text
                                         )
-                                    )
-                                    result_list.append(translated_json)
+                                        translation_key = (
+                                            self._generate_translation_key(
+                                                chapter_name, f"{full_key}[{i}]"
+                                            )
+                                        )
+                                        self.translation_keys[translation_key] = (
+                                            escaped_text
+                                        )
+                                        translated_json = (
+                                            self.filter._reconstruct_json_text(
+                                                item, f"{{{translation_key}}}"
+                                            )
+                                        )
+                                        result_list.append(translated_json)
                                 else:
                                     result_list.append(item)
                             else:
