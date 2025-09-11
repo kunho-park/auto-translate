@@ -444,15 +444,17 @@ class ModpackLoader:
 
     def _get_file_language_type(self, file_path: str) -> str:
         """파일의 언어 타입을 반환합니다 (source, target, other)"""
-        file_path_normalized = file_path.replace("\\", "/").lower()
+        # file_path_normalized = file_path.replace("\\", "/").lower()
 
-        # lang 폴더나 파일명에 언어 코드가 포함된 경우로만 판단
-        if self.source_lang in file_path_normalized:
-            return "source"
-        elif self.target_lang and self.target_lang in file_path_normalized:
-            return "target"
+        # # lang 폴더나 파일명에 언어 코드가 포함된 경우로만 판단
+        # if self.source_lang in file_path_normalized:
+        #     return "source"
+        # elif self.target_lang and self.target_lang in file_path_normalized:
+        #     return "target"
 
-        return "other"
+        # return "other"
+
+        return "source"
 
     def _extract_all_zip_files(self):
         """모드팩 내 모든 ZIP 파일들을 추출합니다."""
