@@ -550,9 +550,19 @@ class ModpackTranslator:
                     Path(korean_path).suffix.lower()
                 )
                 if parser_class:
+                    # 한국어 파일 읽기
                     parser = parser_class(Path(korean_path))
-                    data = await parser.parse()
-                    for key, value in data.items():
+                    korean_data = await parser.parse()
+
+                    # 원본 파일도 읽기
+                    original_parser = parser_class(Path(file_path))
+                    original_data = await original_parser.parse()
+
+                    # 한국어 파일의 값과 원본 파일의 값이 다른 경우만 추가
+                    for key, value in korean_data.items():
+                        if key in original_data and original_data[key] == value:
+                            # 원본과 같은 값이면 패스
+                            continue
                         file_translations[key] = value
 
             # 파일 업데이트 (출력 디렉토리가 지정된 경우 타겟 파일에서 읽기)
