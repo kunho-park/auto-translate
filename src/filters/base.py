@@ -512,6 +512,7 @@ class ExtendedFilterManager(FilterManager):
                 FTBQuestsChapterFilter,
                 FTBQuestsEnUsFilter,
                 FTBQuestsFilter,
+                FTBQuestsNBTFilter,
                 FTBQuestsRewardTableFilter,
             )
 
@@ -519,6 +520,7 @@ class ExtendedFilterManager(FilterManager):
             self.register_filter(FTBQuestsChapterFilter())
             self.register_filter(FTBQuestsRewardTableFilter())
             self.register_filter(FTBQuestsEnUsFilter())
+            self.register_filter(FTBQuestsNBTFilter())
         except ImportError:
             logger.warning("FTBQuests 필터를 로드할 수 없습니다.")
 

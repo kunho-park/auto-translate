@@ -18,6 +18,7 @@ from .ftbquests import (
     FTBQuestsChapterFilter,
     FTBQuestsEnUsFilter,
     FTBQuestsFilter,
+    FTBQuestsNBTFilter,
     FTBQuestsRewardTableFilter,
 )
 from .kubejs import (
@@ -51,6 +52,7 @@ __all__ = [
     "FTBQuestsFilter",
     "FTBQuestsChapterFilter",
     "FTBQuestsRewardTableFilter",
+    "FTBQuestsNBTFilter",
     "FTBQuestsEnUsFilter",
     # KubeJS 필터들
     "KubeJSFilter",

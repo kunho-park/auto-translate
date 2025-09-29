@@ -81,6 +81,10 @@ class BaseParser(abc.ABC):
             from .js import JSParser
 
             return JSParser
+        elif extension == ".nbt":
+            from .nbt import NBTParser
+
+            return NBTParser
         else:
             return None
 
@@ -92,4 +96,4 @@ class BaseParser(abc.ABC):
         Returns:
             List[str]: 지원하는 파일 확장자 목록
         """
-        return [".json", ".lang", ".txt", ".snbt", ".xml", ".js", ".ts"]
+        return [".json", ".lang", ".txt", ".snbt", ".xml", ".js", ".ts", ".nbt"]

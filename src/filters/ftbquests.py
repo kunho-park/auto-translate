@@ -335,6 +335,162 @@ class FTBQuestsFilter(BaseFilter):
             return 1  # 기타는 낮은 우선순위
 
 
+class FTBQuestsNBTFilter(BaseFilter):
+    """FTBQuests NBT 파일 전용 필터 (플랫 구조)"""
+
+    name = "ftbquests_nbt"
+
+    # NBT 파일 패턴
+    path_patterns = [
+        r".*/ftbquests/.*\.nbt$",
+        r".*/config/ftbquests/.*\.nbt$",
+    ]
+
+    # 번역 대상 키들 (화이트리스트 방식)
+    key_whitelist = {
+        "text",
+        "title",
+        "subtitle",
+        "description",
+        "name",
+        "quest_desc",
+        "quest_subtitle",
+        "Lore",
+        "Name",
+        "icon",
+        "command",
+    }
+
+    def get_priority(self) -> int:
+        """NBT 전용 필터는 높은 우선순위"""
+        return 20
+
+    def should_translate_key(self, key: str) -> bool:
+        """키가 번역 대상인지 확인 (화이트리스트 방식)"""
+        # 배열 인덱스나 점 표기법 처리
+        # 예: "text[0]" -> "text", "tasks[0].title" -> "title"
+        key_parts = key.split(".")
+        last_key = key_parts[-1]
+
+        # 배열 인덱스 제거
+        if "[" in last_key:
+            last_key = last_key.split("[")[0]
+
+        return last_key in self.key_whitelist
+
+    async def extract_translations(self, file_path: str) -> List[TranslationEntry]:
+        """NBT 파일에서 번역 대상 추출 (플랫 구조)"""
+        try:
+            # NBT 파서 사용
+            parser_class = BaseParser.get_parser_by_extension(".nbt")
+            if not parser_class:
+                logger.warning(f"NBT 파서를 찾을 수 없음: {file_path}")
+                return []
+
+            parser = parser_class(Path(file_path))
+            data = await parser.parse()
+
+            if not isinstance(data, dict):
+                logger.warning(f"NBT 파일이 딕셔너리 형식이 아님: {file_path}")
+                return []
+
+            entries = []
+
+            # 플랫 구조로 처리 (키가 이미 "text[0]", "tasks[0].title" 형태)
+            for key, value in data.items():
+                if isinstance(value, str) and value.strip():
+                    if self.should_translate_key(key):
+                        entry = TranslationEntry(
+                            key=key,
+                            original_text=value,
+                            file_path=file_path,
+                            file_type=self.name,
+                            context={
+                                "file_type": "ftbquests_nbt",
+                                "category": self._get_category_from_path(file_path),
+                                "key": key,
+                            },
+                            priority=self._get_key_priority(key),
+                        )
+                        entries.append(entry)
+
+            logger.debug(
+                f"FTBQuests NBT 파일에서 {len(entries)}개 번역 항목 발견: {Path(file_path).name}"
+            )
+            return entries
+
+        except Exception as e:
+            logger.error(f"FTBQuests NBT 파일 처리 실패 ({file_path}): {e}")
+            return []
+
+    async def apply_translations(
+        self, file_path: str, translations: Dict[str, str]
+    ) -> bool:
+        """번역된 텍스트를 NBT 파일에 적용합니다."""
+        try:
+            # NBT 파서 사용하여 원본 파일 읽기
+            parser_class = BaseParser.get_parser_by_extension(".nbt")
+            if not parser_class:
+                logger.warning(f"NBT 파서를 찾을 수 없음: {file_path}")
+                return False
+
+            parser = parser_class(Path(file_path))
+            data = await parser.parse()
+
+            if not isinstance(data, dict):
+                return False
+
+            updated = False
+
+            # 플랫 구조로 번역 적용
+            for key, translated_text in translations.items():
+                if key in data and data[key] != translated_text:
+                    data[key] = translated_text
+                    updated = True
+
+            if updated:
+                # 번역이 적용된 파일 저장
+                await parser.dump(data)
+                logger.debug(f"FTBQuests NBT 번역 적용 완료: {Path(file_path).name}")
+                return True
+            else:
+                logger.debug(
+                    f"FTBQuests NBT 번역 적용할 내용 없음: {Path(file_path).name}"
+                )
+                return False
+
+        except Exception as e:
+            logger.error(f"FTBQuests NBT 번역 적용 실패 ({file_path}): {e}")
+            return False
+
+    def _get_category_from_path(self, file_path: str) -> str:
+        """파일 경로에서 카테고리 추출"""
+        path_lower = file_path.lower().replace("\\", "/")
+
+        if "chapters" in path_lower:
+            return "chapter"
+        elif "quests" in path_lower:
+            return "quest"
+        elif "tasks" in path_lower:
+            return "task"
+        elif "rewards" in path_lower:
+            return "reward"
+        else:
+            return "unknown"
+
+    def _get_key_priority(self, key: str) -> int:
+        """키에 따른 우선순위 설정"""
+        # 배열 인덱스 제거하여 기본 키 추출
+        base_key = key.split("[")[0].split(".")[-1]
+
+        if base_key in ["title", "name"]:
+            return 10  # 제목은 높은 우선순위
+        elif base_key in ["description", "text"]:
+            return 5  # 설명은 중간 우선순위
+        else:
+            return 1  # 기타는 낮은 우선순위
+
+
 class FTBQuestsChapterFilter(FTBQuestsFilter):
     """FTBQuests 챕터 전용 필터 (퀘스트 배열 처리)"""
 
