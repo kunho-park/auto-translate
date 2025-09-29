@@ -4,7 +4,6 @@
 전체 패키징 작업을 관리하고 조정합니다.
 """
 
-import asyncio
 import logging
 from pathlib import Path
 from typing import Dict
@@ -78,10 +77,8 @@ class PackageManager:
         """
         logger.info("전체 패키징 작업 시작")
 
-        create_resourcepack = kwargs.get("create_resourcepack", True)
         create_modpack = kwargs.get("create_modpack", True)
         create_jar_mods = kwargs.get("create_jar_mods", True)
-        parallel = kwargs.get("parallel", True)
 
         results = {}
 
@@ -93,57 +90,19 @@ class PackageManager:
         stats = self._analyze_translated_files(translated_files)
         logger.info(f"번역 파일 분석 결과: {stats}")
 
-        # 패키징 작업 실행
-        if parallel:
-            # 병렬 처리
-            tasks = []
+        if create_modpack and stats.get("modpack_files", 0) > 0:
+            _, results["modpack"] = await self._package_modpack(
+                translated_files, output_dir, **kwargs
+            )
 
-            if create_resourcepack and stats.get("mod_files", 0) > 0:
-                tasks.append(
-                    self._package_resourcepack(translated_files, output_dir, **kwargs)
-                )
+        _, results["resourcepack"] = await self._package_resourcepack(
+            translated_files, output_dir, **kwargs
+        )
 
-            if create_modpack and stats.get("modpack_files", 0) > 0:
-                tasks.append(
-                    self._package_modpack(translated_files, output_dir, **kwargs)
-                )
-
-            if create_jar_mods and stats.get("data_files", 0) > 0:
-                tasks.append(
-                    self._package_jar_mods(translated_files, output_dir, **kwargs)
-                )
-
-            if tasks:
-                task_results = await asyncio.gather(*tasks, return_exceptions=True)
-
-                # 결과 처리
-                for result in task_results:
-                    if isinstance(result, Exception):
-                        # 예외 발생 시 처리. 어떤 태스크에서 발생했는지 특정하기 어려움.
-                        # 필요하다면 태스크 식별자를 결과에 포함시켜야 함.
-                        logger.error(f"패키징 작업 중 예외 발생: {result}")
-                        # 모든 태스크가 실패했다고 가정하거나, 별도의 오류 처리가 필요.
-                    elif isinstance(result, tuple) and len(result) == 2:
-                        name, package_result = result
-                        results[name] = package_result
-                    else:
-                        logger.error(f"알 수 없는 결과 타입: {result}")
-        else:
-            # 순차 처리
-            if create_modpack and stats.get("modpack_files", 0) > 0:
-                _, results["modpack"] = await self._package_modpack(
-                    translated_files, output_dir, **kwargs
-                )
-
-            if create_resourcepack and stats.get("mod_files", 0) > 0:
-                _, results["resourcepack"] = await self._package_resourcepack(
-                    translated_files, output_dir, **kwargs
-                )
-
-            if create_jar_mods and stats.get("data_files", 0) > 0:
-                _, results["jar_mods"] = await self._package_jar_mods(
-                    translated_files, output_dir, **kwargs
-                )
+        if create_jar_mods and stats.get("data_files", 0) > 0:
+            _, results["jar_mods"] = await self._package_jar_mods(
+                translated_files, output_dir, **kwargs
+            )
 
         # 결과 요약
         self._log_packaging_summary(results)

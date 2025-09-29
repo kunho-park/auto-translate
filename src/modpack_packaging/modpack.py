@@ -338,6 +338,11 @@ class ModpackPackager(BasePackager):
                     if file_path.is_file():
                         # 상대 경로로 아카이브에 추가
                         arcname = file_path.relative_to(modpack_dir)
+
+                        # mods 폴더에 있는 파일은 제외
+                        if "mods" in arcname.parts:
+                            continue
+
                         zipf.write(file_path, arcname)
 
             logger.info(f"모드팩 ZIP 생성: {zip_path}")
