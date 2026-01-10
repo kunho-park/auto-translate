@@ -89,17 +89,17 @@ class TermMeaning(BaseModel):
 class GlossaryEntry(BaseModel):
     """A glossary entry for a single original term, which may have multiple meanings."""
 
-    original: str = Field(description="Original term")
+    original: str = Field(description="Original term (REQUIRED)")
     meanings: List[TermMeaning] = Field(
-        description="A list of possible translations for the term, each with its own context"
+        description="A list of possible translations for the term, each with its own context (REQUIRED)"
     )
 
 
 class SimpleGlossaryTerm(BaseModel):
     """A single glossary term with one meaning and its context."""
 
-    original: str = Field(description="Original term")
-    translation: str = Field(description="Translated term")
+    original: str = Field(description="Original term (REQUIRED)")
+    translation: str = Field(description="Translated term (REQUIRED)")
     context: str = Field(
         description="A very concise snippet of the surrounding text (under 10 words) to differentiate its meaning. This field is REQUIRED - if no specific context is available, provide a default value like '일반적인 사용' (general usage)"
     )
