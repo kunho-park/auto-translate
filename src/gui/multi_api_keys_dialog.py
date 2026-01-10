@@ -58,6 +58,7 @@ class MultiAPIKeysDialog:
                 ft.dropdown.Option("gemini", "Google Gemini"),
                 ft.dropdown.Option("claude", "Anthropic Claude"),
                 ft.dropdown.Option("deepseek", "DeepSeek"),
+                ft.dropdown.Option("grok", "Grok"),
                 ft.dropdown.Option("ollama", "Ollama"),
             ],
             value="gemini",
