@@ -40,6 +40,12 @@ class LLMManager:
                 "client_class": None,
                 "models": [],
             },
+            "grok": {
+                "name": "xAI Grok",
+                "api_key_env": "XAI_API_KEY",
+                "client_class": None,
+                "models": [],
+            },
             "ollama": {
                 "name": "Ollama",
                 "api_key_env": None,  # Ollama는 API 키 불필요
@@ -98,6 +104,8 @@ class LLMManager:
                 return await self._get_claude_models()
             elif provider_id == "deepseek":
                 return await self._get_deepseek_models()
+            elif provider_id == "grok":
+                return await self._get_grok_models()
             elif provider_id == "ollama":
                 return await self._get_ollama_models()
             else:
@@ -258,6 +266,60 @@ class LLMManager:
             logger.error(f"DeepSeek 모델 조회 실패: {e}")
             return []
 
+    async def _get_grok_models(self) -> List[Dict]:
+        """Grok 모델 목록 조회"""
+        try:
+            # Grok API 클라이언트 (OpenAI 호환)
+            from openai import AsyncOpenAI
+
+            api_key = self.get_api_key("grok")
+            if not api_key:
+                logger.warning("xAI API 키가 설정되지 않았습니다")
+                return []
+
+            client = AsyncOpenAI(api_key=api_key, base_url="https://api.x.ai/v1")
+
+            # API 호출이 실패할 경우를 대비한 하드코딩된 목록
+            default_models = [
+                {
+                    "id": "grok-2-latest",
+                    "name": "Grok 2 Latest",
+                    "description": "xAI Grok 2 (최신 버전)",
+                },
+                {
+                    "id": "grok-2-vision-latest",
+                    "name": "Grok 2 Vision Latest",
+                    "description": "xAI Grok 2 Vision (이미지 인식 가능)",
+                },
+            ]
+
+            try:
+                models = await client.models.list()
+                grok_models = []
+                for model in models.data:
+                    # 'grok'이 포함된 모델만 필터링
+                    if "grok" in model.id.lower():
+                        grok_models.append(
+                            {
+                                "id": model.id,
+                                "name": model.id,
+                                "description": f"xAI {model.id}",
+                            }
+                        )
+
+                # 결과가 비어있지 않으면 반환, 비어있으면 기본 목록 사용
+                return grok_models if grok_models else default_models
+
+            except Exception as api_error:
+                logger.warning(
+                    f"Grok 모델 목록 API 조회 실패, 기본 목록 사용: {api_error}"
+                )
+                return default_models
+
+        except Exception as e:
+            logger.error(f"Grok 모델 조회 실패: {e}")
+            return []
+
     async def _get_ollama_models(self) -> List[Dict]:
         """Ollama 모델 목록 조회"""
         try:
@@ -300,6 +362,8 @@ class LLMManager:
                 return await self._create_claude_client(model_id, **kwargs)
             elif provider_id == "deepseek":
                 return await self._create_deepseek_client(model_id, **kwargs)
+            elif provider_id == "grok":
+                return await self._create_grok_client(model_id, **kwargs)
             elif provider_id == "ollama":
                 return await self._create_ollama_client(model_id, **kwargs)
             else:
@@ -385,6 +449,27 @@ class LLMManager:
             model=model_id,
             openai_api_key=api_key,
             base_url="https://api.deepseek.com",
+            temperature=kwargs.get("temperature", 0.1),
+            **filtered_kwargs,
+        )
+
+    async def _create_grok_client(self, model_id: str, **kwargs):
+        """Grok 클라이언트 생성 (LangChain 호환)"""
+        from langchain_openai import ChatOpenAI
+
+        api_key = self.get_api_key("grok")
+        if not api_key:
+            raise ValueError("xAI API 키가 설정되지 않았습니다")
+
+        # 중복 매개변수 제거
+        filtered_kwargs = {
+            k: v for k, v in kwargs.items() if k not in ["temperature", "max_tokens"]
+        }
+
+        return ChatOpenAI(
+            model=model_id,
+            openai_api_key=api_key,
+            base_url="https://api.x.ai/v1",
             temperature=kwargs.get("temperature", 0.1),
             **filtered_kwargs,
         )

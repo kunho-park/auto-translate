@@ -110,6 +110,7 @@ class EnvManager:
             "GOOGLE_API_KEY",
             "ANTHROPIC_API_KEY",
             "DEEPSEEK_API_KEY",
+            "XAI_API_KEY",
         ]
 
         for pattern in api_key_patterns:
@@ -126,6 +127,7 @@ class EnvManager:
             "gemini": "GOOGLE_API_KEY",
             "claude": "ANTHROPIC_API_KEY",
             "deepseek": "DEEPSEEK_API_KEY",
+            "grok": "XAI_API_KEY",
         }
 
         env_key = key_mapping.get(provider_id)
@@ -143,6 +145,7 @@ class EnvManager:
             "gemini": "GOOGLE_API_KEY",
             "claude": "ANTHROPIC_API_KEY",
             "deepseek": "DEEPSEEK_API_KEY",
+            "grok": "XAI_API_KEY",
         }
 
         env_key = key_mapping.get(provider_id)
@@ -158,6 +161,7 @@ class EnvManager:
             "gemini": "GOOGLE_API_KEY",
             "claude": "ANTHROPIC_API_KEY",
             "deepseek": "DEEPSEEK_API_KEY",
+            "grok": "XAI_API_KEY",
         }
 
         env_key = key_mapping.get(provider_id)
@@ -205,7 +209,7 @@ class EnvManager:
         }
 
         # API 키 설정 상태 확인
-        providers = ["openai", "gemini", "claude", "deepseek"]
+        providers = ["openai", "gemini", "claude", "deepseek", "grok"]
         for provider in providers:
             api_key = self.get_api_key(provider)
             if api_key:
