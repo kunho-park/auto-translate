@@ -590,6 +590,39 @@ class ModpackBrowser:
         """번역 시작 콜백 설정"""
         self.on_translation_start = callback
 
+    async def show_migration_dialog(self):
+        """새로운 버전 안내 팝업"""
+
+        async def close_handler(e):
+            self.page.close(dlg)
+
+        async def download_handler(e):
+            url = "https://github.com/kunho-park/minecraft-translator/releases"
+            await self.page.loop.run_in_executor(None, webbrowser.open, url)
+
+        dlg = ft.AlertDialog(
+            title=ft.Text("신버전(베타) 출시 알림"),
+            content=ft.Column(
+                [
+                    ft.Text("새로운 베타 버전이 출시되었습니다."),
+                    ft.Text("GitHub에서 다운로드해주세요."),
+                    ft.Text("이 번역기는 곧 지원이 중단됩니다."),
+                ],
+                tight=True,
+                width=400,
+            ),
+            actions=[
+                ft.TextButton("닫기", on_click=close_handler),
+                ft.ElevatedButton(
+                    "다운로드하러 가기",
+                    on_click=download_handler,
+                    icon=ft.Icons.DOWNLOAD,
+                ),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        self.page.open(dlg)
+
     # ---------------------------------------------------------------------
     # Folder picker callback
     # ---------------------------------------------------------------------

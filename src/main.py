@@ -91,6 +91,9 @@ async def main(page: ft.Page):
     # 앱 초기화
     app = MainApp(page)
 
+    # 새 버전 알림 팝업
+    await app.browser.show_migration_dialog()
+
     # 모드팩 로딩 시작
     await app.browser.load_modpacks()
 
